@@ -1,11 +1,12 @@
-import { Text } from "react-native"
-
-import { Container, Title } from "./styles";
+import { MainContainer, Title, StatusBar, VerticalContainer, HorizontalContainer } from "./styles";
 
 export default function Home() {
     return (
-        <Container>
-            <Title>GERENCIADOR DE METAS</Title>
-        </Container>
+        <MainContainer>
+            <StatusBar animated backgroundColor={"#2596be"} barStyle={"dark-content"} />
+            <VerticalContainer>
+                <Title>GERENCIADOR DE METAS</Title>
+            </VerticalContainer>
+        </MainContainer>
     );
 }
