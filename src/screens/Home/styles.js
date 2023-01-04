@@ -6,29 +6,34 @@ import * as Animatable from 'react-native-animatable';
 export const CenterTitle = styled(Animatable.Text)`
   font-family: ${THEME.FONTS.MEDIUM};
   color: ${THEME.COLORS.TEXT};
-  font-size: ${RFPercentage(4)}px;  
+  font-size: ${RFPercentage(2.8)}px;  
   `
-
+export const CenterGroup = styled(Animatable.View)`
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    position: absolute;
+`
 export const CenterView = styled(Animatable.View)`
-  flex: 1;
   flex-direction: row;
-  position: absolute;
   justify-content: space-around;
   align-items: center;
-  z-index: 1000;
-  background-color: ${THEME.COLORS.PRIMARY900};
   text-align: center;
   padding: 0 ${RFPercentage(3)}px;
-  width: ${RFPercentage(30)}px;
-  height: ${RFPercentage(10)}px;
+  margin: ${RFPercentage(2)}px 0;
+  width: ${RFPercentage(25)}px;
+  height: ${RFPercentage(7)}px;
+  background-color: ${THEME.COLORS.PRIMARY900};
   border-radius: 8px;
   border: 3px dashed ${THEME.COLORS.TEXT};
 `
 
 export const SmallIcon = styled(Animatable.Image)`
-  width: ${RFPercentage(6)}px;
+  width: ${RFPercentage(4)}px;
+  height: ${RFPercentage(4)}px;
 `
-
 
 export const AnimatedIcon = styled(Animatable.Image)`
     width: ${RFPercentage(6)}px;    

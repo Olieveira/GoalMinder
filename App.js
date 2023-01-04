@@ -8,10 +8,10 @@ import {
 
 import * as SplashScreen from 'expo-splash-screen';
 import { ThemeProvider } from 'styled-components/native';
-
 import THEME from './src/theme';
-
 import Home from './src/screens/Home';
+
+import { Routes } from './src/routes';
 
 SplashScreen.preventAutoHideAsync(); //tela de carregamento
 
@@ -25,13 +25,13 @@ export default function App() {
 
   if (!fontsLoaded) {
     return null;
-  }else{
+  } else {
     SplashScreen.hideAsync(); //esconde a tela de carregamento
   }
 
   return (
     <ThemeProvider theme={THEME}>
-      <Home />
+      <Routes />
     </ThemeProvider>
   );
 }
