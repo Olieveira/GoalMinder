@@ -1,6 +1,7 @@
 import { Bg, Clouds, CenterAdvice, TitleAdvice } from './styles';
 import cloudsBg from '../../assets/cloudsBg.png';
 import CircleAdd from '../../components/Buttons/CircleAdd';
+import AddForm from '../../components/AddForm';
 
 import { useState } from 'react';
 
@@ -12,11 +13,13 @@ export default function Goals() {
             <Clouds source={cloudsBg} resizeMode="center" iterationCount={'infinite'} duration={30000} direction={'alternate-reverse'} animation={'pulse'} />
 
             <CenterAdvice style={{ display: centerAdviceDisplay }} >
-                <TitleAdvice>
+                {/* <TitleAdvice>
                     Nenhum registro!
                 </TitleAdvice>
 
-                <CircleAdd />
+                <CircleAdd AddFunction={() => window.alert("Clicado com sucesso!")} /> */}
+
+                <AddForm/>
 
             </CenterAdvice>
 

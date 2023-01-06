@@ -8,7 +8,7 @@ export default {
         PRIMARY800: '#067B9C',
         PRIMARY700: '#4073DB',
         PRIMARY600: '#3AA1F2',
-        GOALS: '#c12500'
+        GOALS: '#c12500',
     },
     FONTS: {
         REGULAR: 'Roboto_400Regular',

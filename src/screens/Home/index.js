@@ -5,7 +5,6 @@ import { MaterialIcons } from "@expo/vector-icons"
 
 import bg from '../../assets/background.png';
 import target from '../../assets/target.png';
-import home from '../../assets/home.png';
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 export default function Home() {
