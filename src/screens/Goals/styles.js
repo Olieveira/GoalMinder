@@ -10,7 +10,7 @@ export const horizontalContainer = styled.View`
 export const CenterAdvice = styled(Animatable.View)`
     position: absolute;
     flex-direction: column;
-    background-color: ${THEME.COLORS.ALERT};
+    background-color: ${THEME.COLORS.ALERT900};
     padding: ${RFPercentage(3.3)}px;
     border-radius: 10px;
 `

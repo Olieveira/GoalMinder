@@ -1,75 +1,55 @@
-import { Container, Frame } from "./styles";
+import { Container, Frame, Label } from "./styles";
 import Input from "../Input";
 import CircleAdd from '../Buttons/CircleAdd'
-import { useState } from "react";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
-import { Button } from "react-native";
+import { useState, useRef } from "react";
+import { Button, Keyboard, KeyboardAvoidingView } from "react-native";
 
 export default function AddForm({ hideForm }) {
+    const [numIndicators, setNumIndicators] = useState(0);
+
+    const scrollViewRef = useRef(null);
 
     function handleAddIndicator() {
-        Toast.show({
-            autoHide: true,
-            position: "top",
-            text1: "SUCESSO!",
-            text2: "Indicador adicionado!"
-        });
+        setNumIndicators(numIndicators + 1)
+        scrollViewRef.current.scrollToEnd({ animated: true, });
     }
 
     return (
-        <Container>
-            <Input
-                placeholder="Ex.: Perder 10kg"
-                icon="target"
-                label="META"
-            />
-            <Input
-                icon="watch"
-                placeholder="Ex.: 1 ano"
-                label="TEMPO"
-            />
-
-            <Frame contentContainerStyle={{ alignItems: "center", padding: 10 }}>
+        <Container onPress={Keyboard.dismiss}>
+            <KeyboardAvoidingView behavior="position" enabled>
                 <Input
-                    icon="flag"
-                    placeholder="Ex.: Treino Diário"
-                    label="INDICADORES"
+                    placeholder="Ex.: Perder 10kg"
+                    icon="target"
+                    label="META"
                 />
                 <Input
-                    icon="flag"
-                    placeholder="Ex.: Treino Diário"
-                />
-                <Input
-                    icon="flag"
-                    placeholder="Ex.: Treino Diário"
-                />
-                <Input
-                    icon="flag"
-                    placeholder="Ex.: Treino Diário"
-                />
-                <Input
-                    icon="flag"
-                    placeholder="Ex.: Treino Diário"
-                />
-                <Input
-                    icon="flag"
-                    placeholder="Ex.: Treino Diário"
-                />
-                <Input
-                    icon="flag"
-                    placeholder="Ex.: Treino Diário"
-                />
-                <Input
-                    icon="flag"
-                    placeholder="Ex.: Treino Diário"
+                    icon="watch"
+                    placeholder="Ex.: 1 ano"
+                    label="TEMPO"
                 />
 
-                <CircleAdd AddFunction={handleAddIndicator} />
-            </Frame>
+                <Label>INDICADORES {numIndicators > 1 ? '(' + (numIndicators + 1) + ')' : null}</Label>
 
-            <Button title="OK" onPress={hideForm} />
+                <Frame ref={scrollViewRef} contentContainerStyle={{ alignItems: "center", padding: 10 }}>
+                    <Input
+                        icon="flag"
+                        placeholder="Ex.: Treino Diário"
+                    />
+                    {Array.from(Array(numIndicators).keys()).map(index => (
+                        <Input
+                            key={index}
+                            icon="flag"
+                            placeholder="Ex.: Treino Diário"
+                        />
 
-            <Toast />
+                    ))}
+
+                    <CircleAdd AddFunction={handleAddIndicator} />
+                </Frame>
+
+                <Button title="OK" onPress={hideForm} />
+
+            </KeyboardAvoidingView>
 
         </Container>
     );

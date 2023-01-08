@@ -25,7 +25,6 @@ export default function Goals() {
                     <CircleAdd AddFunction={handleShowForm} />
                 </View>
 
-
                 {centerAdviceDisplay ? <AddForm hideForm={handleShowForm} /> : null}
 
             </CenterAdvice>

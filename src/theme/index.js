@@ -2,8 +2,9 @@ export default {
     COLORS: {
         BACKGROUND: '#06899c',
         TEXT: '#00F0E0',
-        ALERT: '#D8CB60',
         SUCCESS: '#4AA560',
+        ALERT800: '#e6c152',
+        ALERT900: '#ffd65b',
         PRIMARY900: '#06589C',
         PRIMARY800: '#067B9C',
         PRIMARY700: '#4073DB',

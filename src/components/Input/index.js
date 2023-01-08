@@ -19,7 +19,7 @@ export default function Input(props) {
     }
 
     return (
-        <VContainer style={{height: props.label == undefined ? RFPercentage(7.2) : RFPercentage(10.7)  }}>
+        <VContainer style={{ height: props.label == undefined ? RFPercentage(7.2) : RFPercentage(10.7) }}>
             <LabelText style={{ display: props.label == undefined ? 'none' : 'flex' }}>
                 {props.label}
             </LabelText>
@@ -33,6 +33,7 @@ export default function Input(props) {
                     onFocus={HandleInputFocus}
                     onBlur={HandleInputFocus}
                     keyboardType={keyboardType}
+                    autoCapitalize={keyboardType == "email-address" ? 'none' : null}
                     placeholder={placeholder}
                     secureTextEntry={isShowed ? false : secureTextEntry}
                 />
