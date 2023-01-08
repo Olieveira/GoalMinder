@@ -12,9 +12,10 @@ export const Container = styled.View`
     width: ${RFPercentage(38)}px;
 `
 
-export const Frame = styled.View`
+export const Frame = styled.ScrollView`
     border: 1.5px solid ${THEME.COLORS.BACKGROUND};
-    padding: ${RFPercentage(2.3)}px;
     border-radius: 10px;
-    margin-top: ${RFPercentage(1)}px
+    margin-top: ${RFPercentage(1)}px;
+    height: ${RFPercentage(45)}px;
+    width: ${RFPercentage(40)}px;
 `

@@ -3,9 +3,9 @@ import Input from "../Input";
 import CircleAdd from '../Buttons/CircleAdd'
 import { useState } from "react";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { Button } from "react-native";
 
-export default function AddForm() {
-    const [indicators, setIndicators] = useState([]);
+export default function AddForm({ hideForm }) {
 
     function handleAddIndicator() {
         Toast.show({
@@ -15,6 +15,7 @@ export default function AddForm() {
             text2: "Indicador adicionado!"
         });
     }
+
     return (
         <Container>
             <Input
@@ -28,18 +29,48 @@ export default function AddForm() {
                 label="TEMPO"
             />
 
-            <Frame>
+            <Frame contentContainerStyle={{ alignItems: "center", padding: 10 }}>
                 <Input
                     icon="flag"
                     placeholder="Ex.: Treino Diário"
                     label="INDICADORES"
                 />
+                <Input
+                    icon="flag"
+                    placeholder="Ex.: Treino Diário"
+                />
+                <Input
+                    icon="flag"
+                    placeholder="Ex.: Treino Diário"
+                />
+                <Input
+                    icon="flag"
+                    placeholder="Ex.: Treino Diário"
+                />
+                <Input
+                    icon="flag"
+                    placeholder="Ex.: Treino Diário"
+                />
+                <Input
+                    icon="flag"
+                    placeholder="Ex.: Treino Diário"
+                />
+                <Input
+                    icon="flag"
+                    placeholder="Ex.: Treino Diário"
+                />
+                <Input
+                    icon="flag"
+                    placeholder="Ex.: Treino Diário"
+                />
 
                 <CircleAdd AddFunction={handleAddIndicator} />
-
             </Frame>
 
-            <Toast/>
+            <Button title="OK" onPress={hideForm} />
+
+            <Toast />
+
         </Container>
     );
 }
