@@ -4,28 +4,23 @@ import { useState, useEffect } from "react";
 import THEME from "../../theme";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
-export default function Input(props) {
+export default function Input({ keyboardType, placeholder, secureTextEntry, showOption, label, icon, onChangeText, value }) {
     const [isFilled, setIsFilled] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [isShowed, setIsShowed] = useState(false);
-
-    const keyboardType = props.type || "default";
-    const placeholder = props.placeholder || "";
-    const secureTextEntry = props.secureTextEntry == true ? true : null
-    const showOption = props.showOption;
 
     function HandleInputFocus() {
         setIsFocused(!isFocused);
     }
 
     return (
-        <VContainer style={{ height: props.label == undefined ? RFPercentage(7.2) : RFPercentage(10.7) }}>
-            <LabelText style={{ display: props.label == undefined ? 'none' : 'flex' }}>
-                {props.label}
+        <VContainer style={{ height: label == undefined ? RFPercentage(7.2) : RFPercentage(10.7) }}>
+            <LabelText style={{ display: label == undefined ? 'none' : 'flex' }}>
+                {label}
             </LabelText>
             <HContainer>
                 <Feather
-                    name={props.icon}
+                    name={icon}
                     size={22}
                     color={isFilled || isFocused ? THEME.COLORS.PRIMARY600 : THEME.COLORS.BACKGROUND}
                 />
@@ -36,6 +31,8 @@ export default function Input(props) {
                     autoCapitalize={keyboardType == "email-address" ? 'none' : null}
                     placeholder={placeholder}
                     secureTextEntry={isShowed ? false : secureTextEntry}
+                    onChangeText={onChangeText}
+                    value={value}
                 />
                 <Feather
                     style={{ display: showOption == true ? "flex" : "none" }}
