@@ -2,10 +2,12 @@ import { Container, Frame, Label } from "./styles";
 import Input from "../Input";
 import CircleAdd from '../Buttons/CircleAdd'
 import { useState, useRef } from "react";
-import { Button, Keyboard, KeyboardAvoidingView } from "react-native";
+import { Alert, Button, Keyboard, KeyboardAvoidingView } from "react-native";
 import { v4 as uuidv4 } from 'uuid';
 import 'react-native-get-random-values';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as FlashMessage from "react-native-flash-message";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 export default function AddForm({ hideForm }) {
     // quantidade de indicadores
@@ -18,6 +20,16 @@ export default function AddForm({ hideForm }) {
 
     // referência a scrollView
     const scrollViewRef = useRef(null);
+
+    function showInfo(info) {
+        let description = info;
+
+        FlashMessage.showMessage({
+            message: "DICA",
+            type: "info",
+            description
+        });
+    }
 
     // Handle que controla o valor do state de todos indicadores
     function handleIndicatorUpdated(index, value) {
@@ -44,14 +56,19 @@ export default function AddForm({ hideForm }) {
             goal,
             time,
             indicators: indicators.filter(item => item !== undefined)
-        }
+        };
 
-        const response = await AsyncStorage.getItem("@goalsmanagement:goals");
-        const previousData = response ? JSON.parse(response) : [];
+        if (goal != "" && time != "") {
 
-        const data = [...previousData, newData]
+            const response = await AsyncStorage.getItem("@goalsmanagement:goals");
+            const previousData = response ? JSON.parse(response) : [];
 
-        await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data));
+            const data = [...previousData, newData]
+
+            await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data));
+            Alert.alert(`Campo cadastrado com sucesso!`)
+        };
+
         hideForm();
     }
 
@@ -59,17 +76,22 @@ export default function AddForm({ hideForm }) {
         <Container onPress={Keyboard.dismiss}>
             <KeyboardAvoidingView behavior="position" enabled>
                 <Input
+                    style={{ focused: true }}
                     placeholder="Ex.: Perder 10kg"
                     icon="target"
                     label="META"
                     onChangeText={setGoal}
+                    returnKeyType="next"
                     value={goal}
+                    infoShowFunction={() => showInfo("Busque sempre estabelecer metas mensuráveis e detalhadas!")}
                 />
                 <Input
                     icon="watch"
                     placeholder="Ex.: 1 ano"
                     label="TEMPO"
                     onChangeText={setTime}
+                    returnKeyType="next"
+                    infoShowFunction={() => showInfo("Defina um tempo de conclusão realista e dentro do possível!")}
                     value={time}
                 />
 
@@ -82,6 +104,7 @@ export default function AddForm({ hideForm }) {
                             icon="flag"
                             placeholder="Ex.: Treino Diário"
                             onChangeText={(text) => handleIndicatorUpdated(index, text)}
+                            returnKeyType={indicators.length > index + 1 ? "next" : "done"}
                             value={indicators[index]}
                         />
 
@@ -93,6 +116,14 @@ export default function AddForm({ hideForm }) {
                 <Button title="OK" onPress={handleSubmit} />
 
             </KeyboardAvoidingView>
+
+            <FlashMessage.default 
+            position={'center'} 
+            duration={4500}
+            hideOnPress={true}
+            animated={true}
+            icon={"info"} 
+            style={{ width: RFPercentage(40), padding: RFPercentage(1.5) }} />
 
         </Container>
     );

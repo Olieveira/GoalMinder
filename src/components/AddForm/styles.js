@@ -28,6 +28,7 @@ export const Label = styled.Text`
     font-size: ${RFPercentage(2.4)}px;
     font-family: ${THEME.FONTS.MEDIUM};
     color: ${THEME.COLORS.PRIMARY800};
-    align-self: center;
+    margin-top: ${RFPercentage(2)}px;
+    align-self: flex-start;
 
 `
