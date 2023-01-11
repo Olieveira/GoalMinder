@@ -3,6 +3,9 @@ import THEME from "../../theme";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import * as Animatable from 'react-native-animatable';
 
+export const EditButton = styled.TouchableOpacity`
+
+`
 
 export const IndicatorFrame = styled.View`
     border: 1.5px dotted ${THEME.COLORS.PRIMARY900};
@@ -11,13 +14,18 @@ export const IndicatorFrame = styled.View`
 
 `
 
-export const HeaderIndicatorTitle = styled.Text``
+export const HeaderIndicatorTitle = styled.Text`
+    margin: 0 ${RFPercentage(0.7)}px;
+    font-family: ${THEME.FONTS.MEDIUM};
+    color: ${THEME.COLORS.PRIMARY900};
+    font-size: ${RFPercentage(2)}px;
+`
 
 export const IndicatorHeader = styled.View`
     flex: 1;
     flex-direction: row;
     z-index: 1000;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     background-color: ${THEME.COLORS.ALERT900};
     padding: ${RFPercentage(1)}px 0px;

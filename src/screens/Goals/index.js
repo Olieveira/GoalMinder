@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bg, Clouds, CenterAdvice, TitleAdvice, GoalView, GoalsScrollView, GoalHorizontalView, ViewAnimated, IndicatorsView, DataText, Frame, IndicatorHeader, HeaderIndicatorTitle, IndicatorFrame } from './styles';
+import { Bg, Clouds, CenterAdvice, TitleAdvice, GoalView, GoalsScrollView, GoalHorizontalView, ViewAnimated, IndicatorsView, DataText, Frame, IndicatorHeader, HeaderIndicatorTitle, IndicatorFrame, EditButton } from './styles';
 import { Keyboard, View, Text, Button } from 'react-native';
 import cloudsBg from '../../assets/cloudsBg.png';
 import CircleAdd from '../../components/Buttons/CircleAdd';
@@ -8,29 +8,44 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons'
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import THEME from '../../theme';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as FlashMessage from "react-native-flash-message";
 
 export default function Goals() {
     const [formDisplay, setFormDisplay] = useState(false);
     const [goals, setGoals] = useState([]);
+    const [editId, setEditId] = useState("");
 
     useEffect(() => {
-        async function startFetchData() {
-            await fetchData();
-        };
-        startFetchData();
+        fetchData();
     }, []);
 
-    async function fetchData() {
-        const response = await AsyncStorage.getItem("@goalsmanagement:goals");
-        response == null ? null : setGoals(JSON.parse(response));
-        console.log(response);
-    }
+    function showInfo(message, description, type) {
+        FlashMessage.showMessage({
+            message,
+            type,
+            description
+        });
+    };
 
-    async function handleShowForm() {
+    async function fetchData() {
+        try {
+            const response = await AsyncStorage.getItem("@goalsmanagement:goals");
+            response == null ? null : setGoals(JSON.parse(response));
+        } catch (err) {
+            console.log("Erro: ", err);
+        }
+    };
+
+    async function handleShowForm(id) {
+        id != undefined ? setEditId(id) : null;
+
         setFormDisplay(!formDisplay);
         await fetchData();
-    }
+    };
+
+    function openEditForm(id) {
+        console.log("Editar item do id: \n", id);
+    };
 
 
     function currentUserView() {
@@ -44,7 +59,7 @@ export default function Goals() {
                                 <IndicatorHeader>
                                     <Feather
                                         style={{
-                                            marginRight: RFPercentage(3),
+                                            marginRight: RFPercentage(1),
                                             borderRightColor: THEME.COLORS.BACKGROUND,
                                             borderRightWidth: 2,
                                             borderBottomRightRadius: 5,
@@ -55,17 +70,30 @@ export default function Goals() {
                                         color={THEME.COLORS.BACKGROUND}
                                     />
                                     <HeaderIndicatorTitle>{item.goal.toUpperCase()}</HeaderIndicatorTitle>
+                                    <EditButton onPress={() => handleShowForm(item.id)}>
+                                        <Feather
+                                            style={{
+                                                marginLeft: RFPercentage(1),
+                                                borderLeftColor: THEME.COLORS.BACKGROUND,
+                                                borderLeftWidth: 1.3,
+                                                paddingLeft: RFPercentage(1),
+                                            }}
+                                            name='edit'
+                                            size={25}
+                                            color={THEME.COLORS.BACKGROUND}
+                                        />
+                                    </EditButton>
                                 </IndicatorHeader>
                                 <GoalHorizontalView>
                                     <GoalView>
                                         <Feather
                                             style={{ marginRight: RFPercentage(1.2) }}
-                                            name="target"
+                                            name="calendar"
                                             size={RFPercentage(3.5)}
                                             color={THEME.COLORS.BACKGROUND}
                                         />
                                         <DataText>
-                                            {item.goal}
+                                            {item.createdAt}
                                         </DataText>
                                     </GoalView>
                                     <GoalView>
@@ -90,10 +118,10 @@ export default function Goals() {
                                     />
                                     <IndicatorsView>
                                         {item.indicators.map((indicator, index) => (
-                                            <IndicatorFrame>
-                                                <DataText
-                                                    key={`ind${index}`}
-                                                >
+                                            <IndicatorFrame
+                                                key={`ind${index}`}
+                                            >
+                                                <DataText>
                                                     {indicator}
                                                 </DataText>
                                             </IndicatorFrame>
@@ -157,7 +185,7 @@ export default function Goals() {
                 </ViewAnimated>
 
                 <View
-                    style={{ display: formDisplay ? 'none' : 'flex', width: '50%', alignSelf: createNativeStackNavigator }}
+                    style={{ display: formDisplay ? 'none' : 'flex', width: '30%', alignSelf: 'center', borderRadius: '50%', marginTop: 10 }}
                 >
                     <Button
                         color={'red'}
@@ -170,7 +198,20 @@ export default function Goals() {
                     />
                 </View>
 
-                {formDisplay ? <AddForm hideForm={handleShowForm} /> : null}
+                {formDisplay ? <AddForm
+                    id={editId}
+                    hideForm={handleShowForm}
+                    showMessage={() => showInfo("SUCESSO", "Meta cadastrada!", "success")}
+                    showMessageNotFound={() => showInfo("ID não encontrado!", "Se o item selecionado existir e esse erro persistir, contacte o desenvolvedor!", "danger")}
+                /> : null}
+
+                <FlashMessage.default
+                    position={'center'}
+                    duration={4500}
+                    hideOnPress={true}
+                    animated={true}
+                    icon={"info"}
+                    style={{ width: RFPercentage(40), padding: RFPercentage(1.5) }} />
 
             </CenterAdvice>
 

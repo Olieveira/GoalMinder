@@ -17,6 +17,7 @@ export function UserRoutes() {
             tabBarInactiveBackgroundColor: THEME.COLORS.BACKGROUND,
             tabBarActiveTintColor: THEME.COLORS.ALERT,
             tabBarInactiveTintColor: THEME.COLORS.PRIMARY600,
+            tabBarStyle: {backgroundColor: THEME.COLORS.BACKGROUND},
             tabBarShowLabel: false,
             tabBarHideOnKeyboard: true
         }}>

@@ -1,6 +1,6 @@
 import { TextInput, HContainer, VContainer, LabelText } from "./styles"
 import { Feather } from "@expo/vector-icons"
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import THEME from "../../theme";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
@@ -8,8 +8,6 @@ export default function Input({ keyboardType, placeholder, secureTextEntry, show
     const [isFilled, setIsFilled] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [isShowed, setIsShowed] = useState(false);
-
-    useEffect(() => { console.log(Object.prototype.toString.call(infoShowFunction)) }, [])
 
     function HandleInputFocus() {
         setIsFocused(!isFocused);
