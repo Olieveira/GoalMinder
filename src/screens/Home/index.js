@@ -2,13 +2,16 @@ import { MainContainer, Title, StatusBar, TitleContainer, MainImage, Text, Anima
 import THEME from "../../theme";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons"
-
 import bg from '../../assets/background.png';
 import target from '../../assets/target.png';
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 export default function Home() {
     const navigation = useNavigation();
+     /** Realiza a navegação entre telas
+      * 
+      * @param {string} Screen - Tela destino.
+      */
     function go(Screen) {
         navigation.navigate(Screen);
     }

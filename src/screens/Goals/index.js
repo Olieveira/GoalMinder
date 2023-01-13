@@ -19,6 +19,15 @@ export default function Goals() {
         fetchData();
     }, []);
 
+
+    /**
+     * 
+     * @param {string} message Título da mensagem. 
+     * @param {string} description Mensagem central.
+     * @param {string} type Tipo da mensagem: "none" | "default" | "info" | "success" | "danger" | "warning."
+     * 
+     * @returns {JSX.Element} Elemento de exibição de mensagem.
+     */
     function showInfo(message, description, type) {
         FlashMessage.showMessage({
             message,
@@ -27,6 +36,9 @@ export default function Goals() {
         });
     };
 
+    /**
+     * Realiza consulta dos dados cadastrados e o atribui para o state vinculado a renderização dos componentes.
+     */
     async function fetchData() {
         try {
             const response = await AsyncStorage.getItem("@goalsmanagement:goals");
@@ -36,6 +48,11 @@ export default function Goals() {
         }
     };
 
+    /**
+     * Controla visibilidade do formulário de adição/edição de metas.
+     * 
+     * @param {string} id - Id do item passado ao clicar no botão de editar. 
+     */
     async function handleShowForm(id) {
         id != undefined ? setEditId(id) : null;
 
@@ -43,11 +60,11 @@ export default function Goals() {
         await fetchData();
     };
 
-    function openEditForm(id) {
-        console.log("Editar item do id: \n", id);
-    };
-
-
+    /**
+     * Verifica a quantidade de itens no state dos elementos a serem renderizados e define a tela a ser exibida
+     * 
+     * @returns {JSX.Element}
+     */
     function currentUserView() {
         if (goals.length > 0 && formDisplay == false) {
             return (

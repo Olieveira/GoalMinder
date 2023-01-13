@@ -11,6 +11,16 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import GenericButton from "../Buttons/Generic";
 import THEME from "../../theme";
 
+/**
+ * 
+ * @param hideForm Function que destroi ou torna invisível o form.
+ * 
+ * @param showMessage Function que exibe mensagens de sucesso na tela do componente pai.
+ * 
+ * @param showMessageNotFound Function que exibe mensagens de erro/imprevistos na tela do componente pai.
+ * 
+ * @param id ID referente a um item específico (quando chamado para edição).
+ */
 export default function AddForm({ hideForm, showMessage, showMessageNotFound, id }) {
     // quantidade de indicadores
     const [numIndicators, setNumIndicators] = useState(1);
@@ -30,6 +40,9 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, id
     // referência a scrollView
     const scrollViewRef = useRef(null);
 
+    /**
+     * Carrega as informações do item a ser editado.
+     */
     async function editItem() {
         const response = await AsyncStorage.getItem("@goalsmanagement:goals");
         const previousData = response ? JSON.parse(response) : [];
@@ -53,6 +66,15 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, id
         })
     };
 
+    /**
+     * Exibe mensagens no centro da tela.
+     * 
+     * @param message Titulo da mensagem.
+     * 
+     * @param description Mensagem a ser exibida.
+     * 
+     * @param type Tipo da mensagem: "none" | "default" | "info" | "success" | "danger" | "warning."
+     */
     function showInfo(message, description, type) {
 
         FlashMessage.showMessage({
@@ -62,7 +84,13 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, id
         });
     }
 
-    // Handle que controla o valor do state de todos indicadores
+    /** 
+     * Handle que controla o valor do state de todos indicadores
+     * 
+     * @param index Number referente ao index do array dos indicadores.
+     * 
+     * @param value Valor do indicador.
+    */
     function handleIndicatorUpdated(index, value) {
         setIndicators(previous => {
             const newIndicators = [...previous];
@@ -73,12 +101,17 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, id
         })
     }
 
-    // Incrementa o state dos indicadores e roda a scroll para o final da view
+    /** 
+     *  Incrementa o state dos indicadores e roda a scrollView para o final.
+    */
     function handleAddIndicator() {
         setNumIndicators(numIndicators + 1)
         scrollViewRef.current.scrollToEnd({ animated: true, });
     }
 
+    /**
+     * Realiza a validação dos campos e cadastro dos dados.
+     */
     async function handleSubmit() {
         const id = uuidv4();
 
@@ -105,10 +138,14 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, id
             const data = [...previousData, newData]
 
             await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data));
+
+            showMessage();
+            hideForm();
+        } else {
+            showInfo("OPS!", "Preencha os campos para cadastrar uma meta!", "danger");
         };
 
-        showMessage();
-        hideForm();
+
     }
 
     return (
@@ -154,11 +191,6 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, id
                 </KeyboardAvoidingView>
             </Frame>
 
-            {/* <CadastroBtn
-                onPress={handleSubmit}
-            >
-                <CadastroTxt>CADASTRAR</CadastroTxt>
-            </CadastroBtn> */}
             <ButtonsView>
                 <GenericButton
                     icon='skip-back'
