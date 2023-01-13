@@ -220,6 +220,7 @@ export default function Goals() {
                     hideForm={handleShowForm}
                     showMessage={() => showInfo("SUCESSO", "Meta cadastrada!", "success")}
                     showMessageNotFound={() => showInfo("ID não encontrado!", "Se o item selecionado existir e esse erro persistir, contacte o desenvolvedor!", "danger")}
+                    showMessageDeleted={() => showInfo("META EXCLUIDA COM SUCESSO!", "", "success")}
                 /> : null}
 
                 <FlashMessage.default

@@ -3,36 +3,38 @@ import { Feather } from '@expo/vector-icons'
 
 /**
  * 
- * @param width Largura do botão.
+ * @param {number} width Largura do botão.
  * 
- * @param icon Nome do icone a ser exibido ao lado do texto. (Utilizado biblioteca Feather) {@link https://expo.github.io/vector-icons/}.
+ * @param {string} icon Nome do icone a ser exibido ao lado do texto. (Utilizado biblioteca Feather) {@link https://expo.github.io/vector-icons/}.
  *
- * @param iconColor Cor do icone.
+ * @param {string} iconColor Cor do icone.
  * 
- * @param iconSize Tamanho do icone.
+ * @param {number} iconSize Tamanho do icone.
  * 
- * @param text Texto do botão.
+ * @param {string} text Texto do botão.
  * 
- * @param backgroundColor Cor do botão.
+ * @param {string} backgroundColor Cor do botão.
  * 
- * @param txtColor Cor do texto do botão.
+ * @param {string} txtColor Cor do texto do botão.
  * 
- * @param borderWidth Largura da borda do botão.
+ * @param {number} borderWidth Largura da borda do botão.
  * 
- * @param borderRadius Curvatura da borda.
+ * @param {number} borderRadius Curvatura da borda.
  * 
- * @param borderColor Cor da borda.
+ * @param {string} borderColor Cor da borda.
  * 
- * @param fontSize Tamanho da fonte do texto do botão.
+ * @param {number} fontSize Tamanho da fonte do texto do botão.
  * 
- * @param fontFamily Fonte do texto do botão.
+ * @param {string} fontFamily Fonte do texto do botão.
  * 
- * @param handleFunction Function chamada ao pressionar botão.
+ * @param {function} handleFunction Function chamada ao pressionar botão.
  * 
- * @returns Componente de função.
+ * @param {string} display Display tag que define a visibilidade do elemento!
+ * 
+ * @returns {JSX.Element} Componente de função.
  * 
  */
-export default function GenericButton({ width, icon, iconColor, iconSize, text, backgroundColor, txtColor, borderWidth, borderRadius, borderColor, fontSize, fontFamily, handleFunction }) {
+export default function GenericButton({ width, icon, iconColor, iconSize, text, backgroundColor, txtColor, borderWidth, borderRadius, borderColor, fontSize, fontFamily, handleFunction, display }) {
     return (
         <Button
             onPress={handleFunction}
@@ -41,7 +43,8 @@ export default function GenericButton({ width, icon, iconColor, iconSize, text, 
                 borderWidth,
                 borderRadius,
                 borderColor,
-                width
+                width,
+                display
             }}>
             <Feather
                 style={{ display: icon != undefined ? "flex" : "none", marginRight: text != undefined ? 5 : null }}

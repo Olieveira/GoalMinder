@@ -2,32 +2,18 @@ import styled from "styled-components/native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import THEME from "../../theme";
 
+export const VerticalButtonsView = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+`
+
 export const ButtonsView = styled.View`
     flex: 1;
     flex-direction: row;
     justify-content: space-around;
-    padding: ${RFPercentage(2)}px 0 ${RFPercentage(1)}px 0
+    padding: ${RFPercentage(2)}px 0 ${RFPercentage(2.5)}px 0;
 `
-
-export const CadastroTxt = styled.Text`
-    text-align: center;
-    font-family: ${THEME.FONTS.MEDIUM};
-    color: ${THEME.COLORS.TEXT};
-    font-size: ${RFPercentage(2.3)}px;
-`
-
-export const CadastroBtn = styled.TouchableOpacity`
-    flex-direction: row;
-    align-self: flex-end;
-    justify-content: center;
-    padding: ${RFPercentage(0.6)}px;
-    margin-top: ${RFPercentage(2)}px;
-    flex: 1;
-    background-color: ${THEME.COLORS.SUCCESS};
-    width: ${RFPercentage(16)}px;    
-    
-`
-
 export const Container = styled.View`
     flex: 1;
     flex-direction: column;
