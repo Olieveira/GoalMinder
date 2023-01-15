@@ -30,9 +30,6 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
     // texto do botão de cadastro/edit ['EDITAR' || 'CADASTRAR']
     const [submitButtonText, setSubmitButtonText] = useState("");
 
-    // função do botão cadastro/edit
-    const [submitFunction, setSubmitFunction] = useState(() => { });
-
     //visibilidade do botão DELETE ['flex' || 'none']
     const [deleteButton, setDeleteButton] = useState(undefined);
 
@@ -47,12 +44,10 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
     // Realiza a verificação se é edição ou cadastro de metas ao carregar a tela
     useEffect(() => {
         if (typeof (id) == "string") {
-            setSubmitFunction(() => handleSubmitEdit);
             setSubmitButtonText("EDITAR");
             setDeleteButton("flex");
-            editItem();
+            loadEditItem();
         } else {
-            setSubmitFunction(() => handleSubmit);
             setSubmitButtonText("CADASTRAR");
             setDeleteButton("none");
         }
@@ -61,7 +56,7 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
     /**
      * Carrega as informações do item a ser editado.
      */
-    async function editItem() {
+    async function loadEditItem() {
         const response = await AsyncStorage.getItem("@goalsmanagement:goals");
         const previousData = response ? JSON.parse(response) : [];
 
@@ -150,10 +145,32 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
      * Realiza a edição da meta atual
      */
     async function handleSubmitEdit() {
-        const response = await AsyncStorage.getItem("@goalsmanagement:goals");
-        const previousData = response ? JSON.parse(response) : [];
+        if (goal != "" && time != "") {
 
-        console.log(response);
+            const response = await AsyncStorage.getItem("@goalsmanagement:goals");
+            const previousData = response ? JSON.parse(response) : [];
+
+            const newData = previousData.map((item) => {
+                if (item.id == id) {
+                    return {
+                        id: item.id,
+                        goal,
+                        time,
+                        indicators: indicators.filter(item => item !== undefined && item !== ""),
+                        createdAt: item.createdAt
+                    };
+                } else {
+                    return item;
+                }
+            })
+
+            await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(newData.filter(item => item !== undefined)));
+            showMessage();
+            hideForm();
+        } else {
+            showInfo("OPS!", "Preencha os campos para editar uma meta!", "danger");
+        };
+
     }
 
     /**
@@ -233,9 +250,8 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
                         />
 
                     ))}
-
-                    <CircleAdd AddFunction={handleAddIndicator} />
                 </KeyboardAvoidingView>
+                <CircleAdd AddFunction={handleAddIndicator} />
             </Frame>
 
             <VerticalButtonsView>
@@ -262,7 +278,7 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
                         borderRadius={5}
                         fontSize={RFPercentage(2.3)}
                         fontFamily={THEME.FONTS.MEDIUM}
-                        handleFunction={submitFunction}
+                        handleFunction={typeof (id) == "string" ? handleSubmitEdit : handleSubmit}
                         width={RFPercentage(4)}
                     />
                 </ButtonsView>
