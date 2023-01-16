@@ -76,6 +76,7 @@ export default function Input({ keyboardType, placeholder, secureTextEntry, show
                     secureTextEntry={isShowed ? false : secureTextEntry}
                     onChangeText={onChangeText}
                     value={value}
+                    multiline={true}
                 />
                 <Feather
                     style={{ display: showOption == true ? "flex" : "none" }}

@@ -1,6 +1,7 @@
 import styled from "styled-components/native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import THEME from "../../theme";
+import * as Animatable from 'react-native-animatable'
 
 export const VerticalButtonsView = styled.View`
     flex: 1;
@@ -14,14 +15,14 @@ export const ButtonsView = styled.View`
     justify-content: space-around;
     padding: ${RFPercentage(2)}px 0 ${RFPercentage(2.5)}px 0;
 `
-export const Container = styled.View`
+export const Container = styled(Animatable.View)`
     flex: 1;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     align-content: center;
     justify-items: center;
-    width: ${RFPercentage(38)}px;
+    width: 100%;
 `
 
 export const Frame = styled.ScrollView`

@@ -34,7 +34,7 @@ import { Feather } from '@expo/vector-icons'
  * @returns {JSX.Element} Componente de função.
  * 
  */
-export default function GenericButton({ width, icon, iconColor, iconSize, text, backgroundColor, txtColor, borderWidth, borderRadius, borderColor, fontSize, fontFamily, handleFunction, display }) {
+export default function GenericButton({ width, height, icon, iconColor, iconSize, text, backgroundColor, txtColor, borderWidth, borderRadius, borderColor, fontSize, fontFamily, handleFunction, display }) {
     return (
         <Button
             onPress={handleFunction}
@@ -44,6 +44,7 @@ export default function GenericButton({ width, icon, iconColor, iconSize, text, 
                 borderRadius,
                 borderColor,
                 width,
+                height,
                 display
             }}>
             <Feather

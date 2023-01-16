@@ -15,6 +15,7 @@ export const IndicatorFrame = styled.View`
 `
 
 export const HeaderIndicatorTitle = styled.Text`
+    max-width: ${RFPercentage(25)}px;
     margin: 0 ${RFPercentage(0.7)}px;
     font-family: ${THEME.FONTS.MEDIUM};
     color: ${THEME.COLORS.PRIMARY900};
@@ -38,7 +39,7 @@ export const Frame = styled.View`
     border: solid 2.5px ${THEME.COLORS.BACKGROUND};
     border-radius: 5px;
     margin: ${RFPercentage(0.8)}px 0;
-    width: ${RFPercentage(40)}px;
+    width: ${RFPercentage(44)}px;
 `
 
 export const DataText = styled.Text`
@@ -90,7 +91,7 @@ export const CenterAdvice = styled(Animatable.View)`
     flex-direction: column;
     background-color: ${THEME.COLORS.ALERT900};
     padding: ${RFPercentage(1.3)}px ${RFPercentage(3.3)}px;
-    width: ${RFPercentage(47)}px;
+    width: ${RFPercentage(51)}px;
     border-radius: 10px;
 `
 

@@ -11,16 +11,40 @@ import THEME from '../../theme';
 import * as FlashMessage from "react-native-flash-message";
 import GenericButton from '../../components/Buttons/Generic';
 import ConfirmDelete from '../../components/confirmDelete';
+import { typeOf } from 'react-is';
 
 export default function Goals() {
+    // controla visibilidade do formulario de adição/edição de metas
     const [formDisplay, setFormDisplay] = useState(false);
+    // quantidade de metas cadastradas
     const [goals, setGoals] = useState([]);
+    // Armazena o id do item quando chama o form para edição.
     const [editId, setEditId] = useState("");
+    // Controla a visibilidade do componente de confirmação
     const [showingConfirmation, setShowingConfirmation] = useState(false);
+    // Mensagem exibida no componente de confirmação
+    const [messageConfirmation, setMessageConfirmation] = useState('');
 
     useEffect(() => {
         fetchData();
     }, []);
+
+    /**
+    * Deleta o item atual.
+    */
+    async function deleteItem() {
+        const response = await AsyncStorage.getItem("@goalsmanagement:goals");
+        const previousData = response ? JSON.parse(response) : [];
+
+        const data = previousData.filter(item => item.id != editId);
+
+        await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data));
+
+        setEditId(undefined);
+
+        showInfo("META EXCLUIDA COM SUCESSO!", "", "success");
+        handleShowForm();
+    };
 
     /**
      * Exclui todos os cadastros.
@@ -36,7 +60,7 @@ export default function Goals() {
      */
     function displayConfirmation() {
         setShowingConfirmation(!showingConfirmation);
-    }
+    };
 
     /**
      * Exibe uma mensagem no centro da tela.
@@ -222,7 +246,7 @@ export default function Goals() {
                 </ViewAnimated>
 
                 <GoalView
-                    style={{ display: formDisplay || goals.length <= 0 ? 'none' : 'flex', marginTop: RFPercentage(2) }}
+                    style={{ display: formDisplay || goals.length <= 0 ? 'none' : 'flex', marginTop: RFPercentage(0.2) }}
                 >
 
                     <GenericButton
@@ -232,22 +256,27 @@ export default function Goals() {
                         text="EXCLUIR TUDO"
                         txtColor={THEME.COLORS.TEXT}
                         width={RFPercentage(23)}
+                        height={RFPercentage(6)}
                         handleFunction={() => {
+                            setMessageConfirmation(`Deseja excluir todas as metas cadastradas? (${goals.length})`);
                             displayConfirmation();
                         }}
                         fontFamily={THEME.FONTS.MEDIUM}
                         borderRadius={5}
-
                     />
                 </GoalView>
 
-                {formDisplay ? <AddForm
-                    id={editId}
-                    hideForm={handleShowForm}
-                    showMessage={() => showInfo("SUCESSO", "Meta cadastrada!", "success")}
-                    showMessageNotFound={() => showInfo("ID não encontrado!", "Se o item selecionado existir e esse erro persistir, contacte o desenvolvedor!", "danger")}
-                    showMessageDeleted={() => showInfo("META EXCLUIDA COM SUCESSO!", "", "success")}
-                /> : null}
+                {formDisplay ?
+                    <AddForm
+                        id={editId}
+                        hideForm={handleShowForm}
+                        showMessage={() => showInfo("SUCESSO", "Meta cadastrada!", "success")}
+                        showMessageNotFound={() => showInfo("ID não encontrado!", "Se o item selecionado existir e esse erro persistir, contacte o desenvolvedor!", "danger")}
+                        showConfirmation={() => {
+                            setMessageConfirmation(`Tem certeza que deseja excluir essa meta?`);
+                            displayConfirmation();
+                        }}
+                    /> : null}
 
                 <FlashMessage.default
                     position={'center'}
@@ -261,7 +290,9 @@ export default function Goals() {
             {showingConfirmation && (
                 <ConfirmDelete
                     hide={displayConfirmation}
-                    yes={deleteAll}
+                    yes={typeof (editId) == 'string' ? () => deleteItem() : () => deleteAll()}
+                    title='CONFIRMAÇÃO'
+                    message={messageConfirmation}
                 />
             )}
 

@@ -8,17 +8,19 @@ import { useState } from 'react';
 /**
  * Componente que exibe mensagens com opções
  * 
- * @param {string} display Define o display atual do componente.
- * 
  * @param {function} hide Função que define a visibilidade do componente.
  * 
  * @param {function} yes Função chamada ao pressionar botão de confirmação.
  * 
  * @param {function} no Função chamada ao pressionar botão de negação.
  *  
+ * @param {string} title Título do componente.
+ * 
+ * @param {string} message Texto do componente.
+ * 
  * @returns {JSX.Element} 
  */
-export default function ConfirmDelete({ hide, yes, no }) {
+export default function ConfirmDelete({ hide, yes, no, title, message }) {
     const [animation, setAnimation] = useState("fadeIn");
     return (
         <InactiveBG
@@ -29,7 +31,7 @@ export default function ConfirmDelete({ hide, yes, no }) {
             <CenterView>
                 <TitleView>
                     <TitleMessage>
-                        CONFIRMAÇÃO
+                        {title}
                     </TitleMessage>
 
                     <Feather
@@ -40,9 +42,22 @@ export default function ConfirmDelete({ hide, yes, no }) {
                     />
                 </TitleView>
                 <BodyMessage>
-                    Tem certeza que deseja excluir todas as metas cadastradas?
+                    {message}
                 </BodyMessage>
                 <ButtonsView>
+                    <GenericButton
+                        icon='x-circle'
+                        text='Não'
+                        backgroundColor={THEME.COLORS.GOALS}
+                        iconColor={THEME.COLORS.TEXT}
+                        txtColor={THEME.COLORS.TEXT}
+                        borderRadius={5}
+                        fontSize={RFPercentage(2.3)}
+                        fontFamily={THEME.FONTS.MEDIUM}
+                        handleFunction={no !== undefined ? no() : () => setAnimation("fadeOut")}
+                        width={RFPercentage(20)}
+                    />
+
                     <GenericButton
                         icon='check-circle'
                         text='Sim'
@@ -57,19 +72,6 @@ export default function ConfirmDelete({ hide, yes, no }) {
                             setAnimation("fadeOut")
                         }}
                         width={RFPercentage(5)}
-                    />
-
-                    <GenericButton
-                        icon='x-circle'
-                        text='Não'
-                        backgroundColor={THEME.COLORS.GOALS}
-                        iconColor={THEME.COLORS.TEXT}
-                        txtColor={THEME.COLORS.TEXT}
-                        borderRadius={5}
-                        fontSize={RFPercentage(2.3)}
-                        fontFamily={THEME.FONTS.MEDIUM}
-                        handleFunction={no !== undefined ? no() : () => setAnimation("fadeOut")}
-                        width={RFPercentage(20)}
                     />
                 </ButtonsView>
             </CenterView>

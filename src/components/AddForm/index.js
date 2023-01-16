@@ -19,11 +19,11 @@ import THEME from "../../theme";
  * 
  * @param {function} showMessageNotFound Function que exibe mensagens de erro/imprevistos na tela do componente pai.
  * 
- * @param {function} showMessageDeleted Function que exibe mensagem de exclusão bem sucedida.
+ * @param {function} showConfirmation Function que exibe componente de confirmação de exclusão na tela do componente pai.
  * 
- * @param {string }id ID referente a um item específico (quando chamado para edição).
+ * @param {string} id ID referente a um item específico (quando chamado para edição).
  */
-export default function AddForm({ hideForm, showMessage, showMessageNotFound, showMessageDeleted, id }) {
+export default function AddForm({ hideForm, showMessage, showMessageNotFound, showConfirmation, id }) {
     // quantidade de indicadores
     const [numIndicators, setNumIndicators] = useState(1);
 
@@ -79,21 +79,6 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
     };
 
     /**
-     * Deleta o item atual.
-     */
-    async function deleteItem() {
-        const response = await AsyncStorage.getItem("@goalsmanagement:goals");
-        const previousData = response ? JSON.parse(response) : [];
-
-        const data = previousData.filter(item => item.id != id);
-
-        await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data));
-
-        showMessageDeleted();
-        hideForm();
-    };
-
-    /**
      * Exibe mensagens no centro da tela.
      * 
      * @param message Titulo da mensagem.
@@ -103,7 +88,6 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
      * @param type Tipo da mensagem: "none" | "default" | "info" | "success" | "danger" | "warning."
      */
     function showInfo(message, description, type) {
-
         FlashMessage.showMessage({
             message,
             type,
@@ -213,8 +197,10 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
     }
 
     return (
-        <Container onPress={Keyboard.dismiss}>
-
+        <Container
+         onPress={Keyboard.dismiss}
+         animation='fadeIn'
+         >
             <Input
                 style={{ focused: true }}
                 placeholder="Ex.: Perder 10kg"
@@ -291,7 +277,7 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
                     borderRadius={5}
                     fontSize={RFPercentage(2.3)}
                     fontFamily={THEME.FONTS.MEDIUM}
-                    handleFunction={deleteItem}
+                    handleFunction={showConfirmation}
                     width={RFPercentage(20)}
                     display={deleteButton}
                 />
@@ -304,7 +290,6 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
                 animated={true}
                 icon={"info"}
             />
-
         </Container>
     );
 }

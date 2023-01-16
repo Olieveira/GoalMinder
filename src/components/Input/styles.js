@@ -22,11 +22,13 @@ export const HContainer = styled.View`
   width: ${RFPercentage(29)}px;
 `
 export const TextInput = styled.TextInput`
+flex-grow: 1;
 background-color: transparent;
 border: solid ${RFPercentage(0.3)}px ${THEME.COLORS.BACKGROUND}; 
 border-radius: 4px;
-margin: ${RFPercentage(1)}px ${RFPercentage(2)}px;
-padding: ${RFPercentage(0.3)}px ${RFPercentage(2)}px;
-width: ${RFPercentage(24)}px;
-height: ${RFPercentage(5)}px;
+margin: ${RFPercentage(1)}px ${RFPercentage(1)}px;
+padding: ${RFPercentage(0.3)}px ${RFPercentage(1)}px;
+min-width: ${RFPercentage(24)}px;
+max-width: ${RFPercentage(50)}px;
+min-height: ${RFPercentage(5)}px;
 `
