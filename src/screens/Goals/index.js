@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Bg, Clouds, CenterAdvice, TitleAdvice, GoalView, GoalsScrollView, GoalHorizontalView, ViewAnimated, IndicatorsView, DataText, Frame, IndicatorHeader, HeaderIndicatorTitle, IndicatorFrame, EditButton } from './styles';
-import { Keyboard, View, Text, Button } from 'react-native';
+import { Keyboard, View, Text } from 'react-native';
 import cloudsBg from '../../assets/cloudsBg.png';
 import CircleAdd from '../../components/Buttons/CircleAdd';
 import AddForm from '../../components/AddForm';
@@ -9,18 +9,37 @@ import { Feather } from '@expo/vector-icons'
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import THEME from '../../theme';
 import * as FlashMessage from "react-native-flash-message";
+import GenericButton from '../../components/Buttons/Generic';
+import ConfirmDelete from '../../components/confirmDelete';
 
 export default function Goals() {
     const [formDisplay, setFormDisplay] = useState(false);
     const [goals, setGoals] = useState([]);
     const [editId, setEditId] = useState("");
+    const [showingConfirmation, setShowingConfirmation] = useState(false);
 
     useEffect(() => {
         fetchData();
     }, []);
 
+    /**
+     * Exclui todos os cadastros.
+     */
+    function deleteAll() {
+        AsyncStorage.removeItem("@goalsmanagement:goals");
+        setGoals([]);
+        showInfo("SUCESSO", "Todas as metas foram excluídas com sucesso!", "success");
+    }
 
     /**
+     * Altera a exibição da mensagem de confirmação
+     */
+    function displayConfirmation() {
+        setShowingConfirmation(!showingConfirmation);
+    }
+
+    /**
+     * Exibe uma mensagem no centro da tela.
      * 
      * @param {string} message Título da mensagem. 
      * @param {string} description Mensagem central.
@@ -32,7 +51,8 @@ export default function Goals() {
         FlashMessage.showMessage({
             message,
             type,
-            description
+            description,
+
         });
     };
 
@@ -201,19 +221,25 @@ export default function Goals() {
                     <CircleAdd AddFunction={handleShowForm} />
                 </ViewAnimated>
 
-                <View
-                    style={{ display: formDisplay ? 'none' : 'flex', width: '30%', alignSelf: 'center', borderRadius: '50%', marginTop: 10 }}
+                <GoalView
+                    style={{ display: formDisplay || goals.length <= 0 ? 'none' : 'flex', marginTop: RFPercentage(2) }}
                 >
-                    <Button
-                        color={'red'}
-                        title='Delete'
-                        onPress={() => {
-                            AsyncStorage.removeItem("@goalsmanagement:goals");
-                            setGoals([]);
-                            console.log('deleted');
+
+                    <GenericButton
+                        backgroundColor={THEME.COLORS.GOALS}
+                        icon="x-octagon"
+                        iconColor={THEME.COLORS.TEXT}
+                        text="EXCLUIR TUDO"
+                        txtColor={THEME.COLORS.TEXT}
+                        width={RFPercentage(23)}
+                        handleFunction={() => {
+                            displayConfirmation();
                         }}
+                        fontFamily={THEME.FONTS.MEDIUM}
+                        borderRadius={5}
+
                     />
-                </View>
+                </GoalView>
 
                 {formDisplay ? <AddForm
                     id={editId}
@@ -229,9 +255,15 @@ export default function Goals() {
                     hideOnPress={true}
                     animated={true}
                     icon={"info"}
-                    style={{ width: RFPercentage(40), padding: RFPercentage(1.5) }} />
-
+                    style={{ width: RFPercentage(40), padding: RFPercentage(1.5) }}
+                />
             </CenterAdvice>
+            {showingConfirmation && (
+                <ConfirmDelete
+                    hide={displayConfirmation}
+                    yes={deleteAll}
+                />
+            )}
 
         </Bg >
 
