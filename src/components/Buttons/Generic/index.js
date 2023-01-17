@@ -5,6 +5,8 @@ import { Feather } from '@expo/vector-icons'
  * 
  * @param {number} width Largura do botão.
  * 
+ * @param {number} height Largura do botão.
+ * 
  * @param {string} icon Nome do icone a ser exibido ao lado do texto. (Utilizado biblioteca Feather) {@link https://expo.github.io/vector-icons/}.
  *
  * @param {string} iconColor Cor do icone.

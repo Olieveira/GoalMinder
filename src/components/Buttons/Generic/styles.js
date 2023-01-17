@@ -4,7 +4,6 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 export const BtnText = styled.Text`
 `
 export const Button = styled.TouchableOpacity`
-    flex: 1;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content:  center;

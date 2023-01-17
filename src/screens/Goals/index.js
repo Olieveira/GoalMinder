@@ -10,8 +10,7 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import THEME from '../../theme';
 import * as FlashMessage from "react-native-flash-message";
 import GenericButton from '../../components/Buttons/Generic';
-import ConfirmDelete from '../../components/confirmDelete';
-import { typeOf } from 'react-is';
+import ConfirmDelete from '../../components/ConfirmDelete';
 
 export default function Goals() {
     // controla visibilidade do formulario de adição/edição de metas

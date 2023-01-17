@@ -3,6 +3,26 @@ import THEME from '../../theme';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import * as Animatable from 'react-native-animatable';
 
+export const SuggestionTextView = styled.View`
+    justify-content: center;
+    align-items: center;
+    padding-right: ${RFPercentage(1)}px;
+    max-width: ${RFPercentage(29)}px;
+`
+
+export const HabitsScrollView = styled.ScrollView`
+max-height: ${RFPercentage(53.5)}px;
+`
+
+export const HabitsView = styled.View`
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: ${RFPercentage(0)}px ${RFPercentage(1)}px ${RFPercentage(1)}px ${RFPercentage(1)}px;
+    padding: ${RFPercentage(0.5)}px ${RFPercentage(1)}px;
+`
+
 export const BodyText = styled.Text`
     font-family: ${THEME.FONTS.MEDIUM};
     color: ${THEME.COLORS.BACKGROUND};
@@ -16,20 +36,29 @@ export const DefaultView = styled.View`
     padding: ${RFPercentage(1)}px ${RFPercentage(1.5)}px;
     border-radius: 5px;
 `
+export const DefaultHorizontalView = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-width: ${RFPercentage(33)}px;
+    min-height: ${RFPercentage(5)}px;
+    margin: ${RFPercentage(1)}px ${RFPercentage(0.4)}px;
+    padding: ${RFPercentage(0.7)}px ${RFPercentage(0.7)}px;
+    border-radius: 5px;
+`
 export const HeaderTitle = styled.Text`
     font-family: ${THEME.FONTS.BOLD};
     font-size: ${RFPercentage(3)}px;
     color: ${THEME.COLORS.PRIMARY900};
     text-align: center;
     align-self: center;
-    margin-left: ${RFPercentage(2)}px;
 `
 export const HeaderView = styled.View`
     flex-direction: row;
     width: 100%;
     padding: ${RFPercentage(0)}px ${RFPercentage(2)}px;
     justify-content: center;
-    position: relative;
+    align-items: center;
     border-bottom-width: 2px;
     border-bottom-color: ${THEME.COLORS.PRIMARY900};
     border-bottom-left-radius: 5px;
@@ -40,7 +69,8 @@ export const CenterView = styled(Animatable.View)`
     justify-content: center;
     align-items: center;
     background-color: ${THEME.COLORS.ALERT900};
-    width: ${RFPercentage(40)}px;
+    width: ${RFPercentage(48)}px;
+    max-height: ${RFPercentage(90)}px;
     border-radius: 5px;
 `
 
