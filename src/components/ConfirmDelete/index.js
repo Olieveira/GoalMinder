@@ -55,7 +55,8 @@ export default function ConfirmDelete({ hide, yes, no, title, message }) {
                         fontSize={RFPercentage(2.3)}
                         fontFamily={THEME.FONTS.MEDIUM}
                         handleFunction={no !== undefined ? no() : () => setAnimation("fadeOut")}
-                        width={RFPercentage(20)}
+                        width={RFPercentage(17)}
+                        height={RFPercentage(5)}
                     />
 
                     <GenericButton
@@ -71,7 +72,8 @@ export default function ConfirmDelete({ hide, yes, no, title, message }) {
                             yes();
                             setAnimation("fadeOut")
                         }}
-                        width={RFPercentage(5)}
+                        width={RFPercentage(17)}
+                        height={RFPercentage(5)}
                     />
                 </ButtonsView>
             </CenterView>

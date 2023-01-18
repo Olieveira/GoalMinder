@@ -11,6 +11,7 @@ import THEME from '../../theme';
 import * as FlashMessage from "react-native-flash-message";
 import GenericButton from '../../components/Buttons/Generic';
 import ConfirmDelete from '../../components/ConfirmDelete';
+import { LayoutAnimation } from 'react-native';
 
 export default function Goals() {
     // controla visibilidade do formulario de adição/edição de metas
@@ -49,6 +50,13 @@ export default function Goals() {
      * Exclui todos os cadastros.
      */
     function deleteAll() {
+        LayoutAnimation.configureNext({
+            duration: 300,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+            },
+        });
+
         AsyncStorage.removeItem("@goalsmanagement:goals");
         setGoals([]);
         showInfo("SUCESSO", "Todas as metas foram excluídas com sucesso!", "success");
@@ -84,6 +92,13 @@ export default function Goals() {
      */
     async function fetchData() {
         try {
+            LayoutAnimation.configureNext({
+                duration: 300,
+                update: {
+                    type: LayoutAnimation.Types.easeInEaseOut,
+                },
+            });
+
             const response = await AsyncStorage.getItem("@goalsmanagement:goals");
             response == null ? null : setGoals(JSON.parse(response));
         } catch (err) {
@@ -114,7 +129,11 @@ export default function Goals() {
                 <View>
                     <TitleAdvice>METAS</TitleAdvice>
                     {goals.map((item, i) => (
-                        <GoalView key={i}>
+                        <GoalView 
+                        key={i}
+                        animation='fadeInDown'
+                        duration={500}
+                        >
                             <Frame>
                                 <IndicatorHeader>
                                     <Feather
@@ -228,7 +247,11 @@ export default function Goals() {
                 animation={'pulse'}
             />
 
-            <CenterAdvice >
+            <CenterAdvice
+                animation={'fadeIn'}
+                duration={1000}
+                delay={300}
+            >
 
                 <GoalsScrollView >
                     {currentUserView()}
@@ -265,7 +288,7 @@ export default function Goals() {
                     />
                 </GoalView>
 
-                {formDisplay ?
+                {formDisplay && (
                     <AddForm
                         id={editId}
                         hideForm={handleShowForm}
@@ -275,7 +298,8 @@ export default function Goals() {
                             setMessageConfirmation(`Tem certeza que deseja excluir essa meta?`);
                             displayConfirmation();
                         }}
-                    /> : null}
+                    />
+                )}
 
                 <FlashMessage.default
                     position={'center'}

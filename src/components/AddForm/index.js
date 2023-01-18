@@ -249,6 +249,8 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
                         iconColor={THEME.COLORS.SUCCESS}
                         txtColor={THEME.COLORS.SUCCESS}
                         borders={false}
+                        height={RFPercentage(5)}
+                        width={RFPercentage(20)}
                         borderRadius={5}
                         fontSize={RFPercentage(2.3)}
                         fontFamily={THEME.FONTS.MEDIUM}
@@ -261,11 +263,12 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
                         backgroundColor={THEME.COLORS.SUCCESS}
                         iconColor={THEME.COLORS.TEXT}
                         txtColor={THEME.COLORS.TEXT}
+                        height={RFPercentage(5)}
+                        width={RFPercentage(20)}
                         borderRadius={5}
                         fontSize={RFPercentage(2.3)}
                         fontFamily={THEME.FONTS.MEDIUM}
                         handleFunction={typeof (id) == "string" ? handleSubmitEdit : handleSubmit}
-                        width={RFPercentage(4)}
                     />
                 </ButtonsView>
                 <GenericButton

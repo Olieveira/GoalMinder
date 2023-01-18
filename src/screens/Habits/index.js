@@ -6,9 +6,18 @@ import THEME from '../../theme';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import ShowMore from '../../components/ShowMore';
 import GenericButton from '../../components/Buttons/Generic';
+import HabitsForm from '../../components/HabitsForm';
 
 export default function Habits() {
+    const [formDisplay, setFormDisplay] = useState(false);
     const [habits, setHabits] = useState([]);
+
+    /**
+     * Muda o display do formulario
+     */
+    function changeDisplayForm() {
+        setFormDisplay(!formDisplay);
+    }
 
     /**
      * Cadastra um novo hábito
@@ -62,6 +71,12 @@ export default function Habits() {
         )
     }
 
+    /**
+     * Verifica se possui algum item cadastrado e retorna o respectivo componente
+     * 
+     * @returns {JSX.Element}
+     * 
+     */
     function setScreen() {
         if (habits.length <= 0) {
             return (
@@ -93,7 +108,7 @@ export default function Habits() {
                         </BodyText>
 
                         <GenericButton
-                            handleFunction={addHabit}
+                            handleFunction={changeDisplayForm}
                             icon='plus-circle'
                             iconColor={THEME.COLORS.BACKGROUND}
                             iconSize={24}
@@ -216,6 +231,12 @@ export default function Habits() {
             </ImageView>
 
             {setScreen()}
+
+            {formDisplay && (
+                <HabitsForm
+                    hideForm={changeDisplayForm}
+                />
+            )}
 
         </RootView>
     );
