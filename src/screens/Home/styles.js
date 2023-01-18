@@ -27,7 +27,7 @@ export const CenterView = styled(Animatable.View)`
   height: ${RFPercentage(7)}px;
   background-color: ${THEME.COLORS.PRIMARY900};
   border-radius: 8px;
-  border: 3px dashed ${THEME.COLORS.TEXT};
+  border: 1px solid ${THEME.COLORS.TEXT};
 `
 
 export const SmallIcon = styled(Animatable.Image)`

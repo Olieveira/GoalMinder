@@ -25,14 +25,14 @@ import { Feather } from '@expo/vector-icons';
  * @param {string} id ID referente a um item específico (quando chamado para edição).
  */
 export default function HabitsForm({ hideForm, showMessage, showMessageNotFound, showConfirmation, id }) {
-    // quantidade de indicadores
-    const [numMetas, setNumMetas] = useState(0);
 
     // texto do botão de cadastro/edit ['EDITAR' || 'CADASTRAR']
     const [submitButtonText, setSubmitButtonText] = useState("");
 
     //visibilidade do botão DELETE ['flex' || 'none']
     const [deleteButton, setDeleteButton] = useState(undefined);
+
+    const [links, setLinks] = useState([]);
 
     // states dos inputs
     const [habit, setHabit] = useState("");
@@ -52,9 +52,27 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
         }
     }, [])
 
+    /**
+     * Vincula ou desvincula metas com o objetivo.
+     * 
+     * @param {number} i Posição da meta a ser vinculada. 
+     */
+    function changeLinks(i) {
+        setLinks(links.map((item, index) => {
+            if (i == index) {
+                if (item == true) { return false } else { return true };
+            } else {
+                return item;
+            };
+        }))
+    }
+
     async function fetchData() {
         const response = await AsyncStorage.getItem("@goalsmanagement:goals");
-        response == null ? null : setGoals(JSON.parse(response));
+        if (response != null) {
+            setGoals(JSON.parse(response));
+            setLinks(JSON.parse(response).map((item) => item.linked));
+        };
     };
 
     /**
@@ -95,13 +113,6 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
             return newIndicators;
         })
-    };
-
-    /** 
-     *  Incrementa o state dos indicadores e roda a scrollView para o final.
-    */
-    function handleAddIndicator() {
-        setNumMetas(numMetas + 1)
     };
 
     /**
@@ -234,15 +245,15 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                                         {item.goal}
                                     </GoalsText>
                                     <DefaultView
-                                        animation={'rotate'}
-                                        duration={2000}
-                                        iterationCount='infinite'
-                                        iterationDelay={5000}
+                                        animation={links[index] ? 'fadeIn' : 'fadeOut'}
+                                        duration={links[index] ? 700 : 300}
+                                        direction={links[index] ? null : "alternate-reverse"}
                                     >
                                         <Feather
-                                            name="refresh-cw"
+                                            name={links[index] ? "shuffle" : "refresh-cw"}
                                             size={18}
-                                            color={THEME.COLORS.ALERT900}
+                                            color={links[index] ? THEME.COLORS.TEXT : THEME.COLORS.ALERT900}
+                                            onPress={() => { changeLinks(index) }}
                                         />
                                     </DefaultView>
                                 </HorizontalGoalsView>
@@ -250,7 +261,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                             </DefaultView>
                         ))}
                     </KeyboardAvoidingView>
-                    <CircleAdd AddFunction={handleAddIndicator} />
+                    <CircleAdd AddFunction={() => console.log('Added')} />
                 </Frame>
 
                 <VerticalButtonsView>

@@ -141,6 +141,7 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
                         goal,
                         time,
                         indicators: indicators.filter(item => item !== undefined && item !== ""),
+                        linked: item.linked,
                         createdAt: item.createdAt
                     };
                 } else {
@@ -175,6 +176,7 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
             goal,
             time,
             indicators: indicators.filter(item => item !== undefined),
+            linked: false,
             createdAt
         };
 
@@ -198,9 +200,9 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
 
     return (
         <Container
-         onPress={Keyboard.dismiss}
-         animation='fadeIn'
-         >
+            onPress={Keyboard.dismiss}
+            animation='fadeIn'
+        >
             <Input
                 style={{ focused: true }}
                 placeholder="Ex.: Perder 10kg"
