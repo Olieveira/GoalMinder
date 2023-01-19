@@ -3,6 +3,9 @@ import THEME from '../../theme';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import * as Animatable from 'react-native-animatable';
 
+export const HabitTitle = styled.Text`
+`
+
 export const SuggestionTextView = styled.View`
     justify-content: center;
     align-items: center;

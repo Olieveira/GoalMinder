@@ -7,16 +7,33 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import ShowMore from '../../components/ShowMore';
 import GenericButton from '../../components/Buttons/Generic';
 import HabitsForm from '../../components/HabitsForm';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ShowHabits from '../../components/ShowHabits';
 
 export default function Habits() {
     const [formDisplay, setFormDisplay] = useState(false);
     const [habits, setHabits] = useState([]);
+
+    async function fetchData() {
+        const response = await AsyncStorage.getItem("@goalsmanagement:habits");
+        if (response != null) {
+            console.log(JSON.parse(response));
+            setHabits(JSON.parse(response));
+        };
+    }
+
+
+    function showInfo(message, description, type) {
+        window.alert(description);
+    }
 
     /**
      * Muda o display do formulario
      */
     function changeDisplayForm() {
         setFormDisplay(!formDisplay);
+
+        formDisplay && fetchData();
     }
 
     /**
@@ -203,13 +220,40 @@ export default function Habits() {
                 </CenterView>);
         } else {
             return (
-                <DefaultView>
-                    <HeaderView style={{ top: 0 }}>
-                        <HeaderTitle>
-                            HÁBITOS CADASTRADOS
+
+                <CenterView
+                    animation={'fadeIn'}
+                    duration={1000}
+                    delay={800}
+                >
+                    <HeaderView>
+                        <DefaultView>
+                            <Feather
+                                name='award'
+                                size={24}
+                                color={THEME.COLORS.PRIMARY900}
+                            />
+                        </DefaultView>
+                        <HeaderTitle style={{ marginLeft: RFPercentage(2) }}>
+                            Hábitos Cadastrados
                         </HeaderTitle>
                     </HeaderView>
-                </DefaultView>
+
+                    <HabitsView>
+                        <HabitsScrollView>
+                            {habits.map((item, index) => (
+                                <DefaultView key={index}>
+                                    <ShowHabits
+                                        item={item}
+                                    />
+                                </DefaultView>
+                            ))}
+                        </HabitsScrollView>
+
+
+                    </HabitsView>
+
+                </CenterView>
             );
         }
     }
@@ -235,6 +279,7 @@ export default function Habits() {
             {formDisplay && (
                 <HabitsForm
                     hideForm={changeDisplayForm}
+                    showMessage={(title, msg, type) => showInfo(title, msg, type)}
                 />
             )}
 

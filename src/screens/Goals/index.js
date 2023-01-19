@@ -8,7 +8,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons'
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import THEME from '../../theme';
-import * as FlashMessage from "react-native-flash-message";
 import GenericButton from '../../components/Buttons/Generic';
 import ConfirmDelete from '../../components/ConfirmDelete';
 import { LayoutAnimation } from 'react-native';
@@ -78,13 +77,8 @@ export default function Goals() {
      * 
      * @returns {JSX.Element} Elemento de exibição de mensagem.
      */
-    function showInfo(message, description, type) {
-        FlashMessage.showMessage({
-            message,
-            type,
-            description,
-
-        });
+    async function showInfo(message, description, type) {
+        window.alert(description);
     };
 
     /**
@@ -129,10 +123,10 @@ export default function Goals() {
                 <View>
                     <TitleAdvice>METAS</TitleAdvice>
                     {goals.map((item, i) => (
-                        <GoalView 
-                        key={i}
-                        animation='fadeInDown'
-                        duration={500}
+                        <GoalView
+                            key={i}
+                            animation='fadeInDown'
+                            duration={500}
                         >
                             <Frame>
                                 <IndicatorHeader>
@@ -300,15 +294,7 @@ export default function Goals() {
                         }}
                     />
                 )}
-
-                <FlashMessage.default
-                    position={'center'}
-                    duration={4500}
-                    hideOnPress={true}
-                    animated={true}
-                    icon={"info"}
-                    style={{ width: RFPercentage(40), padding: RFPercentage(1.5) }}
-                />
+                
             </CenterAdvice>
             {showingConfirmation && (
                 <ConfirmDelete

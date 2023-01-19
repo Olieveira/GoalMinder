@@ -1,16 +1,16 @@
-import { Container, CenterView, Frame, Label, ButtonsView, VerticalButtonsView, GoalsLabelView, DefaultView, HorizontalGoalsView, GoalsText } from "./styles";
+import { Container, CenterView, Frame, Label, ButtonsView, VerticalButtonsView, GoalsLabelView, DefaultView, HorizontalGoalsView, GoalsText, DefaultHorizontalView, ShowMoreCheckView, CheckText } from "./styles";
 import Input from "../Input";
 import CircleAdd from '../Buttons/CircleAdd'
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Keyboard, KeyboardAvoidingView } from "react-native";
 import { v4 as uuidv4 } from 'uuid';
 import 'react-native-get-random-values';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as FlashMessage from "react-native-flash-message";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import GenericButton from "../Buttons/Generic";
 import THEME from "../../theme";
 import { Feather } from '@expo/vector-icons';
+import ShowMore from "../ShowMore";
 
 /**
  * 
@@ -32,12 +32,13 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
     //visibilidade do botão DELETE ['flex' || 'none']
     const [deleteButton, setDeleteButton] = useState(undefined);
 
-    const [links, setLinks] = useState([]);
-
     // states dos inputs
     const [habit, setHabit] = useState("");
     const [time, setTime] = useState("");
-    const [goals, setGoals] = useState([]);
+
+    // states dos dados armazenados
+    const [checklists, setCheckLists] = useState([]);
+    const [links, setLinks] = useState([{}]);
 
     // Realiza a verificação se é edição ou cadastro de metas ao carregar a tela
     useEffect(() => {
@@ -50,28 +51,89 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
             setSubmitButtonText("CADASTRAR");
             setDeleteButton("none");
         }
-    }, [])
+    }, []);
+
+    /**
+     * Retorna um componente passado como parâmetro para outro componente que exibe informações dos checkLists.
+     */
+    function showMoreChecklistComponent() {
+        return (
+            <DefaultHorizontalView style={{
+                marginTop: RFPercentage(1),
+                justifyContent: 'space-between',
+                alignItems: 'center',
+            }}>
+                <ShowMoreCheckView style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <Feather
+                        name='repeat'
+                        size={15}
+                        color={THEME.COLORS.TEXT}
+                    />
+                    <CheckText>
+                        Repetição
+                    </CheckText>
+
+                </ShowMoreCheckView>
+
+
+                <ShowMoreCheckView style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <Feather
+                        name='bell'
+                        size={15}
+                        color={THEME.COLORS.TEXT}
+                    />
+                    <CheckText>
+                        Notificações
+                    </CheckText>
+                </ShowMoreCheckView>
+
+            </DefaultHorizontalView>
+        );
+    }
+
+    /**
+     *  Adiciona um index no state utilizado para renderizar os checkLists 
+     */
+    function handleAddCheckList() {
+        setCheckLists([...checklists, { 'checklist': 'teste', 'time': '1 ano' }]);
+    };
 
     /**
      * Vincula ou desvincula metas com o objetivo.
      * 
      * @param {number} i Posição da meta a ser vinculada. 
      */
-    function changeLinks(i) {
+    function handleChangeLinks(i) {
         setLinks(links.map((item, index) => {
             if (i == index) {
-                if (item == true) { return false } else { return true };
+                return {
+                    'linked': !item.linked,
+                    'id': item.id,
+                    'goal': item.goal,
+                    'time': item.tiem
+                };
             } else {
                 return item;
             };
         }))
-    }
+
+        console.log(links);
+    };
 
     async function fetchData() {
         const response = await AsyncStorage.getItem("@goalsmanagement:goals");
         if (response != null) {
-            setGoals(JSON.parse(response));
-            setLinks(JSON.parse(response).map((item) => item.linked));
+            const data = JSON.parse(response);
+
+            setLinks(data.map((item) => {
+                return {
+                    'linked': item.linked,
+                    'id': item.id,
+                    'goal': item.goal,
+                    'time': item.time
+                };
+            }).filter((item) => item !== undefined)
+            );
         };
     };
 
@@ -85,35 +147,8 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
      * @param type Tipo da mensagem: "none" | "default" | "info" | "success" | "danger" | "warning."
      */
     function showInfo(message, description, type) {
-        FlashMessage.showMessage({
-            message,
-            description,
-            type,
-            duration: 5000,
-            style: {
-                width: RFPercentage(42),
-                alignContent: 'center',
-                justifyContent: 'center'
-            }
-        });
-    };
-
-    /** 
-     * Handle que controla o valor do state de todos indicadores
-     * 
-     * @param index Number referente ao index do array dos indicadores.
-     * 
-     * @param value Valor do indicador.
-    */
-    function handleIndicatorUpdated(index, value) {
-        setIndicators(previous => {
-            const newIndicators = [...previous];
-
-            newIndicators[index] = value;
-
-            return newIndicators;
-        })
-    };
+        window.alert(description);
+    }
 
     /**
      * Realiza a edição da meta atual
@@ -162,22 +197,23 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
         const newData = {
             id,
-            goal,
+            habit,
             time,
-            indicators: indicators.filter(item => item !== undefined),
+            linked: links.map(item => item.linked ? item.id : null).filter(item => item !== undefined && item !== null),
+            checklists,
             createdAt
         };
 
-        if (goal != "" && time != "") {
+        if (habit != "" && time != "") {
 
-            const response = await AsyncStorage.getItem("@goalsmanagement:goals");
+            const response = await AsyncStorage.getItem("@goalsmanagement:habits");
             const previousData = response ? JSON.parse(response) : [];
 
             const data = [...previousData, newData]
 
-            await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data));
+            await AsyncStorage.setItem("@goalsmanagement:habits", JSON.stringify(data));
 
-            showMessage();
+            showMessage('teste', 'teste2');
             hideForm();
         } else {
             showInfo("OPS!", "Preencha os campos para cadastrar uma meta!", "danger");
@@ -191,7 +227,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
             onPress={Keyboard.dismiss}
             animation='fadeIn'
         >
-            <CenterView>
+            <CenterView nestedScrollEnabled={true} shouldCancelWhenOutside={false} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
                 <Input
                     style={{ focused: true }}
                     placeholder="Ex.: Parar de fumar."
@@ -231,9 +267,9 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                     </DefaultView>
                 </GoalsLabelView>
 
-                <Frame contentContainerStyle={{ alignItems: "center", padding: RFPercentage(1) }}>
+                <Frame contentContainerStyle={{ alignItems: "center", justifyContent: "center", padding: RFPercentage(1) }}>
                     <KeyboardAvoidingView behavior="position" enabled>
-                        {goals.map((item, index) => (
+                        {links.map((item, index) => (
                             <DefaultView key={index}>
                                 <HorizontalGoalsView>
                                     <Feather
@@ -242,18 +278,18 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                                         color={THEME.COLORS.ALERT900}
                                     />
                                     <GoalsText>
-                                        {item.goal}
+                                        {item.goal + ' em ' + item.time}
                                     </GoalsText>
                                     <DefaultView
-                                        animation={links[index] ? 'fadeIn' : 'fadeOut'}
-                                        duration={links[index] ? 700 : 300}
-                                        direction={links[index] ? null : "alternate-reverse"}
+                                        animation={item.linked ? 'fadeIn' : 'fadeOut'}
+                                        duration={item.linked ? 700 : 300}
+                                        direction={item.linked ? null : "alternate-reverse"}
                                     >
                                         <Feather
-                                            name={links[index] ? "shuffle" : "refresh-cw"}
+                                            name={item.linked ? "shuffle" : "refresh-cw"}
                                             size={18}
-                                            color={links[index] ? THEME.COLORS.TEXT : THEME.COLORS.ALERT900}
-                                            onPress={() => { changeLinks(index) }}
+                                            color={item.linked ? THEME.COLORS.TEXT : THEME.COLORS.ALERT900}
+                                            onPress={() => { handleChangeLinks(index) }}
                                         />
                                     </DefaultView>
                                 </HorizontalGoalsView>
@@ -261,8 +297,50 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                             </DefaultView>
                         ))}
                     </KeyboardAvoidingView>
-                    <CircleAdd AddFunction={() => console.log('Added')} />
                 </Frame>
+
+
+                <GoalsLabelView>
+                    <Feather
+                        name='check-square'
+                        size={18}
+                        color={THEME.COLORS.BACKGROUND}
+                    />
+                    <DefaultView>
+                        <Label>CHECKLIST'S</Label>
+                        <Feather
+                            style={{ position: 'absolute', right: -RFPercentage(3), top: -RFPercentage(1) }}
+                            name='info'
+                            size={17}
+                            color={THEME.COLORS.BACKGROUND}
+                            onPress={() =>
+                                showInfo("CHECKLISTS", "\nCrie atividades frequentes e fortaleça sua caminhada para a habituação!\n\nIsso ajuda a proporcionar recompensas ao seu cérebro sempre que uma atividade é realizada.\n\nIsso proporciona uma maior percepção no aumento do progresso!\n", "info")
+                            }
+                        />
+                    </DefaultView>
+                </GoalsLabelView>
+
+                <DefaultView style={{ flex: 1, width: RFPercentage(40), maxHeight: RFPercentage(35) }}>
+                    <Frame nestedScrollEnabled={true} contentContainerStyle={{ alignItems: "center", padding: RFPercentage(1) }}>
+                        <KeyboardAvoidingView behavior="position" enabled>
+
+                            {checklists.length > 0 && checklists.map((item, index) => (
+                                <DefaultView key={index}>
+                                    <ShowMore
+                                        icon='check-circle'
+                                        title='Teste'
+                                        bodyComponent={showMoreChecklistComponent()}
+                                    />
+                                </DefaultView>
+                            ))}
+
+                        </KeyboardAvoidingView>
+
+                        <CircleAdd AddFunction={() => handleAddCheckList()} />
+
+                    </Frame>
+                </DefaultView>
+
 
                 <VerticalButtonsView>
                     <ButtonsView>
@@ -309,16 +387,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                         display={deleteButton}
                     />
                 </VerticalButtonsView>
-
             </CenterView>
-
-            <FlashMessage.default
-                position={'center'}
-                duration={4500}
-                hideOnPress={true}
-                animated={true}
-                icon={"info"}
-            />
 
         </Container>
     );

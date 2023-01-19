@@ -87,18 +87,9 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
      * 
      * @param type Tipo da mensagem: "none" | "default" | "info" | "success" | "danger" | "warning."
      */
-    function showInfo(message, description, type) {
-        FlashMessage.showMessage({
-            message,
-            type,
-            description,
-            style: {
-                width: RFPercentage(42),
-                alignContent: 'center',
-                justifyContent: 'center'
-            }
-        });
-    }
+    async function showInfo(message, description, type) {
+        window.alert(description);
+    };
 
     /** 
      * Handle que controla o valor do state de todos indicadores
