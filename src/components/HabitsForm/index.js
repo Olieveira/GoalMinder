@@ -110,14 +110,12 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                     'linked': !item.linked,
                     'id': item.id,
                     'goal': item.goal,
-                    'time': item.tiem
+                    'time': item.time
                 };
             } else {
                 return item;
             };
         }))
-
-        console.log(links);
     };
 
     async function fetchData() {

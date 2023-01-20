@@ -251,36 +251,42 @@ export default function Goals() {
                     {currentUserView()}
                 </GoalsScrollView>
 
-                <ViewAnimated
-                    style={{ display: formDisplay ? 'none' : 'flex' }}
-                    animation={"tada"}
-                    iterationCount="infinite"
-                    duration={1000}
-                    iterationDelay={800}
-                >
-                    <CircleAdd AddFunction={handleShowForm} />
-                </ViewAnimated>
+                {!formDisplay && (
+                    <ViewAnimated
+                        animation={"tada"}
+                        iterationCount="infinite"
+                        duration={1000}
+                        iterationDelay={800}
+                    >
+                        <CircleAdd AddFunction={handleShowForm} />
+                    </ViewAnimated>
+                )}
 
-                <GoalView
-                    style={{ display: formDisplay || goals.length <= 0 ? 'none' : 'flex', marginTop: RFPercentage(0.2) }}
-                >
+                {!formDisplay && goals.length > 0 && (
 
-                    <GenericButton
-                        backgroundColor={THEME.COLORS.GOALS}
-                        icon="x-octagon"
-                        iconColor={THEME.COLORS.TEXT}
-                        text="EXCLUIR TUDO"
-                        txtColor={THEME.COLORS.TEXT}
-                        width={RFPercentage(23)}
-                        height={RFPercentage(6)}
-                        handleFunction={() => {
-                            setMessageConfirmation(`Deseja excluir todas as metas cadastradas? (${goals.length})`);
-                            displayConfirmation();
-                        }}
-                        fontFamily={THEME.FONTS.MEDIUM}
-                        borderRadius={5}
-                    />
-                </GoalView>
+                    <GoalView
+                        animation={'fadeIn'}
+                        delay={250}
+                        style={{ display: formDisplay || goals.length <= 0 ? 'none' : 'flex', marginTop: RFPercentage(0.2) }}
+                    >
+
+                        <GenericButton
+                            backgroundColor={THEME.COLORS.GOALS}
+                            icon="x-octagon"
+                            iconColor={THEME.COLORS.TEXT}
+                            text="EXCLUIR TUDO"
+                            txtColor={THEME.COLORS.TEXT}
+                            width={RFPercentage(23)}
+                            height={RFPercentage(6)}
+                            handleFunction={() => {
+                                setMessageConfirmation(`Deseja excluir todas as metas cadastradas? (${goals.length})`);
+                                displayConfirmation();
+                            }}
+                            fontFamily={THEME.FONTS.MEDIUM}
+                            borderRadius={5}
+                        />
+                    </GoalView>
+                )}
 
                 {formDisplay && (
                     <AddForm
@@ -294,7 +300,7 @@ export default function Goals() {
                         }}
                     />
                 )}
-                
+
             </CenterAdvice>
             {showingConfirmation && (
                 <ConfirmDelete

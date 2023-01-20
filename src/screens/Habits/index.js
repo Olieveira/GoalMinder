@@ -1,6 +1,6 @@
 import { RootView, HabitsImage, ImageView, FooterLicenseView, LicenseText, CenterView, HeaderView, HeaderTitle, DefaultView, DefaultHorizontalView, BodyText, HabitsView, HabitFrame, HabitTitle, HabitsScrollView, SuggestionTextView } from './styles';
 import habitsBg from '../../assets/habitsBg.png'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Feather } from '@expo/vector-icons';
 import THEME from '../../theme';
 import { RFPercentage } from 'react-native-responsive-fontsize';
@@ -9,14 +9,21 @@ import GenericButton from '../../components/Buttons/Generic';
 import HabitsForm from '../../components/HabitsForm';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ShowHabits from '../../components/ShowHabits';
+import { View, Text } from 'react-native';
 
 export default function Habits() {
     const [formDisplay, setFormDisplay] = useState(false);
     const [habits, setHabits] = useState([]);
+    const [deleteButton, setDeleteButton] = useState(true);
+
+    useEffect(() => {
+        fetchData();
+    }, [])
 
     async function fetchData() {
         const response = await AsyncStorage.getItem("@goalsmanagement:habits");
         if (response != null) {
+            console.log('\nResponse: \n');
             console.log(JSON.parse(response));
             setHabits(JSON.parse(response));
         };
@@ -32,15 +39,17 @@ export default function Habits() {
      */
     function changeDisplayForm() {
         setFormDisplay(!formDisplay);
+        setDeleteButton(!deleteButton);
 
         formDisplay && fetchData();
     }
 
-    /**
-     * Cadastra um novo hábito
-     */
-    function addHabit() {
-        setHabits(...habits, 'x');
+    async function deleteAll() {
+        await AsyncStorage.removeItem('@goalsmanagement:habits');
+        await fetchData();
+        setHabits([]);
+        showInfo("", 'Deleted');
+
     }
 
     /**
@@ -220,11 +229,9 @@ export default function Habits() {
                 </CenterView>);
         } else {
             return (
-
                 <CenterView
                     animation={'fadeIn'}
                     duration={1000}
-                    delay={800}
                 >
                     <HeaderView>
                         <DefaultView>
@@ -241,17 +248,48 @@ export default function Habits() {
 
                     <HabitsView>
                         <HabitsScrollView>
-                            {habits.map((item, index) => (
+                            {habits.map((habito, index) => (
                                 <DefaultView key={index}>
                                     <ShowHabits
-                                        item={item}
+                                        item={habito}
                                     />
                                 </DefaultView>
                             ))}
                         </HabitsScrollView>
-
-
                     </HabitsView>
+
+                    {deleteButton && (
+                        <DefaultHorizontalView
+                            style={{ justifyContent: 'center' }}
+                        >
+                            <GenericButton
+                                handleFunction={deleteAll}
+                                icon='plus-circle'
+                                iconColor={THEME.COLORS.GOALS}
+                                iconSize={24}
+                                text="Excluir tudo"
+                                height={RFPercentage(5)}
+                                width={RFPercentage(20)}
+                                borderRadius={5}
+                                txtColor={THEME.COLORS.GOALS}
+                                fontFamily={THEME.FONTS.BOLD}
+                            />
+
+                            <GenericButton
+                                handleFunction={changeDisplayForm}
+                                icon='plus-circle'
+                                iconColor={THEME.COLORS.SUCCESS}
+                                iconSize={24}
+                                text="Novo Hábito"
+                                height={RFPercentage(5)}
+                                width={RFPercentage(20)}
+                                borderRadius={5}
+                                txtColor={THEME.COLORS.SUCCESS}
+                                fontFamily={THEME.FONTS.BOLD}
+                            />
+
+                        </DefaultHorizontalView>
+                    )}
 
                 </CenterView>
             );
@@ -274,7 +312,7 @@ export default function Habits() {
                 </FooterLicenseView>
             </ImageView>
 
-            {setScreen()}
+            {!formDisplay && (setScreen())}
 
             {formDisplay && (
                 <HabitsForm
