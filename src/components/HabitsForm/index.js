@@ -10,7 +10,7 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import GenericButton from "../Buttons/Generic";
 import THEME from "../../theme";
 import { Feather } from '@expo/vector-icons';
-import ShowMore from "../ShowMore";
+import ShowChecks from "../ShowChecks";
 
 /**
  * 
@@ -42,6 +42,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
     // Realiza a verificação se é edição ou cadastro de metas ao carregar a tela
     useEffect(() => {
+        console.log('CHECKLISTS: - ', checklists);
         fetchData();
 
         if (typeof (id) == "string") {
@@ -52,6 +53,22 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
             setDeleteButton("none");
         }
     }, []);
+
+    /**
+     * Faz a edição do titulo do checkBox na respectiva posição no array.
+     * 
+     * @param {number} i Posição no array do checklist a ser editado. 
+     * @param {string} text Novo valor a ser editado.
+     */
+    function editCheckList(i, text) {
+        setCheckLists(current => {
+            const edited = [...current];
+
+            edited[i] = text;
+
+            return edited;
+        });
+    };
 
     /**
      * Retorna um componente passado como parâmetro para outro componente que exibe informações dos checkLists.
@@ -95,7 +112,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
      *  Adiciona um index no state utilizado para renderizar os checkLists 
      */
     function handleAddCheckList() {
-        setCheckLists([...checklists, { 'checklist': 'teste', 'time': '1 ano' }]);
+        setCheckLists([...checklists, { title: '', repeat: false, notifications: false }]);
     };
 
     /**
@@ -187,11 +204,11 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
         const id = uuidv4();
 
         const now = new Date();
-        const dia = toString(now.getDate()).length > 1 ? now.getDate() : `0${now.getDate()}`;
-        const mes = now.getMonth() + 1 >= 10 ? now.getMonth() + 1 : `0${now.getMonth() + 1}`;
+        const dia = toString(now.getDate()).length > 1 ? now.getDate() : `0${now.getDate()} `;
+        const mes = now.getMonth() + 1 >= 10 ? now.getMonth() + 1 : `0${now.getMonth() + 1} `;
         const ano = now.getFullYear();
 
-        const createdAt = `${dia}/${mes}/${ano}`;
+        const createdAt = `${dia} /${mes}/${ano} `;
 
         const newData = {
             id,
@@ -318,16 +335,16 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                     </DefaultView>
                 </GoalsLabelView>
 
-                <DefaultView style={{ flex: 1, width: RFPercentage(40), maxHeight: RFPercentage(35) }}>
+                <DefaultView style={{ flex: 1, width: RFPercentage(46), maxHeight: RFPercentage(55) }}>
                     <Frame nestedScrollEnabled={true} contentContainerStyle={{ alignItems: "center", padding: RFPercentage(1) }}>
                         <KeyboardAvoidingView behavior="position" enabled>
 
                             {checklists.length > 0 && checklists.map((item, index) => (
                                 <DefaultView key={index}>
-                                    <ShowMore
-                                        icon='check-circle'
-                                        title='Teste'
-                                        bodyComponent={showMoreChecklistComponent()}
+                                    <ShowChecks
+                                        placeholder={'Ex.: Ler 10 páginas.'}
+                                        item={checklists[index]}
+                                        onChangeText={(text) => { editCheckList(index, text) }}
                                     />
                                 </DefaultView>
                             ))}

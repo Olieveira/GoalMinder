@@ -23,8 +23,6 @@ export default function Habits() {
     async function fetchData() {
         const response = await AsyncStorage.getItem("@goalsmanagement:habits");
         if (response != null) {
-            console.log('\nResponse: \n');
-            console.log(JSON.parse(response));
             setHabits(JSON.parse(response));
         };
     }

@@ -65,7 +65,7 @@ export const CenterView = styled(ScrollView)`
     flex: 1;
     min-height: ${RFPercentage(60)}px;
     max-height: ${RFPercentage(85)}px;
-    width: ${RFPercentage(48)}px;
+    width: ${RFPercentage(50)}px;
     flex-direction: column;
     background-color: ${THEME.COLORS.ALERT800};
     border-radius: 5px;
