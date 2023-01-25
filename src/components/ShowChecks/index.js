@@ -1,4 +1,4 @@
-import { BgView, HorizontalView, FrameDataView, FrameLabel, MultiplyItensView, SimpleHorizontalView, SimpleView, InputTitle } from './styles';
+import { BgView, HorizontalView, FrameDataView, FrameLabel, MultiplyItensView, SimpleHorizontalView, SimpleView, InputTitle, OptionView, OptionSelectedText, OptionText, OptionsSection } from './styles';
 import { Feather } from '@expo/vector-icons';
 import THEME from '../../theme';
 import { useState } from 'react';
@@ -8,6 +8,14 @@ import { useEffect } from 'react';
 export default function ShowChecks({ placeholder, item, onChangeText }) {
     const [notifications, setNotifications] = useState(false);
     const [repeat, setRepeat] = useState(false);
+    const [showingOptionsRepeat, setShowingOptionsRepeat] = useState(false);
+    const [selectedValueRepeat, setSelectedValueRepeat] = useState('Selecione');
+    const [showingOptionsNotifications, setShowingOptionsNotifications] = useState(false);
+    const [selectedValueNotifications, setSelectedValueNotifications] = useState('Selecione');
+
+    const repeatOptions = ['Outro', 'Diário', 'Semanal', 'Mensal'];
+
+    const notificationsOptions = ['Diário', 'Semanal', 'Mensal', 'Nenhum'];
 
     useEffect(() => {
         console.log(item);
@@ -16,6 +24,28 @@ export default function ShowChecks({ placeholder, item, onChangeText }) {
     }, [])
 
     const [expandChecksDisplay, setExpandCheckDisplay] = useState(false);
+
+    /**
+     * Expande a view dos checkList's
+     * 
+     * @param {string} opt Indica qual das opções serão expandidas. ['repeat' | 'notifications']
+     * 
+     */
+    function handleExpandOptions(opt) {
+        LayoutAnimation.configureNext({
+            duration: 300,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+
+            },
+        });
+
+        if (opt == 'repeat') {
+            setShowingOptionsRepeat(!showingOptionsRepeat);
+        } else if (opt == 'notifications') {
+            setShowingOptionsNotifications(!showingOptionsNotifications);
+        }
+    };
 
     /**
      * Expande a view dos checkList's
@@ -73,6 +103,36 @@ export default function ShowChecks({ placeholder, item, onChangeText }) {
                                     color={repeat ? THEME.COLORS.SUCCESS : THEME.COLORS.GOALS}
                                     onPress={() => setRepeat(!repeat)}
                                 />
+
+                                {repeat && (
+                                    <OptionsSection>
+                                        <SimpleHorizontalView>
+                                            <OptionSelectedText>{selectedValueRepeat}</OptionSelectedText>
+                                            <Feather
+                                                name={showingOptionsRepeat ? 'chevrons-up' : 'chevrons-down'}
+                                                size={24}
+                                                color={THEME.COLORS.ALERT900}
+                                                onPress={() => handleExpandOptions('repeat')}
+                                            />
+                                        </SimpleHorizontalView>
+                                        {showingOptionsRepeat && (
+                                            <OptionView
+                                                animation={'fadeIn'}
+                                                delay={80}
+                                            >
+                                                {repeatOptions.map((item, index) => (
+                                                    <OptionText
+                                                        key={index}
+                                                        onPress={() => setSelectedValueRepeat(item)}>
+                                                        {item}
+                                                    </OptionText>
+                                                ))}
+                                            </OptionView>
+                                        )}
+
+                                    </OptionsSection>
+                                )}
+
                             </SimpleView>
 
                             <SimpleView>
@@ -90,6 +150,36 @@ export default function ShowChecks({ placeholder, item, onChangeText }) {
                                     color={notifications ? THEME.COLORS.SUCCESS : THEME.COLORS.GOALS}
                                     onPress={() => setNotifications(!notifications)}
                                 />
+
+                                {notifications && (
+                                    <OptionsSection>
+                                        <SimpleHorizontalView>
+                                            <OptionSelectedText>{selectedValueNotifications}</OptionSelectedText>
+                                            <Feather
+                                                name={showingOptionsNotifications ? 'chevrons-up' : 'chevrons-down'}
+                                                size={24}
+                                                color={THEME.COLORS.ALERT900}
+                                                onPress={() => handleExpandOptions('notifications')}
+                                            />
+                                        </SimpleHorizontalView>
+                                        {showingOptionsNotifications && (
+                                            <OptionView
+                                                animation={'fadeIn'}
+                                                delay={80}
+                                            >
+                                                {notificationsOptions.map((item, index) => (
+                                                    <OptionText
+                                                        key={index}
+                                                        onPress={() => setSelectedValueNotifications(item)}>
+                                                        {item}
+                                                    </OptionText>
+                                                ))}
+                                            </OptionView>
+                                        )}
+
+                                    </OptionsSection>
+                                )}
+
                             </SimpleView>
                         </MultiplyItensView>
                     )}

@@ -59,13 +59,15 @@ export default function Habits() {
     function suggetionsComponent(suggestions) {
         return (
             <DefaultView>
-                <BodyText style={{
-                    color: 'white',
-                    textAlign: 'center',
-                    fontSize: RFPercentage(2.5)
-                }}>
-                    {suggestions.title}
-                </BodyText>
+                {suggestions.title !== undefined ? (
+                    <BodyText style={{
+                        color: 'white',
+                        textAlign: 'center',
+                        fontSize: RFPercentage(2.5)
+                    }}>
+                        {suggestions.title}
+                    </BodyText>
+                ) : null}
                 {suggestions.icon.map((item, index) => (
                     <DefaultHorizontalView
                         key={index}
@@ -157,7 +159,6 @@ export default function Habits() {
                                 title='Leitura'
                                 bodyComponent={suggetionsComponent(
                                     {
-                                        title: 'Benefícios da leitura:',
                                         icon: [
                                             'trending-up',
                                             'users',
@@ -179,7 +180,6 @@ export default function Habits() {
                                 title='Parar de fumar'
                                 bodyComponent={suggetionsComponent(
                                     {
-                                        title: 'Parar de fumar traz uma série de benefícios, visto que é uma das principais causas de morte no mundo.',
                                         icon: [
                                             'activity',
                                             'wind',

@@ -3,6 +3,38 @@ import THEME from '../../theme';
 import styled from "styled-components/native";
 import * as Animatable from 'react-native-animatable';
 
+export const OptionsSection = styled.View`
+    border: 2px solid ${THEME.COLORS.ALERT800};
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 3px;
+    min-width: ${RFPercentage(18)}px;
+    padding: 0 ${RFPercentage(0.5)}px;
+    margin: ${RFPercentage(0.8)}px 0;
+`
+
+export const OptionText = styled.Text`
+    font-family: ${THEME.FONTS.MEDIUM};
+    font-size: ${RFPercentage(2)}px;
+    padding: ${RFPercentage(0.3)}px 0;
+    color: ${THEME.COLORS.PRIMARY900};
+    text-align: left;
+`
+
+export const OptionSelectedText = styled.Text`
+    flex: 1;
+    text-align: center;
+    font-family: ${THEME.FONTS.MEDIUM};
+    font-size: ${RFPercentage(2.15)}px;
+    color: ${THEME.COLORS.ALERT800};
+`
+
+export const OptionView = styled(Animatable.View)`
+justify-content: center;
+align-items: flex-start;
+width: 100%;
+`
+
 export const InputTitle = styled.TextInput`
 flex: 1;
 text-align: center;
@@ -31,7 +63,7 @@ export const MultiplyItensView = styled.View`
     width: 100%;
     flex-grow: 1;
     justify-content: space-around;
-    align-items: center;
+    align-items: flex-start;
     margin: ${RFPercentage(1)}px ${RFPercentage(0.5)}px;
     padding: ${RFPercentage(0.5)}px;
     border: 1px dashed ${THEME.COLORS.ALERT900};
