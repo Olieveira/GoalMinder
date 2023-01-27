@@ -42,7 +42,6 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
     // Realiza a verificação se é edição ou cadastro de metas ao carregar a tela
     useEffect(() => {
-        console.log('CHECKLISTS: - ', checklists);
         fetchData();
 
         if (typeof (id) == "string") {
@@ -58,55 +57,26 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
      * Faz a edição do titulo do checkBox na respectiva posição no array.
      * 
      * @param {number} i Posição no array do checklist a ser editado. 
-     * @param {string} text Novo valor a ser editado.
+     * 
+     * @param {string} text Titulo do checkBox a ser editado.
+     * 
+     * @param {string} repeat Texto que define a repetição do checkBox.
+     * 
+     * @param {string} notifications Texto que define a repetição do checkBox.
      */
-    function editCheckList(i, text) {
+    function editCheckList(i, text, repeat, notifications) {
         setCheckLists(current => {
             const edited = [...current];
 
-            edited[i] = text;
+            text !== undefined ? edited[i].title = text : null;
+
+            repeat !== undefined ? edited[i].repeat = repeat : null;
+
+            notifications !== undefined ? edited[i].notifications = notifications : null;
 
             return edited;
         });
     };
-
-    /**
-     * Retorna um componente passado como parâmetro para outro componente que exibe informações dos checkLists.
-     */
-    function showMoreChecklistComponent() {
-        return (
-            <DefaultHorizontalView style={{
-                marginTop: RFPercentage(1),
-                justifyContent: 'space-between',
-                alignItems: 'center',
-            }}>
-                <ShowMoreCheckView style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <Feather
-                        name='repeat'
-                        size={15}
-                        color={THEME.COLORS.TEXT}
-                    />
-                    <CheckText>
-                        Repetição
-                    </CheckText>
-
-                </ShowMoreCheckView>
-
-
-                <ShowMoreCheckView style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <Feather
-                        name='bell'
-                        size={15}
-                        color={THEME.COLORS.TEXT}
-                    />
-                    <CheckText>
-                        Notificações
-                    </CheckText>
-                </ShowMoreCheckView>
-
-            </DefaultHorizontalView>
-        );
-    }
 
     /**
      *  Adiciona um index no state utilizado para renderizar os checkLists 
@@ -204,11 +174,11 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
         const id = uuidv4();
 
         const now = new Date();
-        const dia = toString(now.getDate()).length > 1 ? now.getDate() : `0${now.getDate()} `;
-        const mes = now.getMonth() + 1 >= 10 ? now.getMonth() + 1 : `0${now.getMonth() + 1} `;
+        const dia = toString(now.getDate()).length > 1 ? now.getDate() : `0${now.getDate()}`;
+        const mes = now.getMonth() + 1 >= 10 ? now.getMonth() + 1 : `0${now.getMonth() + 1}`;
         const ano = now.getFullYear();
 
-        const createdAt = `${dia} /${mes}/${ano} `;
+        const createdAt = `${dia}/${mes}/${ano}`;
 
         const newData = {
             id,
@@ -226,15 +196,15 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
             const data = [...previousData, newData]
 
+            console.log('Valor cadastrado -> \n', data);
+
             await AsyncStorage.setItem("@goalsmanagement:habits", JSON.stringify(data));
 
-            showMessage('teste', 'teste2');
+            showMessage('teste', 'Cadastrado com sucesso!');
             hideForm();
         } else {
             showInfo("OPS!", "Preencha os campos para cadastrar uma meta!", "danger");
         };
-
-
     };
 
     return (
@@ -345,6 +315,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                                         placeholder={'Ex.: Ler 10 páginas.'}
                                         item={checklists[index]}
                                         onChangeText={(text) => { editCheckList(index, text) }}
+                                        onSelectValue={(repeat, notifications) => { editCheckList(index, undefined, repeat, notifications) }}
                                     />
                                 </DefaultView>
                             ))}

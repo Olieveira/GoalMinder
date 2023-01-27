@@ -1,4 +1,4 @@
-import { BgView, HorizontalView, FrameDataView, FrameLabel, MultiplyItensView, SimpleHorizontalView, SimpleView } from './styles';
+import { BgView, HorizontalView, FrameDataView, FrameLabel, HeaderLabel, MultiplyItensView, SimpleHorizontalView, SimpleView, CheckValues, CheckHeaders } from './styles';
 import { Feather } from '@expo/vector-icons';
 import THEME from '../../theme';
 import { useEffect, useState } from 'react';
@@ -161,14 +161,40 @@ export default function ShowHabits({ item }) {
                         />
                     </HorizontalView>
                     {expandChecksDisplay && item.checklists.length > 0 && item.checklists.map((item, index) => (
-                        <MultiplyItensView key={index}>
-                            <Feather
-                                name='check-square'
-                                size={20}
-                                color={THEME.COLORS.ALERT900}
-                            />
-                            <FrameLabel>{item.checklist}</FrameLabel>
-                        </MultiplyItensView>
+                        <CheckValues key={index}>
+
+                            <CheckHeaders>
+                                <HeaderLabel>{item.title}</HeaderLabel>
+                                <Feather
+                                    name='check-square'
+                                    size={20}
+                                    color={THEME.COLORS.ALERT900}
+                                />
+                            </CheckHeaders>
+
+                            {item.notifications != false && (
+                                <CheckHeaders>
+                                    <HeaderLabel>{item.notifications}</HeaderLabel>
+                                    <Feather
+                                        name='bell'
+                                        size={20}
+                                        color={THEME.COLORS.ALERT900}
+                                    />
+                                </CheckHeaders>
+                            )}
+
+                            {item.repeat != false && (
+                                <CheckHeaders>
+                                    <HeaderLabel>{item.repeat}</HeaderLabel>
+                                    <Feather
+                                        name='repeat'
+                                        size={20}
+                                        color={THEME.COLORS.ALERT900}
+                                    />
+                                </CheckHeaders>
+                            )}
+
+                        </CheckValues>
                     ))}
 
                 </FrameDataView>

@@ -9,7 +9,6 @@ import GenericButton from '../../components/Buttons/Generic';
 import HabitsForm from '../../components/HabitsForm';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ShowHabits from '../../components/ShowHabits';
-import { View, Text } from 'react-native';
 
 export default function Habits() {
     const [formDisplay, setFormDisplay] = useState(false);

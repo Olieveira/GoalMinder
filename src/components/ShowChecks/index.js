@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { LayoutAnimation } from 'react-native';
 import { useEffect } from 'react';
 
-export default function ShowChecks({ placeholder, item, onChangeText }) {
+export default function ShowChecks({ placeholder, item, onChangeText, onSelectValue }) {
     const [notifications, setNotifications] = useState(false);
     const [repeat, setRepeat] = useState(false);
     const [showingOptionsRepeat, setShowingOptionsRepeat] = useState(false);
@@ -18,12 +18,21 @@ export default function ShowChecks({ placeholder, item, onChangeText }) {
     const notificationsOptions = ['Diário', 'Semanal', 'Mensal', 'Nenhum'];
 
     useEffect(() => {
-        console.log(item);
         setNotifications(item.notifications);
         setRepeat(item.repeat);
     }, [])
 
     const [expandChecksDisplay, setExpandCheckDisplay] = useState(false);
+
+    function handleSelectValue(repeat, notifications) {
+        if (repeat !== undefined) {
+            setSelectedValueRepeat(repeat);
+            onSelectValue(repeat);
+        } else if (notifications !== undefined) {
+            setSelectedValueNotifications(notifications);
+            onSelectValue(undefined, notifications);
+        };
+    };
 
     /**
      * Expande a view dos checkList's
@@ -123,7 +132,7 @@ export default function ShowChecks({ placeholder, item, onChangeText }) {
                                                 {repeatOptions.map((item, index) => (
                                                     <OptionText
                                                         key={index}
-                                                        onPress={() => setSelectedValueRepeat(item)}>
+                                                        onPress={() => handleSelectValue(item)}>
                                                         {item}
                                                     </OptionText>
                                                 ))}
@@ -170,7 +179,7 @@ export default function ShowChecks({ placeholder, item, onChangeText }) {
                                                 {notificationsOptions.map((item, index) => (
                                                     <OptionText
                                                         key={index}
-                                                        onPress={() => setSelectedValueNotifications(item)}>
+                                                        onPress={() => handleSelectValue(undefined, item)}>
                                                         {item}
                                                     </OptionText>
                                                 ))}
@@ -183,7 +192,6 @@ export default function ShowChecks({ placeholder, item, onChangeText }) {
                             </SimpleView>
                         </MultiplyItensView>
                     )}
-
                 </FrameDataView>
             </HorizontalView>
 
