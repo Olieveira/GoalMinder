@@ -13,7 +13,7 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
     const [showingOptionsNotifications, setShowingOptionsNotifications] = useState(false);
     const [selectedValueNotifications, setSelectedValueNotifications] = useState('Selecione');
 
-    const repeatOptions = ['Outro', 'Diário', 'Semanal', 'Mensal'];
+    const repeatOptions = ['Diário', 'Semanal', 'Mensal', 'Nenhum'];
 
     const notificationsOptions = ['Diário', 'Semanal', 'Mensal', 'Nenhum'];
 
@@ -24,6 +24,8 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
 
     const [expandChecksDisplay, setExpandCheckDisplay] = useState(false);
 
+
+
     function handleSelectValue(repeat, notifications) {
         if (repeat !== undefined) {
             setSelectedValueRepeat(repeat);
@@ -31,6 +33,27 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
         } else if (notifications !== undefined) {
             setSelectedValueNotifications(notifications);
             onSelectValue(undefined, notifications);
+        };
+    };
+
+    /**
+     * Expande as opções dos listBox's
+     * 
+     * @param {string} opt Indica qual das opções serão expandidas. ['repeat' | 'notifications']
+     * 
+     */
+    function handleExpandList(opt) {
+        LayoutAnimation.configureNext({
+            duration: 500,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+            },
+        });
+
+        if (opt == 'repeat') {
+            setRepeat(!repeat);
+        } else if (opt == 'notifications') {
+            setNotifications(!notifications);
         };
     };
 
@@ -96,7 +119,9 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
                         />
                     </HorizontalView>
                     {expandChecksDisplay && (
-                        <MultiplyItensView>
+                        <MultiplyItensView
+                            animation={'fadeIn'}
+                        >
                             <SimpleView>
                                 <SimpleHorizontalView>
                                     <Feather
@@ -110,11 +135,14 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
                                     name={repeat ? 'toggle-right' : 'toggle-left'}
                                     size={25}
                                     color={repeat ? THEME.COLORS.SUCCESS : THEME.COLORS.GOALS}
-                                    onPress={() => setRepeat(!repeat)}
+                                    onPress={() => handleExpandList('repeat')}
                                 />
 
                                 {repeat && (
-                                    <OptionsSection>
+                                    <OptionsSection
+                                        animation={'fadeIn'}
+                                        delay={100}
+                                    >
                                         <SimpleHorizontalView>
                                             <OptionSelectedText>{selectedValueRepeat}</OptionSelectedText>
                                             <Feather
@@ -157,11 +185,13 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
                                     name={notifications ? 'toggle-right' : 'toggle-left'}
                                     size={25}
                                     color={notifications ? THEME.COLORS.SUCCESS : THEME.COLORS.GOALS}
-                                    onPress={() => setNotifications(!notifications)}
+                                    onPress={() => handleExpandList('notifications')}
                                 />
 
                                 {notifications && (
-                                    <OptionsSection>
+                                    <OptionsSection
+                                        animation={'fadeIn'}
+                                    >
                                         <SimpleHorizontalView>
                                             <OptionSelectedText>{selectedValueNotifications}</OptionSelectedText>
                                             <Feather

@@ -4,6 +4,7 @@ import THEME from '../../theme';
 import { useEffect, useState } from 'react';
 import { LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 
 export default function ShowHabits({ item }) {
     const [expandGoalsDisplay, setExpandGoalsDisplay] = useState(false);
@@ -107,34 +108,51 @@ export default function ShowHabits({ item }) {
                     </HorizontalView>
 
                     {expandGoalsDisplay && linkedGoals.length > 0 && linkedGoals.map((item, index) => (
-                        <MultiplyItensView key={index}>
+                        <MultiplyItensView
+                            key={index}
+                            animation={'fadeIn'}
+                        >
 
-                            <SimpleHorizontalView>
+                            <SimpleView
+                                style={{
+                                    marginBottom: RFPercentage(2.5),
+                                    marginHorizontal: RFPercentage(0.5),
+                                }}
+                            >
                                 <Feather
                                     name='target'
                                     size={20}
                                     color={THEME.COLORS.ALERT900}
                                 />
                                 <FrameLabel>{item.goal}</FrameLabel>
-                            </SimpleHorizontalView>
-
-                            <SimpleHorizontalView>
-                                <Feather
-                                    name='watch'
-                                    size={20}
-                                    color={THEME.COLORS.ALERT900}
-                                />
-                                <FrameLabel>{item.time}</FrameLabel>
-                            </SimpleHorizontalView>
-
-                            <SimpleView>
-                                <Feather
-                                    name='calendar'
-                                    size={20}
-                                    color={THEME.COLORS.ALERT900}
-                                />
-                                <FrameLabel>{item.createdAt}</FrameLabel>
                             </SimpleView>
+
+                            <SimpleHorizontalView
+                                style={{
+                                    borderStyle: 'solid',
+                                    borderTopColor: THEME.COLORS.PRIMARY800,
+                                    borderTopWidth: 3,
+                                    paddingHorizontal: RFPercentage(1),
+                                    paddingTop: RFPercentage(1),
+                                }}
+                            >
+                                <SimpleView>
+                                    <Feather
+                                        name='watch'
+                                        size={20}
+                                        color={THEME.COLORS.ALERT900}
+                                    />
+                                    <FrameLabel>{item.time}</FrameLabel>
+                                </SimpleView>
+                                <SimpleView>
+                                    <Feather
+                                        name='calendar'
+                                        size={20}
+                                        color={THEME.COLORS.ALERT900}
+                                    />
+                                    <FrameLabel>{item.createdAt}</FrameLabel>
+                                </SimpleView>
+                            </SimpleHorizontalView>
 
                         </MultiplyItensView>
                     ))}

@@ -27,20 +27,16 @@ export const SimpleView = styled.View`
 `
 
 export const SimpleHorizontalView = styled.View`
+    width: ${RFPercentage(31)}px;
     flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    align-content: center;
-    justify-items: center;
-    width: ${RFPercentage(15)}px;
-    height: ${RFPercentage(5)}px;
 `
 
-export const MultiplyItensView = styled.View`
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-around;
+export const MultiplyItensView = styled(Animatable.View)`
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
     margin: ${RFPercentage(0.5)}px;
     padding: ${RFPercentage(0.5)}px;
@@ -79,7 +75,6 @@ export const HeaderLabel = styled.Text`
     `
 export const FrameLabel = styled.Text`
     text-align: center;
-    flex-grow: 1;
     font-family: ${THEME.FONTS.MEDIUM};
     color: ${THEME.COLORS.ALERT900};
     font-size: ${RFPercentage(2.2)}px;

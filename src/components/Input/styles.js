@@ -1,6 +1,7 @@
 import styled from "styled-components/native";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import THEME from '../../theme'
+import THEME from '../../theme';
+import * as Animatable from "react-native-animatable";
 
 export const LabelText = styled.Text`
   font-family: ${THEME.FONTS.MEDIUM};
@@ -8,7 +9,7 @@ export const LabelText = styled.Text`
   text-align: center;
 `
 
-export const VContainer = styled.View`
+export const VContainer = styled(Animatable.View)`
   flex-direction: column;
   justify-content: center;
   align-items: center;

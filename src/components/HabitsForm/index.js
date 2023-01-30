@@ -11,6 +11,8 @@ import GenericButton from "../Buttons/Generic";
 import THEME from "../../theme";
 import { Feather } from '@expo/vector-icons';
 import ShowChecks from "../ShowChecks";
+import { useRef } from "react";
+import { LayoutAnimation } from "react-native";
 
 /**
  * 
@@ -39,6 +41,9 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
     // states dos dados armazenados
     const [checklists, setCheckLists] = useState([]);
     const [links, setLinks] = useState([{}]);
+
+    const checkListsScroll = useRef(null);
+    const centerViewScroll = useRef(null);
 
     // Realiza a verificação se é edição ou cadastro de metas ao carregar a tela
     useEffect(() => {
@@ -82,7 +87,17 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
      *  Adiciona um index no state utilizado para renderizar os checkLists 
      */
     function handleAddCheckList() {
+        LayoutAnimation.configureNext({
+            duration: 100,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+            }
+        });
+
         setCheckLists([...checklists, { title: '', repeat: false, notifications: false }]);
+
+        checkListsScroll.current.scrollToEnd({ animated: true });
+        centerViewScroll.current.scrollToEnd({ animated: true });
     };
 
     /**
@@ -212,7 +227,14 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
             onPress={Keyboard.dismiss}
             animation='fadeIn'
         >
-            <CenterView nestedScrollEnabled={true} shouldCancelWhenOutside={false} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
+            <CenterView
+                ref={centerViewScroll}
+                nestedScrollEnabled={true}
+                shouldCancelWhenOutside={false}
+                contentContainerStyle={{
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
                 <Input
                     style={{ focused: true }}
                     placeholder="Ex.: Parar de fumar."
@@ -254,7 +276,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
                 <Frame contentContainerStyle={{ alignItems: "center", justifyContent: "center", padding: RFPercentage(1) }}>
                     <KeyboardAvoidingView behavior="position" enabled>
-                        {links.map((item, index) => (
+                        {links.length > 0 && links.map((item, index) => (
                             <DefaultView key={index}>
                                 <HorizontalGoalsView>
                                     <Feather
@@ -278,9 +300,30 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                                         />
                                     </DefaultView>
                                 </HorizontalGoalsView>
-
                             </DefaultView>
                         ))}
+                        {links.length <= 0 && (
+                            <DefaultView
+                                style={{
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    backgroundColor: THEME.COLORS.PRIMARY800,
+                                    padding: RFPercentage(1),
+                                    borderRadius: 5,
+                                }}
+                            >
+                                <Feather
+                                    style={{ marginBottom: RFPercentage(0.8) }}
+                                    name="info"
+                                    size={24}
+                                    color={THEME.COLORS.ALERT900}
+                                />
+                                <GoalsText style={{ textAlign: "center" }}>
+                                    {'Nenhuma meta cadastrada!\n\nCrie novas METAS para vinculá-las com seus hábitos.\n'}
+                                </GoalsText>
+                            </DefaultView>
+                        )}
+
                     </KeyboardAvoidingView>
                 </Frame>
 
@@ -306,11 +349,21 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                 </GoalsLabelView>
 
                 <DefaultView style={{ flex: 1, width: RFPercentage(46), maxHeight: RFPercentage(55) }}>
-                    <Frame nestedScrollEnabled={true} contentContainerStyle={{ alignItems: "center", padding: RFPercentage(1) }}>
+                    <Frame
+                        ref={checkListsScroll}
+                        nestedScrollEnabled={true}
+                        contentContainerStyle={{
+                            alignItems: "center",
+                            padding: RFPercentage(1)
+                        }}>
                         <KeyboardAvoidingView behavior="position" enabled>
 
                             {checklists.length > 0 && checklists.map((item, index) => (
-                                <DefaultView key={index}>
+                                <DefaultView
+                                    key={index}
+                                    animation={'fadeIn'}
+                                    duration={350}
+                                >
                                     <ShowChecks
                                         placeholder={'Ex.: Ler 10 páginas.'}
                                         item={checklists[index]}

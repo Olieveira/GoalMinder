@@ -43,7 +43,11 @@ export default function Input({ keyboardType, placeholder, secureTextEntry, show
     }
 
     return (
-        <VContainer style={{ height: label == undefined ? RFPercentage(7.2) : RFPercentage(10.7) }}>
+        <VContainer
+            animation={'fadeIn'}
+            style={{
+                height: label == undefined ? RFPercentage(7.2) : RFPercentage(10.7)
+            }}>
             <HContainer style={{ display: infoShowFunction == undefined && label == undefined ? 'none' : 'flex' }}>
                 <LabelText style={{
                     display: label == undefined ? 'none' : 'flex',

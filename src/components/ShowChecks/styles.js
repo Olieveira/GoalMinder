@@ -3,7 +3,7 @@ import THEME from '../../theme';
 import styled from "styled-components/native";
 import * as Animatable from 'react-native-animatable';
 
-export const OptionsSection = styled.View`
+export const OptionsSection = styled(Animatable.View)`
     border: 2px solid ${THEME.COLORS.ALERT800};
     justify-content: space-between;
     align-items: center;
@@ -57,7 +57,7 @@ export const SimpleHorizontalView = styled.View`
     height: ${RFPercentage(5)}px;
 `
 
-export const MultiplyItensView = styled.View`
+export const MultiplyItensView = styled(Animatable.View)`
     flex-direction: row;
     flex: 1;
     width: 100%;

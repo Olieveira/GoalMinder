@@ -10,6 +10,7 @@ import * as FlashMessage from "react-native-flash-message";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import GenericButton from "../Buttons/Generic";
 import THEME from "../../theme";
+import { LayoutAnimation } from 'react-native';
 
 /**
  * 
@@ -112,8 +113,15 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
      *  Incrementa o state dos indicadores e roda a scrollView para o final.
     */
     function handleAddIndicator() {
+        LayoutAnimation.configureNext({
+            duration: 100,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+            },
+        });
+
         setNumIndicators(numIndicators + 1)
-        scrollViewRef.current.scrollToEnd({ animated: true, });
+        scrollViewRef.current.scrollToEnd({ animated: true });
     }
 
     /**
