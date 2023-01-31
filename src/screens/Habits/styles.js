@@ -52,7 +52,7 @@ export const DefaultHorizontalView = styled.View`
 export const HeaderTitle = styled.Text`
     font-family: ${THEME.FONTS.BOLD};
     font-size: ${RFPercentage(3)}px;
-    color: ${THEME.COLORS.PRIMARY900};
+    color: ${THEME.COLORS.BACKGROUND};
     text-align: center;
     align-self: center;
 `

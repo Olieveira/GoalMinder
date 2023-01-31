@@ -1,4 +1,4 @@
-import { BgView, HorizontalView, FrameDataView, FrameLabel, HeaderLabel, MultiplyItensView, SimpleHorizontalView, SimpleView, CheckValues, CheckHeaders } from './styles';
+import { BgView, HorizontalView, FrameDataView, FrameLabel, HeaderLabel, MultiplyItensView, SimpleHorizontalView, SimpleView, CheckValues, CheckHeaders, CheckVerticalView, CheckHorizontalView } from './styles';
 import { Feather } from '@expo/vector-icons';
 import THEME from '../../theme';
 import { useEffect, useState } from 'react';
@@ -69,7 +69,9 @@ export default function ShowHabits({ item }) {
     return (
         <BgView>
             <HorizontalView>
-                <FrameDataView>
+                <FrameDataView style={{
+                    borderTopLeftRadius: 15,
+                }}>
                     <Feather
                         name='book-open'
                         size={20}
@@ -78,7 +80,9 @@ export default function ShowHabits({ item }) {
                     <FrameLabel>{item.habit}</FrameLabel>
                 </FrameDataView>
 
-                <FrameDataView>
+                <FrameDataView style={{
+                    borderTopRightRadius: 15,
+                }}>
                     <Feather
                         name='watch'
                         size={20}
@@ -88,136 +92,147 @@ export default function ShowHabits({ item }) {
                 </FrameDataView>
             </HorizontalView>
 
-            <HorizontalView>
-                <FrameDataView>
-                    <HorizontalView>
+            {linkedGoals.length > 0 && (
+                <HorizontalView>
+                    <FrameDataView style={{
+                        paddingTop: expandGoalsDisplay ? null : RFPercentage(0.5),
+                    }}>
+                        <HorizontalView style={{
+                            backgroundColor: expandGoalsDisplay ? THEME.COLORS.PRIMARY900 : null
+                        }}>
 
-                        <Feather
-                            name='paperclip'
-                            size={20}
-                            color={THEME.COLORS.ALERT900}
-                        />
-                        <FrameLabel>Metas vinculadas</FrameLabel>
-                        <Feather
-                            name={expandGoalsDisplay ? 'chevrons-up' : 'chevrons-down'}
-                            size={24}
-                            color={THEME.COLORS.ALERT900}
-                            onPress={handleExpandGoals}
-                        />
+                            <Feather
+                                name='paperclip'
+                                size={20}
+                                color={THEME.COLORS.ALERT900}
+                            />
+                            <FrameLabel>Metas vinculadas</FrameLabel>
+                            <Feather
+                                name={expandGoalsDisplay ? 'chevrons-up' : 'chevrons-down'}
+                                size={24}
+                                color={THEME.COLORS.ALERT900}
+                                onPress={handleExpandGoals}
+                            />
 
-                    </HorizontalView>
+                        </HorizontalView>
 
-                    {expandGoalsDisplay && linkedGoals.length > 0 && linkedGoals.map((item, index) => (
-                        <MultiplyItensView
-                            key={index}
-                            animation={'fadeIn'}
-                        >
-
-                            <SimpleView
-                                style={{
-                                    marginBottom: RFPercentage(2.5),
-                                    marginHorizontal: RFPercentage(0.5),
-                                }}
+                        {expandGoalsDisplay && linkedGoals.map((item, index) => (
+                            <MultiplyItensView
+                                key={index}
+                                animation={'fadeIn'}
                             >
-                                <Feather
-                                    name='target'
-                                    size={20}
-                                    color={THEME.COLORS.ALERT900}
-                                />
-                                <FrameLabel>{item.goal}</FrameLabel>
-                            </SimpleView>
 
-                            <SimpleHorizontalView
-                                style={{
-                                    borderStyle: 'solid',
-                                    borderTopColor: THEME.COLORS.PRIMARY800,
-                                    borderTopWidth: 3,
-                                    paddingHorizontal: RFPercentage(1),
-                                    paddingTop: RFPercentage(1),
-                                }}
-                            >
-                                <SimpleView>
+                                <SimpleView
+                                    style={{
+                                        marginBottom: RFPercentage(2.5),
+                                        marginHorizontal: RFPercentage(0.5),
+                                    }}
+                                >
                                     <Feather
-                                        name='watch'
+                                        name='target'
                                         size={20}
                                         color={THEME.COLORS.ALERT900}
                                     />
-                                    <FrameLabel>{item.time}</FrameLabel>
+                                    <FrameLabel>{item.goal}</FrameLabel>
                                 </SimpleView>
-                                <SimpleView>
-                                    <Feather
-                                        name='calendar'
-                                        size={20}
-                                        color={THEME.COLORS.ALERT900}
-                                    />
-                                    <FrameLabel>{item.createdAt}</FrameLabel>
-                                </SimpleView>
-                            </SimpleHorizontalView>
 
-                        </MultiplyItensView>
-                    ))}
+                                <SimpleHorizontalView
+                                    style={{
+                                        borderStyle: 'solid',
+                                        borderTopColor: THEME.COLORS.PRIMARY800,
+                                        borderTopWidth: 3,
+                                        paddingHorizontal: RFPercentage(1),
+                                        paddingTop: RFPercentage(1),
+                                    }}
+                                >
+                                    <SimpleView>
+                                        <Feather
+                                            name='watch'
+                                            size={20}
+                                            color={THEME.COLORS.ALERT900}
+                                        />
+                                        <FrameLabel>{item.time}</FrameLabel>
+                                    </SimpleView>
+                                    <SimpleView>
+                                        <Feather
+                                            name='calendar'
+                                            size={20}
+                                            color={THEME.COLORS.ALERT900}
+                                        />
+                                        <FrameLabel>{item.createdAt}</FrameLabel>
+                                    </SimpleView>
+                                </SimpleHorizontalView>
 
-                </FrameDataView>
-            </HorizontalView>
+                            </MultiplyItensView>
+                        ))}
 
-            <HorizontalView>
-                <FrameDataView>
-                    <HorizontalView>
-                        <Feather
-                            name='check-square'
-                            size={20}
-                            color={THEME.COLORS.ALERT900}
-                        />
+                    </FrameDataView>
+                </HorizontalView>
+            )}
 
-                        <FrameLabel>checklists</FrameLabel>
+            {item.checklists.length > 0 && (
+                <HorizontalView>
+                    <FrameDataView style={{
+                        paddingTop: expandChecksDisplay ? null : RFPercentage(0.5),
+                        borderBottomRightRadius: 10,
+                        borderBottomLeftRadius: 10
+                    }}>
+                        <HorizontalView style={{
+                            backgroundColor: expandChecksDisplay ? THEME.COLORS.PRIMARY900 : null
+                        }}>
+                            <Feather
+                                name='check-square'
+                                size={20}
+                                color={THEME.COLORS.ALERT900}
+                            />
 
-                        <Feather
-                            name={expandChecksDisplay ? 'chevrons-up' : 'chevrons-down'}
-                            size={24}
-                            color={THEME.COLORS.ALERT900}
-                            onPress={handleExpandChecks}
-                        />
-                    </HorizontalView>
-                    {expandChecksDisplay && item.checklists.length > 0 && item.checklists.map((item, index) => (
-                        <CheckValues key={index}>
+                            <FrameLabel>checklists</FrameLabel>
 
-                            <CheckHeaders>
-                                <HeaderLabel>{item.title}</HeaderLabel>
-                                <Feather
-                                    name='check-square'
-                                    size={20}
-                                    color={THEME.COLORS.ALERT900}
-                                />
-                            </CheckHeaders>
+                            <Feather
+                                name={expandChecksDisplay ? 'chevrons-up' : 'chevrons-down'}
+                                size={24}
+                                color={THEME.COLORS.ALERT900}
+                                onPress={handleExpandChecks}
+                            />
+                        </HorizontalView>
+                        {expandChecksDisplay && item.checklists.map((item, index) => (
+                            <CheckValues key={index}>
 
-                            {item.notifications != false && (
                                 <CheckHeaders>
-                                    <HeaderLabel>{item.notifications}</HeaderLabel>
+                                    <HeaderLabel>{item.title}</HeaderLabel>
                                     <Feather
-                                        name='bell'
+                                        name='check-square'
                                         size={20}
                                         color={THEME.COLORS.ALERT900}
                                     />
                                 </CheckHeaders>
-                            )}
 
-                            {item.repeat != false && (
-                                <CheckHeaders>
-                                    <HeaderLabel>{item.repeat}</HeaderLabel>
-                                    <Feather
-                                        name='repeat'
-                                        size={20}
-                                        color={THEME.COLORS.ALERT900}
-                                    />
-                                </CheckHeaders>
-                            )}
+                                <CheckHorizontalView>
+                                    <CheckVerticalView>
+                                        <HeaderLabel>{item.notifications != false ? item.notifications : 'Desativado'}</HeaderLabel>
+                                        <Feather
+                                            name={item.notifications != false ? 'bell' : 'bell-off'}
+                                            size={20}
+                                            color={THEME.COLORS.ALERT900}
+                                        />
+                                    </CheckVerticalView>
 
-                        </CheckValues>
-                    ))}
+                                    <CheckVerticalView>
+                                        <HeaderLabel>{item.repeat != false ? item.repeat : 'Desativado'}</HeaderLabel>
+                                        <Feather
+                                            name={item.repeat != false ? 'repeat' : 'shuffle'}
+                                            size={20}
+                                            color={THEME.COLORS.ALERT900}
+                                        />
+                                    </CheckVerticalView>
+                                </CheckHorizontalView>
 
-                </FrameDataView>
-            </HorizontalView>
+                            </CheckValues>
+                        ))}
 
+                    </FrameDataView>
+                </HorizontalView>
+            )}
         </BgView>
     );
 

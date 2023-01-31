@@ -3,6 +3,22 @@ import THEME from '../../theme';
 import styled from "styled-components/native";
 import * as Animatable from 'react-native-animatable';
 
+export const CheckVerticalView = styled.View`
+    justify-content: center;
+    align-items: center;
+`
+
+export const CheckHorizontalView = styled.View`
+    margin-top: ${RFPercentage(1)}px;
+    border-top-color: ${THEME.COLORS.ALERT900};
+    border-top-width: 1px;
+    border-style: dashed;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+`
+
 export const CheckHeaders = styled.View`
     width: 100%;
     flex-direction: row;
@@ -38,8 +54,8 @@ export const MultiplyItensView = styled(Animatable.View)`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: ${RFPercentage(0.5)}px;
-    padding: ${RFPercentage(0.5)}px;
+    margin: ${RFPercentage(1)}px ${RFPercentage(0.5)}px;
+    padding: ${RFPercentage(1)}px ${RFPercentage(0.5)}px ${RFPercentage(0.5)}px ${RFPercentage(0.5)}px;
     border: 1px dashed ${THEME.COLORS.ALERT900};
     border-radius: 10px;
 `
@@ -54,6 +70,8 @@ export const BgView = styled(Animatable.View)`
     border: 4px solid ${THEME.COLORS.PRIMARY800};
 `
 export const HorizontalView = styled(Animatable.View)`
+    width: 100%;
+    padding: ${RFPercentage(0.5)}px;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -64,14 +82,15 @@ export const FrameDataView = styled(Animatable.View)`
     align-items: center;
     border: 2px solid ${THEME.COLORS.PRIMARY900};
     margin: ${RFPercentage(0.5)}px;
-    padding: ${RFPercentage(0.5)}px;
+    padding: ${RFPercentage(0.7)}px 0;
 `
 export const HeaderLabel = styled.Text`
     text-align: center;
-    flex-grow: 1;
+    flex: 1;
     font-family: ${THEME.FONTS.MEDIUM};
     color: ${THEME.COLORS.ALERT900};
     font-size: ${RFPercentage(2.2)}px;
+    margin: ${RFPercentage(0.3)}px 0;
     `
 export const FrameLabel = styled.Text`
     text-align: center;

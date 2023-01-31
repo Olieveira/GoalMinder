@@ -235,11 +235,11 @@ export default function Habits() {
                             <Feather
                                 name='award'
                                 size={24}
-                                color={THEME.COLORS.PRIMARY900}
+                                color={THEME.COLORS.BACKGROUND}
                             />
                         </DefaultView>
                         <HeaderTitle style={{ marginLeft: RFPercentage(2) }}>
-                            Hábitos Cadastrados
+                            Hábitos
                         </HeaderTitle>
                     </HeaderView>
 
