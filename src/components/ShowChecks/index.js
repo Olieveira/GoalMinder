@@ -30,9 +30,11 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
         if (repeat !== undefined) {
             setSelectedValueRepeat(repeat);
             onSelectValue(repeat);
+            setShowingOptionsRepeat(!showingOptionsRepeat);
         } else if (notifications !== undefined) {
             setSelectedValueNotifications(notifications);
             onSelectValue(undefined, notifications);
+            setShowingOptionsNotifications(!showingOptionsNotifications);
         };
     };
 

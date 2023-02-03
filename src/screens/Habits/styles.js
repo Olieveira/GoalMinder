@@ -14,7 +14,7 @@ export const SuggestionTextView = styled.View`
 `
 
 export const HabitsScrollView = styled.ScrollView`
-max-height: ${RFPercentage(53)}px;
+max-height: ${RFPercentage(67)}px;
 `
 
 export const HabitsView = styled.View`

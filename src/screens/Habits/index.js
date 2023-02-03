@@ -148,11 +148,16 @@ export default function Habits() {
 
                     </DefaultView>
                     <HabitsView>
-                        <BodyText style={{ textAlign: 'left', alignSelf: 'flex-start', marginBottom: RFPercentage(1), marginLeft: RFPercentage(1) }}>
+                        <BodyText style={{
+                            textAlign: 'left',
+                            alignSelf: 'flex-start',
+                            marginBottom: RFPercentage(1),
+                            marginLeft: RFPercentage(1)
+                        }}>
                             Algumas sugestões:
                         </BodyText>
 
-                        <HabitsScrollView>
+                        <HabitsScrollView style={{ maxHeight: RFPercentage(50) }}>
                             <ShowMore
                                 icon='book-open'
                                 title='Leitura'
@@ -197,7 +202,7 @@ export default function Habits() {
 
                             <ShowMore
                                 icon='shopping-cart'
-                                title='Dieta equiibrada'
+                                title='Dieta equilibrada'
                                 bodyComponent={suggetionsComponent(
                                     {
                                         icon: [

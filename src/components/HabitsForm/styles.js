@@ -82,6 +82,7 @@ export const Container = styled(Animatable.View)`
 `
 export const VerticalButtonsView = styled.View`
     height: ${RFPercentage(9)}px;
+    align-self: stretch;
     justify-content: center;
     align-items: center;
     background-color: ${THEME.COLORS.ALERT900};

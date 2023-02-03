@@ -69,26 +69,10 @@ export default function ShowHabits({ item }) {
     return (
         <BgView>
             <HorizontalView>
-                <FrameDataView style={{
-                    borderTopLeftRadius: 15,
-                }}>
-                    <Feather
-                        name='book-open'
-                        size={20}
-                        color={THEME.COLORS.ALERT900}
-                    />
-                    <FrameLabel>{item.habit}</FrameLabel>
-                </FrameDataView>
-
-                <FrameDataView style={{
-                    borderTopRightRadius: 15,
-                }}>
-                    <Feather
-                        name='watch'
-                        size={20}
-                        color={THEME.COLORS.ALERT900}
-                    />
-                    <FrameLabel>{item.time}</FrameLabel>
+                <FrameDataView>
+                    <HorizontalView style={{ justifyContent: 'center'}}>
+                        <FrameLabel >{item.habit}</FrameLabel>
+                    </HorizontalView>
                 </FrameDataView>
             </HorizontalView>
 
@@ -209,18 +193,18 @@ export default function ShowHabits({ item }) {
 
                                 <CheckHorizontalView>
                                     <CheckVerticalView>
-                                        <HeaderLabel>{item.notifications != false ? item.notifications : 'Desativado'}</HeaderLabel>
+                                        <HeaderLabel>{item.notifications != false && item.notifications != 'Nenhum' ? item.notifications : 'Desativado'}</HeaderLabel>
                                         <Feather
-                                            name={item.notifications != false ? 'bell' : 'bell-off'}
+                                            name={item.notifications != false && item.notifications != 'Nenhum' ? 'bell' : 'bell-off'}
                                             size={20}
                                             color={THEME.COLORS.ALERT900}
                                         />
                                     </CheckVerticalView>
 
                                     <CheckVerticalView>
-                                        <HeaderLabel>{item.repeat != false ? item.repeat : 'Desativado'}</HeaderLabel>
+                                        <HeaderLabel>{item.repeat != false && item.repeat != 'Nenhum' ? item.repeat : 'Desativado'}</HeaderLabel>
                                         <Feather
-                                            name={item.repeat != false ? 'repeat' : 'shuffle'}
+                                            name={item.repeat != false && item.repeat != 'Nenhum' ? 'repeat' : 'shuffle'}
                                             size={20}
                                             color={THEME.COLORS.ALERT900}
                                         />

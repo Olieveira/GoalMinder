@@ -36,7 +36,6 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
     // states dos inputs
     const [habit, setHabit] = useState("");
-    const [time, setTime] = useState("");
 
     // states dos dados armazenados
     const [checklists, setCheckLists] = useState([]);
@@ -120,6 +119,9 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
         }))
     };
 
+    /**
+     * Realiza a consulta das metas cadastradas
+     */
     async function fetchData() {
         const response = await AsyncStorage.getItem("@goalsmanagement:goals");
         if (response != null) {
@@ -152,9 +154,11 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
     /**
      * Realiza a edição da meta atual
+     * 
+     * inutilizado ainda
      */
     async function handleSubmitEdit() {
-        if (goal != "" && time != "") {
+        if (goal != "") {
 
             const response = await AsyncStorage.getItem("@goalsmanagement:goals");
             const previousData = response ? JSON.parse(response) : [];
@@ -198,13 +202,12 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
         const newData = {
             id,
             habit,
-            time,
             linked: links.map(item => item.linked ? item.id : null).filter(item => item !== undefined && item !== null),
-            checklists,
+            checklists: checklists.filter(item => item.title != ''),
             createdAt
         };
 
-        if (habit != "" && time != "") {
+        if (habit != "") {
 
             const response = await AsyncStorage.getItem("@goalsmanagement:habits");
             const previousData = response ? JSON.parse(response) : [];
@@ -233,7 +236,8 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                 shouldCancelWhenOutside={false}
                 contentContainerStyle={{
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    flex: 1
                 }}>
                 <Input
                     style={{ focused: true }}
@@ -244,15 +248,6 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                     returnKeyType="next"
                     value={habit}
                     infoShowFunction={() => showInfo("DICA", "Estabeleça um hábito que possa ser alcançado e periódicamente mensurado para o acompanhamento de seu progresso!.", "info")}
-                />
-                <Input
-                    icon="watch"
-                    placeholder="Ex.: 6 meses"
-                    label="TEMPO"
-                    onChangeText={setTime}
-                    returnKeyType="next"
-                    infoShowFunction={() => showInfo("DICA", "Defina um tempo realista!\n\nPesquisas sugerem que pode levar de 21 a 66 dias para habituar algo.\n\nO fator predominante é sua determinação!", "info")}
-                    value={time}
                 />
                 <GoalsLabelView>
                     <Feather
@@ -274,59 +269,66 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                     </DefaultView>
                 </GoalsLabelView>
 
-                <Frame contentContainerStyle={{ alignItems: "center", justifyContent: "center", padding: RFPercentage(1) }}>
-                    <KeyboardAvoidingView behavior="position" enabled>
-                        {links.length > 0 && links.map((item, index) => (
-                            <DefaultView key={index}>
-                                <HorizontalGoalsView>
+                <DefaultView style={{ flex: 1, width: RFPercentage(46), maxHeight: RFPercentage(55) }}>
+                    <Frame
+                        nestedScrollEnabled={true}
+                        contentContainerStyle={{
+                            alignItems: "center",
+                            padding: RFPercentage(1),
+                        }}
+                    >
+                        <KeyboardAvoidingView behavior="position" enabled>
+                            {links.length > 0 && links.map((item, index) => (
+                                <DefaultView key={index}>
+                                    <HorizontalGoalsView>
+                                        <Feather
+                                            name="target"
+                                            size={20}
+                                            color={THEME.COLORS.ALERT900}
+                                        />
+                                        <GoalsText>
+                                            {item.goal + ' em ' + item.time}
+                                        </GoalsText>
+                                        <DefaultView
+                                            animation={item.linked ? 'fadeIn' : 'fadeOut'}
+                                            duration={item.linked ? 700 : 300}
+                                            direction={item.linked ? null : "alternate-reverse"}
+                                        >
+                                            <Feather
+                                                name={item.linked ? "shuffle" : "refresh-cw"}
+                                                size={18}
+                                                color={item.linked ? THEME.COLORS.TEXT : THEME.COLORS.ALERT900}
+                                                onPress={() => { handleChangeLinks(index) }}
+                                            />
+                                        </DefaultView>
+                                    </HorizontalGoalsView>
+                                </DefaultView>
+                            ))}
+                            {links.length <= 0 && (
+                                <DefaultView
+                                    style={{
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        backgroundColor: THEME.COLORS.PRIMARY800,
+                                        padding: RFPercentage(1),
+                                        borderRadius: 5,
+                                    }}
+                                >
                                     <Feather
-                                        name="target"
-                                        size={20}
+                                        style={{ marginBottom: RFPercentage(0.8) }}
+                                        name="info"
+                                        size={24}
                                         color={THEME.COLORS.ALERT900}
                                     />
-                                    <GoalsText>
-                                        {item.goal + ' em ' + item.time}
+                                    <GoalsText style={{ textAlign: "center" }}>
+                                        {'Nenhuma meta cadastrada!\n\nCrie novas METAS para vinculá-las com seus hábitos.\n'}
                                     </GoalsText>
-                                    <DefaultView
-                                        animation={item.linked ? 'fadeIn' : 'fadeOut'}
-                                        duration={item.linked ? 700 : 300}
-                                        direction={item.linked ? null : "alternate-reverse"}
-                                    >
-                                        <Feather
-                                            name={item.linked ? "shuffle" : "refresh-cw"}
-                                            size={18}
-                                            color={item.linked ? THEME.COLORS.TEXT : THEME.COLORS.ALERT900}
-                                            onPress={() => { handleChangeLinks(index) }}
-                                        />
-                                    </DefaultView>
-                                </HorizontalGoalsView>
-                            </DefaultView>
-                        ))}
-                        {links.length <= 0 && (
-                            <DefaultView
-                                style={{
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    backgroundColor: THEME.COLORS.PRIMARY800,
-                                    padding: RFPercentage(1),
-                                    borderRadius: 5,
-                                }}
-                            >
-                                <Feather
-                                    style={{ marginBottom: RFPercentage(0.8) }}
-                                    name="info"
-                                    size={24}
-                                    color={THEME.COLORS.ALERT900}
-                                />
-                                <GoalsText style={{ textAlign: "center" }}>
-                                    {'Nenhuma meta cadastrada!\n\nCrie novas METAS para vinculá-las com seus hábitos.\n'}
-                                </GoalsText>
-                            </DefaultView>
-                        )}
+                                </DefaultView>
+                            )}
 
-                    </KeyboardAvoidingView>
-                </Frame>
-
+                        </KeyboardAvoidingView>
+                    </Frame>
+                </DefaultView>
 
                 <GoalsLabelView>
                     <Feather
