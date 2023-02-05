@@ -81,8 +81,7 @@ export const Container = styled(Animatable.View)`
     background-color: rgba(0, 0, 0, 0.3);
 `
 export const VerticalButtonsView = styled.View`
-    height: ${RFPercentage(9)}px;
-    align-self: stretch;
+    flex: 1;
     justify-content: center;
     align-items: center;
     background-color: ${THEME.COLORS.ALERT900};
@@ -93,8 +92,9 @@ export const VerticalButtonsView = styled.View`
 export const ButtonsView = styled.View`
     flex: 1;
     flex-direction: row;
-    justify-content: space-around;
-    padding: ${RFPercentage(2)}px 0 ${RFPercentage(2.5)}px 0;
+    justify-content: space-between;
+    align-items: center;
+    padding: ${RFPercentage(1)}px 0;
 `
 
 export const Frame = styled.ScrollView`

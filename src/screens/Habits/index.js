@@ -14,40 +14,43 @@ export default function Habits() {
     const [formDisplay, setFormDisplay] = useState(false);
     const [habits, setHabits] = useState([]);
     const [deleteButton, setDeleteButton] = useState(true);
+    const [editId, setEditId] = useState(undefined);
 
     useEffect(() => {
         fetchData();
-    }, [])
+    }, []);
 
     async function fetchData() {
         const response = await AsyncStorage.getItem("@goalsmanagement:habits");
         if (response != null) {
             setHabits(JSON.parse(response));
         };
-    }
+    };
 
 
     function showInfo(message, description, type) {
         window.alert(description);
-    }
+    };
 
     /**
      * Muda o display do formulario
      */
-    function changeDisplayForm() {
+    async function changeDisplayForm(toEditId) {
+
+        toEditId != undefined ? setEditId(toEditId) : null;
+
         setFormDisplay(!formDisplay);
         setDeleteButton(!deleteButton);
 
-        formDisplay && fetchData();
-    }
+        await fetchData();
+    };
 
     async function deleteAll() {
         await AsyncStorage.removeItem('@goalsmanagement:habits');
         await fetchData();
         setHabits([]);
         showInfo("", 'Deleted');
-
-    }
+    };
 
     /**
      * 
@@ -254,6 +257,9 @@ export default function Habits() {
                                 <DefaultView key={index}>
                                     <ShowHabits
                                         item={habito}
+                                        handleEdit={() => {
+                                            changeDisplayForm(habito.id);
+                                        }}
                                     />
                                 </DefaultView>
                             ))}
@@ -320,6 +326,7 @@ export default function Habits() {
                 <HabitsForm
                     hideForm={changeDisplayForm}
                     showMessage={(title, msg, type) => showInfo(title, msg, type)}
+                    id={editId}
                 />
             )}
 

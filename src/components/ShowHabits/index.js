@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { View } from 'react-native-animatable';
 
-export default function ShowHabits({ item }) {
+export default function ShowHabits({ item, handleEdit }) {
     const [expandGoalsDisplay, setExpandGoalsDisplay] = useState(false);
     const [expandChecksDisplay, setExpandCheckDisplay] = useState(false);
 
@@ -38,7 +38,7 @@ export default function ShowHabits({ item }) {
     }, [])
 
     function handleEditItem() {
-        window.alert('Item Editado!');
+        handleEdit();
     };
 
     function handleDeleteItem() {

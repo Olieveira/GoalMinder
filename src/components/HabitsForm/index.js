@@ -13,6 +13,7 @@ import { Feather } from '@expo/vector-icons';
 import ShowChecks from "../ShowChecks";
 import { useRef } from "react";
 import { LayoutAnimation } from "react-native";
+import { View } from "react-native-animatable";
 
 /**
  * 
@@ -49,6 +50,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
         fetchData();
 
         if (typeof (id) == "string") {
+            loadItemToEdit(id);
             setSubmitButtonText("EDITAR");
             setDeleteButton("flex");
         } else {
@@ -56,6 +58,15 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
             setDeleteButton("none");
         }
     }, []);
+
+    async function loadItemToEdit(id) {
+        const response = await AsyncStorage.getItem('@goalsmanagement:habits');
+        const data = response ? JSON.parse(response) : [];
+
+        const toEdit = data.filter(item => item.id == id)[0];
+
+        setHabit(toEdit.habit);
+    };
 
     /**
      * Faz a edição do titulo do checkBox na respectiva posição no array.
@@ -414,22 +425,26 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                             handleFunction={typeof (id) == "string" ? handleSubmitEdit : handleSubmit}
                         />
                     </ButtonsView>
-                    <GenericButton
-                        icon='x-octagon'
-                        text='EXCLUIR'
-                        backgroundColor={THEME.COLORS.GOALS}
-                        iconColor={THEME.COLORS.TEXT}
-                        txtColor={THEME.COLORS.TEXT}
-                        borderRadius={5}
-                        fontSize={RFPercentage(2.3)}
-                        fontFamily={THEME.FONTS.MEDIUM}
-                        handleFunction={showConfirmation}
-                        width={RFPercentage(20)}
-                        display={deleteButton}
-                    />
+
+                    {deleteButton == 'flex' && (
+                        <View style={{ paddingBottom: RFPercentage(1) }}>
+                            <GenericButton
+                                icon='x-octagon'
+                                text='EXCLUIR'
+                                backgroundColor={THEME.COLORS.GOALS}
+                                iconColor={THEME.COLORS.TEXT}
+                                txtColor={THEME.COLORS.TEXT}
+                                borderRadius={5}
+                                fontSize={RFPercentage(2.3)}
+                                fontFamily={THEME.FONTS.MEDIUM}
+                                handleFunction={showConfirmation}
+                                width={RFPercentage(20)}
+                            />
+                        </View>
+                    )}
+
                 </VerticalButtonsView>
             </CenterView>
-
         </Container>
     );
 }
