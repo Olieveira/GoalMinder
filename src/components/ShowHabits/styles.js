@@ -3,6 +3,27 @@ import THEME from '../../theme';
 import styled from "styled-components/native";
 import * as Animatable from 'react-native-animatable';
 
+export const EditButton = styled.TouchableOpacity`
+    position: absolute;
+    top: -${RFPercentage(2)}px;
+    right: -${RFPercentage(2)}px;
+    background-color: ${THEME.COLORS.BACKGROUND};
+    border-radius: 50px;
+    padding: ${RFPercentage(0.7)}px;
+    border: solid 3px ${THEME.COLORS.PRIMARY800};
+    z-index: 1000;
+`
+export const DeleteButton = styled.TouchableOpacity`
+    position: absolute;
+    top: -${RFPercentage(2)}px;
+    left: -${RFPercentage(2)}px;
+    background-color: ${THEME.COLORS.BACKGROUND};
+    border-radius: 50px;
+    padding: ${RFPercentage(0.6)}px;
+    border: solid 3px ${THEME.COLORS.PRIMARY800};
+    z-index: 1000;
+`
+
 export const CheckVerticalView = styled.View`
     justify-content: center;
     align-items: center;

@@ -136,6 +136,8 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                 };
             }).filter((item) => item !== undefined)
             );
+        } else {
+            setLinks([]);
         };
     };
 
@@ -236,7 +238,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                 shouldCancelWhenOutside={false}
                 contentContainerStyle={{
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    justifyContent: "center",
                     flex: 1
                 }}>
                 <Input
@@ -273,7 +275,6 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                     <Frame
                         nestedScrollEnabled={true}
                         contentContainerStyle={{
-                            alignItems: "center",
                             padding: RFPercentage(1),
                         }}
                     >
@@ -381,7 +382,6 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
                     </Frame>
                 </DefaultView>
-
 
                 <VerticalButtonsView>
                     <ButtonsView>
