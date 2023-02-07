@@ -1,4 +1,4 @@
-import { Container, CenterView, Frame, Label, ButtonsView, VerticalButtonsView, GoalsLabelView, DefaultView, HorizontalGoalsView, GoalsText, DefaultHorizontalView, ShowMoreCheckView, CheckText } from "./styles";
+import { Container, CenterView, Frame, Label, ButtonsView, VerticalButtonsView, GoalsLabelView, DefaultView, HorizontalGoalsView, GoalsText, DefaultHorizontalView, ShowMoreCheckView, CheckText, BgCenterView } from "./styles";
 import Input from "../Input";
 import CircleAdd from '../Buttons/CircleAdd'
 import { useState, useEffect } from "react";
@@ -41,31 +41,67 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
     // states dos dados armazenados
     const [checklists, setCheckLists] = useState([]);
     const [links, setLinks] = useState([{}]);
+    const [linksLoaded, setLinksLoaded] = useState(false); // diz se o state do link ja recebeu os dados do fetch
 
     const checkListsScroll = useRef(null);
     const centerViewScroll = useRef(null);
 
-    // Realiza a verificação se é edição ou cadastro de metas ao carregar a tela
+    // Busca as informações cadastradas quando a tela é carregada
     useEffect(() => {
         fetchData();
-
-        if (typeof (id) == "string") {
-            loadItemToEdit(id);
-            setSubmitButtonText("EDITAR");
-            setDeleteButton("flex");
-        } else {
-            setSubmitButtonText("CADASTRAR");
-            setDeleteButton("none");
-        }
     }, []);
 
+    // Verifica quando os links são carregados
+    useEffect(() => {
+
+        if (linksLoaded) {
+            if (typeof (id) == "string") {
+                setSubmitButtonText("EDITAR");
+                setDeleteButton("flex");
+                loadItemToEdit(id);
+            } else {
+                setSubmitButtonText("CADASTRAR");
+                setDeleteButton("none");
+            };
+        };
+
+    }, [linksLoaded]);
+
+    // Verifica quando os links são carregados
+    useEffect(() => {
+
+        console.log("checkliss: \n", checklists);
+
+    }, [checklists]);
+
+
+    // Carrega as informações cadastradas do item a ser editado
     async function loadItemToEdit(id) {
         const response = await AsyncStorage.getItem('@goalsmanagement:habits');
         const data = response ? JSON.parse(response) : [];
 
-        const toEdit = data.filter(item => item.id == id)[0];
+        data.map((item) => {
+            if (item.id === id) {
+                setHabit(item.habit);
 
-        setHabit(toEdit.habit);
+                links.map((link, index) => {
+                    item.linked.includes(link.id) ? handleChangeLinks(index) : null;
+                });
+
+                const checks = item.checklists.map((check, index) => {
+                    return {
+                        title: check.title,
+                        repeat: check.repeat,
+                        notifications: check.notifications
+                    };
+                });
+
+                setCheckLists(checks);
+                // editCheckList(index, check.title, check.repeat, check.notifications);
+
+
+            };
+        });
     };
 
     /**
@@ -147,8 +183,12 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                 };
             }).filter((item) => item !== undefined)
             );
+
+            setLinksLoaded(true);
+
         } else {
             setLinks([]);
+            setLinksLoaded(true);
         };
     };
 
@@ -227,8 +267,6 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
             const data = [...previousData, newData]
 
-            console.log('Valor cadastrado -> \n', data);
-
             await AsyncStorage.setItem("@goalsmanagement:habits", JSON.stringify(data));
 
             showMessage('teste', 'Cadastrado com sucesso!');
@@ -243,157 +281,159 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
             onPress={Keyboard.dismiss}
             animation='fadeIn'
         >
-            <CenterView
-                ref={centerViewScroll}
-                nestedScrollEnabled={true}
-                shouldCancelWhenOutside={false}
-                contentContainerStyle={{
-                    alignItems: 'center',
-                    justifyContent: "center",
-                    flex: 1
-                }}>
-                <Input
-                    style={{ focused: true }}
-                    placeholder="Ex.: Parar de fumar."
-                    icon="repeat"
-                    label="HÁBITO"
-                    onChangeText={setHabit}
-                    returnKeyType="next"
-                    value={habit}
-                    infoShowFunction={() => showInfo("DICA", "Estabeleça um hábito que possa ser alcançado e periódicamente mensurado para o acompanhamento de seu progresso!.", "info")}
-                />
-                <GoalsLabelView>
-                    <Feather
-                        name='shuffle'
-                        size={18}
-                        color={THEME.COLORS.BACKGROUND}
+            <BgCenterView>
+                <CenterView
+                    ref={centerViewScroll}
+                    nestedScrollEnabled={true}
+                    shouldCancelWhenOutside={false}
+                    contentContainerStyle={{
+                        alignItems: 'center',
+                        justifyContent: "center",
+                        flex: 1,
+                    }}>
+                    <Input
+                        style={{ focused: true }}
+                        placeholder="Ex.: Parar de fumar."
+                        icon="repeat"
+                        label="HÁBITO"
+                        onChangeText={setHabit}
+                        returnKeyType="next"
+                        value={habit}
+                        infoShowFunction={() => showInfo("DICA", "Estabeleça um hábito que possa ser alcançado e periódicamente mensurado para o acompanhamento de seu progresso!.", "info")}
                     />
-                    <DefaultView>
-                        <Label>VINCULAR METAS</Label>
+                    <GoalsLabelView>
                         <Feather
-                            style={{ position: 'absolute', right: -RFPercentage(3), top: -RFPercentage(1) }}
-                            name='info'
-                            size={17}
+                            name='shuffle'
+                            size={18}
                             color={THEME.COLORS.BACKGROUND}
-                            onPress={() =>
-                                showInfo("RELACIONAR METAS", "\nVincule seu hábito com as metas cadastradas!\n\nIsso facilitará a vizualização e o acompanhamento de seu progresso!\n\nObs.: Isso também pode ser feito depois.", "info")
-                            }
                         />
-                    </DefaultView>
-                </GoalsLabelView>
+                        <DefaultView>
+                            <Label>VINCULAR METAS</Label>
+                            <Feather
+                                style={{ position: 'absolute', right: -RFPercentage(3), top: -RFPercentage(1) }}
+                                name='info'
+                                size={17}
+                                color={THEME.COLORS.BACKGROUND}
+                                onPress={() =>
+                                    showInfo("RELACIONAR METAS", "\nVincule seu hábito com as metas cadastradas!\n\nIsso facilitará a vizualização e o acompanhamento de seu progresso!\n\nObs.: Isso também pode ser feito depois.", "info")
+                                }
+                            />
+                        </DefaultView>
+                    </GoalsLabelView>
 
-                <DefaultView style={{ flex: 1, width: RFPercentage(46), maxHeight: RFPercentage(55) }}>
-                    <Frame
-                        nestedScrollEnabled={true}
-                        contentContainerStyle={{
-                            padding: RFPercentage(1),
-                        }}
-                    >
-                        <KeyboardAvoidingView behavior="position" enabled>
-                            {links.length > 0 && links.map((item, index) => (
-                                <DefaultView key={index}>
-                                    <HorizontalGoalsView>
+                    <DefaultView style={{ flex: 1, width: RFPercentage(46), maxHeight: RFPercentage(55) }}>
+                        <Frame
+                            nestedScrollEnabled={true}
+                            contentContainerStyle={{
+                                padding: RFPercentage(1),
+                            }}
+                        >
+                            <KeyboardAvoidingView behavior="position" enabled>
+                                {links.length > 0 && links.map((item, index) => (
+                                    <DefaultView key={index}>
+                                        <HorizontalGoalsView>
+                                            <Feather
+                                                name="target"
+                                                size={20}
+                                                color={THEME.COLORS.ALERT900}
+                                            />
+                                            <GoalsText>
+                                                {item.goal + ' em ' + item.time}
+                                            </GoalsText>
+                                            <DefaultView
+                                                animation={item.linked ? 'fadeIn' : 'fadeOut'}
+                                                duration={item.linked ? 700 : 300}
+                                                direction={item.linked ? null : "alternate-reverse"}
+                                            >
+                                                <Feather
+                                                    name={item.linked ? "shuffle" : "refresh-cw"}
+                                                    size={18}
+                                                    color={item.linked ? THEME.COLORS.TEXT : THEME.COLORS.ALERT900}
+                                                    onPress={() => { handleChangeLinks(index) }}
+                                                />
+                                            </DefaultView>
+                                        </HorizontalGoalsView>
+                                    </DefaultView>
+                                ))}
+                                {links.length <= 0 && (
+                                    <DefaultView
+                                        style={{
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            backgroundColor: THEME.COLORS.PRIMARY800,
+                                            padding: RFPercentage(1),
+                                            borderRadius: 5,
+                                        }}
+                                    >
                                         <Feather
-                                            name="target"
-                                            size={20}
+                                            style={{ marginBottom: RFPercentage(0.8) }}
+                                            name="info"
+                                            size={24}
                                             color={THEME.COLORS.ALERT900}
                                         />
-                                        <GoalsText>
-                                            {item.goal + ' em ' + item.time}
+                                        <GoalsText style={{ textAlign: "center" }}>
+                                            {'Nenhuma meta cadastrada!\n\nCrie novas METAS para vinculá-las com seus hábitos.\n'}
                                         </GoalsText>
-                                        <DefaultView
-                                            animation={item.linked ? 'fadeIn' : 'fadeOut'}
-                                            duration={item.linked ? 700 : 300}
-                                            direction={item.linked ? null : "alternate-reverse"}
-                                        >
-                                            <Feather
-                                                name={item.linked ? "shuffle" : "refresh-cw"}
-                                                size={18}
-                                                color={item.linked ? THEME.COLORS.TEXT : THEME.COLORS.ALERT900}
-                                                onPress={() => { handleChangeLinks(index) }}
-                                            />
-                                        </DefaultView>
-                                    </HorizontalGoalsView>
-                                </DefaultView>
-                            ))}
-                            {links.length <= 0 && (
-                                <DefaultView
-                                    style={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        backgroundColor: THEME.COLORS.PRIMARY800,
-                                        padding: RFPercentage(1),
-                                        borderRadius: 5,
-                                    }}
-                                >
-                                    <Feather
-                                        style={{ marginBottom: RFPercentage(0.8) }}
-                                        name="info"
-                                        size={24}
-                                        color={THEME.COLORS.ALERT900}
-                                    />
-                                    <GoalsText style={{ textAlign: "center" }}>
-                                        {'Nenhuma meta cadastrada!\n\nCrie novas METAS para vinculá-las com seus hábitos.\n'}
-                                    </GoalsText>
-                                </DefaultView>
-                            )}
+                                    </DefaultView>
+                                )}
 
-                        </KeyboardAvoidingView>
-                    </Frame>
-                </DefaultView>
-
-                <GoalsLabelView>
-                    <Feather
-                        name='check-square'
-                        size={18}
-                        color={THEME.COLORS.BACKGROUND}
-                    />
-                    <DefaultView>
-                        <Label>CHECKLIST'S</Label>
-                        <Feather
-                            style={{ position: 'absolute', right: -RFPercentage(3), top: -RFPercentage(1) }}
-                            name='info'
-                            size={17}
-                            color={THEME.COLORS.BACKGROUND}
-                            onPress={() =>
-                                showInfo("CHECKLISTS", "\nCrie atividades frequentes e fortaleça sua caminhada para a habituação!\n\nIsso ajuda a proporcionar recompensas ao seu cérebro sempre que uma atividade é realizada.\n\nIsso proporciona uma maior percepção no aumento do progresso!\n", "info")
-                            }
-                        />
+                            </KeyboardAvoidingView>
+                        </Frame>
                     </DefaultView>
-                </GoalsLabelView>
 
-                <DefaultView style={{ flex: 1, width: RFPercentage(46), maxHeight: RFPercentage(55) }}>
-                    <Frame
-                        ref={checkListsScroll}
-                        nestedScrollEnabled={true}
-                        contentContainerStyle={{
-                            alignItems: "center",
-                            padding: RFPercentage(1)
-                        }}>
-                        <KeyboardAvoidingView behavior="position" enabled>
+                    <GoalsLabelView>
+                        <Feather
+                            name='check-square'
+                            size={18}
+                            color={THEME.COLORS.BACKGROUND}
+                        />
+                        <DefaultView>
+                            <Label>CHECKLIST'S</Label>
+                            <Feather
+                                style={{ position: 'absolute', right: -RFPercentage(3), top: -RFPercentage(1) }}
+                                name='info'
+                                size={17}
+                                color={THEME.COLORS.BACKGROUND}
+                                onPress={() =>
+                                    showInfo("CHECKLISTS", "\nCrie atividades frequentes e fortaleça sua caminhada para a habituação!\n\nIsso ajuda a proporcionar recompensas ao seu cérebro sempre que uma atividade é realizada.\n\nIsso proporciona uma maior percepção no aumento do progresso!\n", "info")
+                                }
+                            />
+                        </DefaultView>
+                    </GoalsLabelView>
 
-                            {checklists.length > 0 && checklists.map((item, index) => (
-                                <DefaultView
-                                    key={index}
-                                    animation={'fadeIn'}
-                                    duration={350}
-                                >
-                                    <ShowChecks
-                                        placeholder={'Ex.: Ler 10 páginas.'}
-                                        item={checklists[index]}
-                                        onChangeText={(text) => { editCheckList(index, text) }}
-                                        onSelectValue={(repeat, notifications) => { editCheckList(index, undefined, repeat, notifications) }}
-                                    />
-                                </DefaultView>
-                            ))}
+                    <DefaultView style={{ flex: 1, width: RFPercentage(46), maxHeight: RFPercentage(55) }}>
+                        <Frame
+                            ref={checkListsScroll}
+                            nestedScrollEnabled={true}
+                            contentContainerStyle={{
+                                alignItems: "center",
+                                padding: RFPercentage(1)
+                            }}>
+                            <KeyboardAvoidingView behavior="position" enabled>
 
-                        </KeyboardAvoidingView>
+                                {checklists.length > 0 && checklists.map((item, index) => (
+                                    <DefaultView
+                                        key={index}
+                                        animation={'fadeIn'}
+                                        duration={350}
+                                    >
+                                        <ShowChecks
+                                            placeholder={'Ex.: Ler 10 páginas.'}
+                                            item={checklists[index]}
+                                            onChangeText={(text) => { editCheckList(index, text) }}
+                                            onSelectValue={(repeat, notifications) => { editCheckList(index, undefined, repeat, notifications) }}
+                                        />
+                                    </DefaultView>
+                                ))}
 
-                        <CircleAdd AddFunction={() => handleAddCheckList()} />
+                            </KeyboardAvoidingView>
 
-                    </Frame>
-                </DefaultView>
+                            <CircleAdd AddFunction={() => handleAddCheckList()} />
 
+                        </Frame>
+                    </DefaultView>
+
+                </CenterView>
                 <VerticalButtonsView>
                     <ButtonsView>
                         <GenericButton
@@ -444,7 +484,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                     )}
 
                 </VerticalButtonsView>
-            </CenterView>
+            </BgCenterView>
         </Container>
     );
 }

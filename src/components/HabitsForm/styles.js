@@ -4,6 +4,13 @@ import THEME from "../../theme";
 import * as Animatable from 'react-native-animatable'
 import { ScrollView } from 'react-native-gesture-handler'
 
+export const BgCenterView = styled.View`
+    margin-top: ${RFPercentage(4)}px;
+    flex: 1;
+    justify-content: flex-start;
+    align-items: center;
+`
+
 export const ShowMoreCheckView = styled.View`
     flex: 1;
     flex-direction: row;
@@ -60,11 +67,10 @@ export const GoalsLabelView = styled.View`
     margin-left: ${RFPercentage(4.5)}px;
 
 `
-
 export const CenterView = styled(ScrollView)`
     flex: 1;
     min-height: ${RFPercentage(60)}px;
-    max-height: ${RFPercentage(85)}px;
+    max-height: ${RFPercentage(78)}px;
     width: ${RFPercentage(50)}px;
     flex-direction: column;
     background-color: ${THEME.COLORS.ALERT800};
@@ -81,6 +87,9 @@ export const Container = styled(Animatable.View)`
     background-color: rgba(0, 0, 0, 0.3);
 `
 export const VerticalButtonsView = styled.View`
+    position: absolute;
+    width: 100%;
+    bottom: 0;
     flex: 1;
     justify-content: center;
     align-items: center;
