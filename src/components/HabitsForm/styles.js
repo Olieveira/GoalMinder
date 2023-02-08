@@ -4,10 +4,26 @@ import THEME from "../../theme";
 import * as Animatable from 'react-native-animatable'
 import { ScrollView } from 'react-native-gesture-handler'
 
+export const HeaderView = styled.View`
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: ${THEME.COLORS.ALERT800};
+    padding: ${RFPercentage(2)}px 0;
+    border: solid 2px ${THEME.COLORS.PRIMARY900};
+`
+
+export const HeaderTitle = styled.Text`
+    width: 100%;
+    text-align: center;
+    font-size: ${RFPercentage(2.7)}px;
+    font-family: ${THEME.FONTS.BOLD};
+    color: ${THEME.COLORS.BACKGROUND};
+`
+
 export const BgCenterView = styled.View`
-    margin-top: ${RFPercentage(4)}px;
-    flex: 1;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
 `
 
@@ -69,13 +85,11 @@ export const GoalsLabelView = styled.View`
 `
 export const CenterView = styled(ScrollView)`
     flex: 1;
-    min-height: ${RFPercentage(60)}px;
     max-height: ${RFPercentage(78)}px;
     width: ${RFPercentage(50)}px;
-    flex-direction: column;
     background-color: ${THEME.COLORS.ALERT800};
-    border-radius: 5px;
-    position: absolute;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
 `
 export const Container = styled(Animatable.View)`
     flex-direction: column;
@@ -83,23 +97,18 @@ export const Container = styled(Animatable.View)`
     align-items: center;
     width: 100%;
     height: 100%;
-    position: absolute;
     background-color: rgba(0, 0, 0, 0.3);
 `
 export const VerticalButtonsView = styled.View`
-    position: absolute;
-    width: 100%;
-    bottom: 0;
-    flex: 1;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     background-color: ${THEME.COLORS.ALERT900};
     border-radius: 5px;
     margin: ${RFPercentage(1)}px ${RFPercentage(0.5)}px;
+    border: solid 2.4px ${THEME.COLORS.ALERT800};
 `
 
 export const ButtonsView = styled.View`
-    flex: 1;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -109,6 +118,8 @@ export const ButtonsView = styled.View`
 export const Frame = styled.ScrollView`
     flex-direction: column;
     margin-top: ${RFPercentage(1)}px;
+    border: solid 2px ${THEME.COLORS.BACKGROUND};
+    border-radius: 2px;
 `
 
 export const Label = styled.Text`

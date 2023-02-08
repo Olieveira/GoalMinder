@@ -1,4 +1,4 @@
-import { Container, CenterView, Frame, Label, ButtonsView, VerticalButtonsView, GoalsLabelView, DefaultView, HorizontalGoalsView, GoalsText, DefaultHorizontalView, ShowMoreCheckView, CheckText, BgCenterView } from "./styles";
+import { Container, CenterView, Frame, Label, ButtonsView, VerticalButtonsView, GoalsLabelView, DefaultView, HorizontalGoalsView, GoalsText, DefaultHorizontalView, ShowMoreCheckView, CheckText, BgCenterView, HeaderView, HeaderTitle } from "./styles";
 import Input from "../Input";
 import CircleAdd from '../Buttons/CircleAdd'
 import { useState, useEffect } from "react";
@@ -66,14 +66,6 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
         };
 
     }, [linksLoaded]);
-
-    // Verifica quando os links são carregados
-    useEffect(() => {
-
-        console.log("checkliss: \n", checklists);
-
-    }, [checklists]);
-
 
     // Carrega as informações cadastradas do item a ser editado
     async function loadItemToEdit(id) {
@@ -282,25 +274,27 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
             animation='fadeIn'
         >
             <BgCenterView>
+                <HeaderView><HeaderTitle>{typeof (id) == "string" ? 'EDITAR' : 'NOVO HÁBITO'}</HeaderTitle></HeaderView>
                 <CenterView
                     ref={centerViewScroll}
-                    nestedScrollEnabled={true}
                     shouldCancelWhenOutside={false}
                     contentContainerStyle={{
                         alignItems: 'center',
                         justifyContent: "center",
-                        flex: 1,
                     }}>
-                    <Input
-                        style={{ focused: true }}
-                        placeholder="Ex.: Parar de fumar."
-                        icon="repeat"
-                        label="HÁBITO"
-                        onChangeText={setHabit}
-                        returnKeyType="next"
-                        value={habit}
-                        infoShowFunction={() => showInfo("DICA", "Estabeleça um hábito que possa ser alcançado e periódicamente mensurado para o acompanhamento de seu progresso!.", "info")}
-                    />
+
+                    <DefaultView style={{ margin: RFPercentage(1.8) }}>
+                        <Input
+                            style={{ focused: true }}
+                            placeholder="Ex.: Parar de fumar."
+                            icon="repeat"
+                            label="HÁBITO"
+                            onChangeText={setHabit}
+                            returnKeyType="next"
+                            value={habit}
+                            infoShowFunction={() => showInfo("DICA", "Estabeleça um hábito que possa ser alcançado e periódicamente mensurado para o acompanhamento de seu progresso!.", "info")}
+                        />
+                    </DefaultView>
                     <GoalsLabelView>
                         <Feather
                             name='shuffle'
@@ -321,11 +315,13 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                         </DefaultView>
                     </GoalsLabelView>
 
-                    <DefaultView style={{ flex: 1, width: RFPercentage(46), maxHeight: RFPercentage(55) }}>
+                    <DefaultView style={{ flex: 1, width: RFPercentage(46), maxHeight: RFPercentage(45), justifyContent: 'center', alignItems: 'center' }}>
                         <Frame
                             nestedScrollEnabled={true}
+                            style={{ padding: RFPercentage(1) }}
                             contentContainerStyle={{
-                                padding: RFPercentage(1),
+                                justifyContent: "center",
+                                alignItems: "center"
                             }}
                         >
                             <KeyboardAvoidingView behavior="position" enabled>
@@ -363,6 +359,8 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                                             backgroundColor: THEME.COLORS.PRIMARY800,
                                             padding: RFPercentage(1),
                                             borderRadius: 5,
+                                            borderColor: THEME.COLORS.BACKGROUND,
+                                            borderWidth: 2
                                         }}
                                     >
                                         <Feather
@@ -401,13 +399,14 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                         </DefaultView>
                     </GoalsLabelView>
 
-                    <DefaultView style={{ flex: 1, width: RFPercentage(46), maxHeight: RFPercentage(55) }}>
+                    <DefaultView style={{ flex: 1, width: RFPercentage(46), maxHeight: RFPercentage(53) }}>
                         <Frame
                             ref={checkListsScroll}
                             nestedScrollEnabled={true}
+                            style={{ marginBottom: RFPercentage(1) }}
                             contentContainerStyle={{
                                 alignItems: "center",
-                                padding: RFPercentage(1)
+                                padding: RFPercentage(1),
                             }}>
                             <KeyboardAvoidingView behavior="position" enabled>
 
@@ -426,10 +425,40 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                                     </DefaultView>
                                 ))}
 
+                                {checklists.length < 1 && (
+                                    <DefaultView
+                                        style={{
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            backgroundColor: THEME.COLORS.PRIMARY800,
+                                            padding: RFPercentage(1),
+                                            borderRadius: 5,
+                                            borderColor: THEME.COLORS.BACKGROUND,
+                                            borderWidth: 2
+                                        }}
+                                    >
+                                        <Feather
+                                            style={{ marginBottom: RFPercentage(0.8) }}
+                                            name="activity"
+                                            size={24}
+                                            color={THEME.COLORS.ALERT900}
+                                        />
+                                        <GoalsText style={{ textAlign: "center" }}>
+                                            {'Cadastre atividades e realize durante seu caminho à habituação!\n'}
+                                        </GoalsText>
+                                    </DefaultView>
+                                )}
+
                             </KeyboardAvoidingView>
 
-                            <CircleAdd AddFunction={() => handleAddCheckList()} />
-
+                            <DefaultView
+                                animation={"tada"}
+                                iterationCount="infinite"
+                                duration={1000}
+                                iterationDelay={800}
+                            >
+                                <CircleAdd AddFunction={() => handleAddCheckList()} />
+                            </DefaultView>
                         </Frame>
                     </DefaultView>
 

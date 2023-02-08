@@ -73,12 +73,12 @@ export const MultiplyItensView = styled(Animatable.View)`
 export const BgView = styled(Animatable.View)`
     justify-content: center;
     align-items: center;
-    padding: ${RFPercentage(1)}px;
-    margin: ${RFPercentage(0.3)}px 0;
-    width: ${RFPercentage(46)}px;
+    padding: ${RFPercentage(0.3)}px;
+    margin: ${RFPercentage(0.3)}px;
+    width: ${RFPercentage(43)}px;
     border-radius: 3px;
     background-color: ${THEME.COLORS.BACKGROUND};
-    border: 4px solid ${THEME.COLORS.PRIMARY800};
+    border: 2px solid ${THEME.COLORS.PRIMARY800};
 `
 export const HorizontalView = styled(Animatable.View)`
     flex-direction: row;
@@ -89,8 +89,8 @@ export const FrameDataView = styled(Animatable.View)`
     flex: 1;
     justify-content: center;
     align-items: center;
-    margin: ${RFPercentage(0.5)}px;
-    padding: ${RFPercentage(0.5)}px;
+    margin: ${RFPercentage(0.2)}px ${RFPercentage(0.5)}px;
+    padding: ${RFPercentage(0.2)}px;
 `
 export const FrameLabel = styled.Text`
     text-align: center;

@@ -18,12 +18,10 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
     const notificationsOptions = ['Diário', 'Semanal', 'Mensal', 'Nenhum'];
 
     useEffect(() => {
-
         item.notifications != false && setSelectedValueNotifications(item.notifications);
 
         item.repeat != false && setSelectedValueRepeat(item.repeat);
 
-        console.log('\n Item recebido no ShowChecks: ', item, '\n');
         setNotifications(item.notifications);
         setRepeat(item.repeat);
     }, [])
@@ -104,7 +102,7 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
         <BgView>
             <HorizontalView>
                 <FrameDataView>
-                    <HorizontalView style>
+                    <HorizontalView>
                         <Feather
                             name='check-square'
                             size={20}

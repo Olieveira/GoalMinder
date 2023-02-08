@@ -96,7 +96,7 @@ export default function Goals() {
             const response = await AsyncStorage.getItem("@goalsmanagement:goals");
             response == null ? null : setGoals(JSON.parse(response));
         } catch (err) {
-            console.log("Erro: ", err);
+            console.log("Erro ao buscar metas cadastradas: ", err);
         }
     };
 
