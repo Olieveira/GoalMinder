@@ -224,7 +224,13 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
 
             <Label>INDICADORES {numIndicators > 1 ? '(' + numIndicators + ')' : null}</Label>
 
-            <Frame onPress={Keyboard.dismiss} ref={scrollViewRef} contentContainerStyle={{ alignItems: "center", padding: 10 }}>
+            <Frame
+                onPress={Keyboard.dismiss}
+                ref={scrollViewRef}
+                contentContainerStyle={{
+                    alignItems: "center",
+                    padding: 10
+                }}>
                 <KeyboardAvoidingView behavior="position" enabled>
                     {Array.from(Array(numIndicators).keys()).map(index => (
                         <Input

@@ -29,6 +29,50 @@ export default function Goals() {
     }, []);
 
     /**
+     * Desvincula a meta dos hábitos vinculados
+     * 
+     * @param {string} id ID do item a ser desvinculado. Desvincula todos se não for informado. 
+     */
+    async function unlink(id) {
+        const response = await AsyncStorage.getItem('@goalsmanagement:habits');
+        const data = response ? JSON.parse(response) : [];
+
+        let filtered = [];
+
+        // Se a exclusão é de um item específico ou de todas metas
+        if (id !== undefined) {
+
+            filtered = data.map((item, index) => {
+                if (item.linked.includes(id)) {
+                    return {
+                        checklists: item.checklists,
+                        createdAt: item.createdAt,
+                        habit: item.habit,
+                        id: item.id,
+                        linked: item.linked.filter(item => item !== id)
+                    };
+                } else {
+                    return item;
+                };
+            });
+
+        } else {
+
+            filtered = data.map((item) => {
+                return {
+                    checklists: item.checklists,
+                    createdAt: item.createdAt,
+                    habit: item.habit,
+                    id: item.id,
+                    linked: []
+                };
+            })
+        };
+
+        await AsyncStorage.setItem('@goalsmanagement:habits', JSON.stringify(filtered));
+    };
+
+    /**
     * Deleta o item atual.
     */
     async function deleteItem() {
@@ -39,16 +83,18 @@ export default function Goals() {
 
         await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data));
 
+        await unlink(editId);
+
         setEditId(undefined);
 
-        showInfo("META EXCLUIDA COM SUCESSO!", "", "success");
+        showInfo("META DESVINCULADA E EXCLUÍDA COM SUCESSO!", "", "success");
         handleShowForm();
     };
 
     /**
      * Exclui todos os cadastros.
      */
-    function deleteAll() {
+    async function deleteAll() {
         LayoutAnimation.configureNext({
             duration: 300,
             update: {
@@ -56,9 +102,12 @@ export default function Goals() {
             },
         });
 
-        AsyncStorage.removeItem("@goalsmanagement:goals");
+        await AsyncStorage.removeItem("@goalsmanagement:goals");
+
+        await unlink();
+
         setGoals([]);
-        showInfo("SUCESSO", "Todas as metas foram excluídas com sucesso!", "success");
+        showInfo("SUCESSO", "Todas as metas foram desvinculadas e excluídas com sucesso!", "success");
     }
 
     /**

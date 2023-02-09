@@ -22,6 +22,7 @@ export default function Habits() {
 
     async function fetchData() {
         const response = await AsyncStorage.getItem("@goalsmanagement:habits");
+
         if (response != null) {
             setHabits(JSON.parse(response));
         };
@@ -39,10 +40,10 @@ export default function Habits() {
 
         toEditId != undefined ? setEditId(toEditId) : null;
 
+        await fetchData();
+
         setFormDisplay(!formDisplay);
         setDeleteButton(!deleteButton);
-
-        await fetchData();
     };
 
     async function deleteAll() {

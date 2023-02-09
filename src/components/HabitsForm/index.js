@@ -56,9 +56,9 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
         if (linksLoaded) {
             if (typeof (id) == "string") {
+                loadItemToEdit(id);
                 setSubmitButtonText("EDITAR");
                 setDeleteButton("flex");
-                loadItemToEdit(id);
             } else {
                 setSubmitButtonText("CADASTRAR");
                 setDeleteButton("none");
@@ -162,7 +162,9 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
      * Realiza a consulta das metas cadastradas
      */
     async function fetchData() {
+
         const response = await AsyncStorage.getItem("@goalsmanagement:goals");
+
         if (response != null) {
             const data = JSON.parse(response);
 
@@ -203,26 +205,26 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
      * inutilizado ainda
      */
     async function handleSubmitEdit() {
-        if (goal != "") {
+        if (habit != "" || !checklists.find(item => item == "" || item == undefined)) {
 
-            const response = await AsyncStorage.getItem("@goalsmanagement:goals");
+            const response = await AsyncStorage.getItem("@goalsmanagement:habits");
             const previousData = response ? JSON.parse(response) : [];
 
             const newData = previousData.map((item) => {
                 if (item.id == id) {
                     return {
                         id: item.id,
-                        goal,
-                        time,
-                        indicators: indicators.filter(item => item !== undefined && item !== ""),
-                        createdAt: item.createdAt
+                        habit,
+                        createdAt: item.createdAt,
+                        checklists,
+                        linked: links.map(item => item.linked ? item.id : null).filter(item => item != undefined && item != null)
                     };
                 } else {
                     return item;
-                }
-            })
+                };
+            });
 
-            await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(newData.filter(item => item !== undefined)));
+            await AsyncStorage.setItem("@goalsmanagement:habits", JSON.stringify(newData.filter(item => item !== undefined)));
             showMessage();
             hideForm();
         } else {
@@ -272,6 +274,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
         <Container
             onPress={Keyboard.dismiss}
             animation='fadeIn'
+            delay={200}
         >
             <BgCenterView>
                 <HeaderView><HeaderTitle>{typeof (id) == "string" ? 'EDITAR' : 'NOVO HÁBITO'}</HeaderTitle></HeaderView>
@@ -514,6 +517,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
                 </VerticalButtonsView>
             </BgCenterView>
+
         </Container>
     );
 }

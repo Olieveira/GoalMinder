@@ -30,7 +30,7 @@ export default function ShowHabits({ item, handleEdit }) {
                     };
                 });
                 setLinkedGoals(linkeds.filter((linked) => linked !== undefined));
-            }
+            };
 
         };
 
@@ -92,7 +92,6 @@ export default function ShowHabits({ item, handleEdit }) {
                 />
             </DeleteButton>
             <BgView>
-
 
                 <HorizontalView>
                     <FrameDataView>
@@ -218,6 +217,16 @@ export default function ShowHabits({ item, handleEdit }) {
                                     </CheckHeaders>
 
                                     <CheckHorizontalView>
+                                        
+                                        <CheckVerticalView>
+                                            <HeaderLabel>{item.repeat != false && item.repeat != 'Nenhum' ? item.repeat : 'Desativado'}</HeaderLabel>
+                                            <Feather
+                                                name={item.repeat != false && item.repeat != 'Nenhum' ? 'repeat' : 'shuffle'}
+                                                size={20}
+                                                color={THEME.COLORS.ALERT900}
+                                            />
+                                        </CheckVerticalView>
+
                                         <CheckVerticalView>
                                             <HeaderLabel>{item.notifications != false && item.notifications != 'Nenhum' ? item.notifications : 'Desativado'}</HeaderLabel>
                                             <Feather
@@ -227,14 +236,6 @@ export default function ShowHabits({ item, handleEdit }) {
                                             />
                                         </CheckVerticalView>
 
-                                        <CheckVerticalView>
-                                            <HeaderLabel>{item.repeat != false && item.repeat != 'Nenhum' ? item.repeat : 'Desativado'}</HeaderLabel>
-                                            <Feather
-                                                name={item.repeat != false && item.repeat != 'Nenhum' ? 'repeat' : 'shuffle'}
-                                                size={20}
-                                                color={THEME.COLORS.ALERT900}
-                                            />
-                                        </CheckVerticalView>
                                     </CheckHorizontalView>
 
                                 </CheckValues>

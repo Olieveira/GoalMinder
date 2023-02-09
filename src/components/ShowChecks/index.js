@@ -8,13 +8,16 @@ import { useEffect } from 'react';
 export default function ShowChecks({ placeholder, item, onChangeText, onSelectValue }) {
     const [notifications, setNotifications] = useState(false);
     const [repeat, setRepeat] = useState(false);
+
     const [showingOptionsRepeat, setShowingOptionsRepeat] = useState(false);
     const [selectedValueRepeat, setSelectedValueRepeat] = useState('Selecione');
+
     const [showingOptionsNotifications, setShowingOptionsNotifications] = useState(false);
     const [selectedValueNotifications, setSelectedValueNotifications] = useState('Selecione');
 
-    const repeatOptions = ['Diário', 'Semanal', 'Mensal', 'Nenhum'];
+    const [expandChecksDisplay, setExpandCheckDisplay] = useState(false);
 
+    const repeatOptions = ['Diário', 'Semanal', 'Mensal', 'Nenhum'];
     const notificationsOptions = ['Diário', 'Semanal', 'Mensal', 'Nenhum'];
 
     useEffect(() => {
@@ -26,14 +29,16 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
         setRepeat(item.repeat);
     }, [])
 
-    const [expandChecksDisplay, setExpandCheckDisplay] = useState(false);
 
     function handleSelectValue(repeat, notifications) {
+
         if (repeat !== undefined) {
             setSelectedValueRepeat(repeat);
             onSelectValue(repeat);
             setShowingOptionsRepeat(!showingOptionsRepeat);
-        } else if (notifications !== undefined) {
+        };
+
+        if (notifications !== undefined) {
             setSelectedValueNotifications(notifications);
             onSelectValue(undefined, notifications);
             setShowingOptionsNotifications(!showingOptionsNotifications);
@@ -56,8 +61,17 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
 
         if (opt == 'repeat') {
             setRepeat(!repeat);
+
+            setSelectedValueRepeat('Selecione');
+            onSelectValue(false);
+            setShowingOptionsRepeat(false);
+
         } else if (opt == 'notifications') {
             setNotifications(!notifications);
+
+            setSelectedValueNotifications('Selecione');
+            onSelectValue(undefined, false);
+            setShowingOptionsNotifications(false);''
         };
     };
 
