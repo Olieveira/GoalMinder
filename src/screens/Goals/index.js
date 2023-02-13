@@ -9,7 +9,7 @@ import { Feather } from '@expo/vector-icons'
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import THEME from '../../theme';
 import GenericButton from '../../components/Buttons/Generic';
-import ConfirmDelete from '../../components/ConfirmDelete';
+import ModalMessage from '../../components/ModalMessage';
 import { LayoutAnimation } from 'react-native';
 
 export default function Goals() {
@@ -23,72 +23,38 @@ export default function Goals() {
     const [showingConfirmation, setShowingConfirmation] = useState(false);
     // Mensagem exibida no componente de confirmação
     const [messageConfirmation, setMessageConfirmation] = useState('');
+    // Componente de exibição de mensagens
+    const [modalType, setModalType] = useState('');
+    const [modalTitle, setModalTitle] = useState('');
+    const [modalYes, setModalYes] = useState();
 
     useEffect(() => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        console.log(showingConfirmation);
+    }, [showingConfirmation]);
+
+
     /**
-     * Desvincula a meta dos hábitos vinculados
-     * 
-     * @param {string} id ID do item a ser desvinculado. Desvincula todos se não for informado. 
+     * Desvincula as metas dos hábitos vinculados
      */
-    async function unlink(id) {
+    async function unlink() {
         const response = await AsyncStorage.getItem('@goalsmanagement:habits');
         const data = response ? JSON.parse(response) : [];
 
-        let filtered = [];
-
-        // Se a exclusão é de um item específico ou de todas metas
-        if (id !== undefined) {
-
-            filtered = data.map((item, index) => {
-                if (item.linked.includes(id)) {
-                    return {
-                        checklists: item.checklists,
-                        createdAt: item.createdAt,
-                        habit: item.habit,
-                        id: item.id,
-                        linked: item.linked.filter(item => item !== id)
-                    };
-                } else {
-                    return item;
-                };
-            });
-
-        } else {
-
-            filtered = data.map((item) => {
-                return {
-                    checklists: item.checklists,
-                    createdAt: item.createdAt,
-                    habit: item.habit,
-                    id: item.id,
-                    linked: []
-                };
-            })
-        };
+        const filtered = data.map((item) => {
+            return {
+                checklists: item.checklists,
+                createdAt: item.createdAt,
+                habit: item.habit,
+                id: item.id,
+                linked: []
+            };
+        })
 
         await AsyncStorage.setItem('@goalsmanagement:habits', JSON.stringify(filtered));
-    };
-
-    /**
-    * Deleta o item atual.
-    */
-    async function deleteItem() {
-        const response = await AsyncStorage.getItem("@goalsmanagement:goals");
-        const previousData = response ? JSON.parse(response) : [];
-
-        const data = previousData.filter(item => item.id != editId);
-
-        await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data));
-
-        await unlink(editId);
-
-        setEditId(undefined);
-
-        showInfo("META DESVINCULADA E EXCLUÍDA COM SUCESSO!", "", "success");
-        handleShowForm();
     };
 
     /**
@@ -107,8 +73,12 @@ export default function Goals() {
         await unlink();
 
         setGoals([]);
-        showInfo("SUCESSO", "Todas as metas foram desvinculadas e excluídas com sucesso!", "success");
-    }
+
+        setShowingConfirmation(false);
+
+        setTimeout(() => showInfo("SUCESSO", "Todas as metas foram desvinculadas e excluídas com sucesso!", "success"), 100);
+
+    };
 
     /**
      * Altera a exibição da mensagem de confirmação
@@ -122,12 +92,22 @@ export default function Goals() {
      * 
      * @param {string} message Título da mensagem. 
      * @param {string} description Mensagem central.
-     * @param {string} type Tipo da mensagem: "none" | "default" | "info" | "success" | "danger" | "warning."
+     * @param {string} type Tipo da mensagem: "info" | "success" | "warning."
+     * @param {function} yes Função executada ao confirmar a mensagem.
      * 
      * @returns {JSX.Element} Elemento de exibição de mensagem.
      */
-    async function showInfo(message, description, type) {
-        window.alert(description);
+    async function showInfo(title, message, type, yes) {
+
+        setModalTitle(title);
+
+        setMessageConfirmation(message);
+
+        setModalType(type);
+
+        setModalYes(() => yes);
+
+        displayConfirmation();
     };
 
     /**
@@ -328,8 +308,7 @@ export default function Goals() {
                             width={RFPercentage(23)}
                             height={RFPercentage(6)}
                             handleFunction={() => {
-                                setMessageConfirmation(`Deseja excluir todas as metas cadastradas? (${goals.length})`);
-                                displayConfirmation();
+                                showInfo("CONFIRMAÇÃO", `Deseja excluir todas as metas cadastradas? (${goals.length})`, "warning", () => deleteAll());
                             }}
                             fontFamily={THEME.FONTS.MEDIUM}
                             borderRadius={5}
@@ -341,22 +320,18 @@ export default function Goals() {
                     <AddForm
                         id={editId}
                         hideForm={handleShowForm}
-                        showMessage={() => showInfo("SUCESSO", "Meta cadastrada!", "success")}
-                        showMessageNotFound={() => showInfo("ID não encontrado!", "Se o item selecionado existir e esse erro persistir, contacte o desenvolvedor!", "danger")}
-                        showConfirmation={() => {
-                            setMessageConfirmation(`Tem certeza que deseja excluir essa meta?`);
-                            displayConfirmation();
-                        }}
+                        showMessage={(title, message, type, yes) => showInfo(title, message, type, yes)}
                     />
                 )}
 
             </CenterAdvice>
             {showingConfirmation && (
-                <ConfirmDelete
+                <ModalMessage
                     hide={displayConfirmation}
-                    yes={typeof (editId) == 'string' ? () => deleteItem() : () => deleteAll()}
-                    title='CONFIRMAÇÃO'
+                    yes={modalYes}
+                    title={modalTitle}
                     message={messageConfirmation}
+                    type={modalType}
                 />
             )}
 

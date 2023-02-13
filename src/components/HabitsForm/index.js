@@ -14,6 +14,7 @@ import ShowChecks from "../ShowChecks";
 import { useRef } from "react";
 import { LayoutAnimation } from "react-native";
 import { View } from "react-native-animatable";
+import ModalMessage from "../ModalMessage";
 
 /**
  * 
@@ -42,6 +43,12 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
     const [checklists, setCheckLists] = useState([]);
     const [links, setLinks] = useState([{}]);
     const [linksLoaded, setLinksLoaded] = useState(false); // diz se o state do link ja recebeu os dados do fetch
+
+    // define a exibição de mensagens no centro da tela
+    const [showingMessage, setShowingMessage] = useState(false);
+    const [modalTitle, setModalTitle] = useState('');
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalType, setModalType] = useState('');
 
     const checkListsScroll = useRef(null);
     const centerViewScroll = useRef(null);
@@ -195,9 +202,17 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
      * 
      * @param type Tipo da mensagem: "none" | "default" | "info" | "success" | "danger" | "warning."
      */
-    function showInfo(message, description, type) {
-        window.alert(description);
-    }
+    function showInfo(title, message, type) {
+
+        setModalTitle(title);
+
+        setModalMessage(message);
+
+        setModalType(type);
+
+        setShowingMessage(true);
+
+    };
 
     /**
      * Realiza a edição da meta atual
@@ -228,7 +243,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
             showMessage();
             hideForm();
         } else {
-            showInfo("OPS!", "Preencha os campos para editar uma meta!", "danger");
+            showInfo("OPS!", "Preencha os campos para editar uma meta!", "warning");
         };
 
     };
@@ -266,7 +281,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
             showMessage('teste', 'Cadastrado com sucesso!');
             hideForm();
         } else {
-            showInfo("OPS!", "Preencha os campos para cadastrar uma meta!", "danger");
+            showInfo("OPS!", "Preencha os campos para cadastrar uma meta!", "warning");
         };
     };
 
@@ -312,7 +327,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                                 size={17}
                                 color={THEME.COLORS.BACKGROUND}
                                 onPress={() =>
-                                    showInfo("RELACIONAR METAS", "\nVincule seu hábito com as metas cadastradas!\n\nIsso facilitará a vizualização e o acompanhamento de seu progresso!\n\nObs.: Isso também pode ser feito depois.", "info")
+                                    showInfo("RELACIONAR METAS", "Vincule seu hábito com as metas cadastradas!\n\nIsso facilitará a vizualização e o acompanhamento de seu progresso!", "info")
                                 }
                             />
                         </DefaultView>
@@ -396,7 +411,7 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
                                 size={17}
                                 color={THEME.COLORS.BACKGROUND}
                                 onPress={() =>
-                                    showInfo("CHECKLISTS", "\nCrie atividades frequentes e fortaleça sua caminhada para a habituação!\n\nIsso ajuda a proporcionar recompensas ao seu cérebro sempre que uma atividade é realizada.\n\nIsso proporciona uma maior percepção no aumento do progresso!\n", "info")
+                                    showInfo("CHECKLISTS", "Crie atividades frequentes e fortaleça sua caminhada para a habituação!\n\nIsso ajuda a proporcionar recompensas ao seu cérebro sempre que uma atividade é realizada.\n\nIsso proporciona uma maior percepção no aumento do progresso!", "info")
                                 }
                             />
                         </DefaultView>
@@ -517,6 +532,15 @@ export default function HabitsForm({ hideForm, showMessage, showMessageNotFound,
 
                 </VerticalButtonsView>
             </BgCenterView>
+
+            {showingMessage && (
+                <ModalMessage
+                    hide={() => setShowingMessage(false)}
+                    title={modalTitle}
+                    message={modalMessage}
+                    type={modalType}
+                />
+            )}
 
         </Container>
     );

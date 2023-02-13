@@ -15,10 +15,10 @@ export const InactiveBG = styled(Animatable.View)`
 `
 export const CenterView = styled(Animatable.View)`
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     width: ${RFPercentage(45)}px;
-    min-height: ${RFPercentage(30)}px;
+    min-height: ${RFPercentage(23)}px;
     border-radius: 5px;
     background-color: ${THEME.COLORS.ALERT800};
     padding: ${RFPercentage(0)}px ${RFPercentage(2.3)}px ${RFPercentage(1)}px;
@@ -30,12 +30,11 @@ export const TitleView = styled.View`
     justify-content: space-between;
     align-items: center;
     align-content: center;
-    margin-bottom: ${RFPercentage(2)}px ;
+    margin: ${RFPercentage(1)}px 0 ${RFPercentage(2)}px 0 ;
 `
 export const TitleMessage = styled.Text`
     font-size: ${RFPercentage(2.5)}px;
     font-family: ${THEME.FONTS.BOLD};
-    color: ${THEME.COLORS.GOALS};
 `
 
 export const BodyMessage = styled.Text`

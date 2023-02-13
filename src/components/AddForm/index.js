@@ -6,7 +6,6 @@ import { Keyboard, KeyboardAvoidingView } from "react-native";
 import { v4 as uuidv4 } from 'uuid';
 import 'react-native-get-random-values';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as FlashMessage from "react-native-flash-message";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import GenericButton from "../Buttons/Generic";
 import THEME from "../../theme";
@@ -24,7 +23,7 @@ import { LayoutAnimation } from 'react-native';
  * 
  * @param {string} id ID referente a um item específico (quando chamado para edição).
  */
-export default function AddForm({ hideForm, showMessage, showMessageNotFound, showConfirmation, id }) {
+export default function AddForm({ hideForm, showMessage, showConfirmation, id }) {
     // quantidade de indicadores
     const [numIndicators, setNumIndicators] = useState(1);
 
@@ -55,6 +54,59 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
     }, [])
 
     /**
+    * Deleta o item atual.
+    */
+    async function deleteItem() {
+        const response = await AsyncStorage.getItem("@goalsmanagement:goals");
+        const previousData = response ? JSON.parse(response) : [];
+
+        const data = previousData.filter(item => item.id != id);
+
+        await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data));
+
+        await unlink();
+
+        setTimeout(() => showMessage("SUCESSO", "Meta excluída e desvínculada com sucesso!", "success"), 200);
+
+        await hideForm();
+
+
+    };
+
+    /**
+     * Desvincula a meta dos hábitos vinculados
+     * 
+     * @param {string} id ID do item a ser desvinculado. Desvincula todos se não for informado. 
+     */
+    async function unlink(goalId) {
+        const response = await AsyncStorage.getItem('@goalsmanagement:habits');
+        const data = response ? JSON.parse(response) : [];
+
+        let filtered = [];
+
+        // Se o id foi recebido
+        if (goalId !== undefined) {
+
+            filtered = data.map((item, index) => {
+                if (item.linked.includes(goalId)) {
+                    return {
+                        checklists: item.checklists,
+                        createdAt: item.createdAt,
+                        habit: item.habit,
+                        id: item.id,
+                        linked: item.linked.filter(item => item !== goalId)
+                    };
+                } else {
+                    return item;
+                };
+            })
+        };
+
+        await AsyncStorage.setItem('@goalsmanagement:habits', JSON.stringify(filtered));
+    };
+
+
+    /**
      * Carrega as informações do item a ser editado.
      */
     async function loadEditItem() {
@@ -72,24 +124,11 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
                 found = true;
             } else {
                 if (index >= previousData.length - 1 && found == false) {
-                    showMessageNotFound();
+                    showMessage("ID não encontrado!", "Se o item selecionado existir e esse erro persistir, contacte o desenvolvedor!", "warning");
                     hideForm();
                 }
             }
         })
-    };
-
-    /**
-     * Exibe mensagens no centro da tela.
-     * 
-     * @param message Titulo da mensagem.
-     * 
-     * @param description Mensagem a ser exibida.
-     * 
-     * @param type Tipo da mensagem: "none" | "default" | "info" | "success" | "danger" | "warning."
-     */
-    async function showInfo(message, description, type) {
-        window.alert(description);
     };
 
     /** 
@@ -149,10 +188,10 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
             })
 
             await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(newData.filter(item => item !== undefined)));
-            showMessage();
+            showMessage("SUCESSO", "Meta editada com sucesso!", "success");
             hideForm();
         } else {
-            showInfo("OPS!", "Preencha os campos para editar uma meta!", "danger");
+            showMessage("OPS!", "Preencha os campos para editar uma meta!", "danger");
         };
 
     }
@@ -188,10 +227,10 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
 
             await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data));
 
-            showMessage();
+            showMessage("SUCESSO", "Meta cadastrada com sucesso!", "success");
             hideForm();
         } else {
-            showInfo("OPS!", "Preencha os campos para cadastrar uma meta!", "danger");
+            showMessage("OPS!", "Preencha os campos para cadastrar uma meta!", "warning");
         };
 
 
@@ -210,7 +249,7 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
                 onChangeText={setGoal}
                 returnKeyType="next"
                 value={goal}
-                infoShowFunction={() => showInfo("DICA", "Busque sempre estabelecer metas mensuráveis e detalhadas!", "info")}
+                infoShowFunction={() => showMessage("DICA", "Busque sempre estabelecer metas mensuráveis e detalhadas!", "info")}
             />
             <Input
                 icon="watch"
@@ -218,7 +257,7 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
                 label="TEMPO"
                 onChangeText={setTime}
                 returnKeyType="next"
-                infoShowFunction={() => showInfo("DICA", "Defina um tempo de conclusão realista e dentro do possível!", "info")}
+                infoShowFunction={() => showMessage("DICA", "Defina um tempo de conclusão realista e dentro do possível!", "info")}
                 value={time}
             />
 
@@ -287,19 +326,12 @@ export default function AddForm({ hideForm, showMessage, showMessageNotFound, sh
                     borderRadius={5}
                     fontSize={RFPercentage(2.3)}
                     fontFamily={THEME.FONTS.MEDIUM}
-                    handleFunction={showConfirmation}
+                    handleFunction={() => { showMessage("CONFIRMAÇÃO", "Tem certeza que deseja excluir essa meta?", "warning", () => deleteItem()) }}
                     width={RFPercentage(20)}
                     display={deleteButton}
                 />
             </VerticalButtonsView>
 
-            <FlashMessage.default
-                position={'center'}
-                duration={4500}
-                hideOnPress={true}
-                animated={true}
-                icon={"info"}
-            />
         </Container>
     );
 }
