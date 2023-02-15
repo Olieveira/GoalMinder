@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { View } from 'react-native-animatable';
 
-export default function ShowHabits({ item, handleEdit }) {
+export default function ShowHabits({ item, handleEdit, handleDelete }) {
     const [expandGoalsDisplay, setExpandGoalsDisplay] = useState(false);
     const [expandChecksDisplay, setExpandCheckDisplay] = useState(false);
 
@@ -15,6 +15,11 @@ export default function ShowHabits({ item, handleEdit }) {
 
     useEffect(() => {
         async function fetchGoalsLinked() {
+            
+            LayoutAnimation.configureNext({
+                duration: 3000,
+            });
+
             const response = await AsyncStorage.getItem('@goalsmanagement:goals');
 
             if (response) {
@@ -36,14 +41,6 @@ export default function ShowHabits({ item, handleEdit }) {
 
         fetchGoalsLinked();
     }, [])
-
-    function handleEditItem() {
-        handleEdit();
-    };
-
-    function handleDeleteItem() {
-        window.alert('Item deletado!');
-    };
 
     /**
      * Expande a view das metas vinculadas
@@ -76,15 +73,17 @@ export default function ShowHabits({ item, handleEdit }) {
     };
 
     return (
-        <View>
-            <EditButton onPress={handleEditItem}>
+        <View
+            animation={'fadeIn'}
+        >
+            <EditButton onPress={handleEdit}>
                 <Feather
                     name='edit'
                     size={17}
                     color={THEME.COLORS.ALERT900}
                 />
             </EditButton>
-            <DeleteButton onPress={handleDeleteItem}>
+            <DeleteButton onPress={handleDelete}>
                 <Feather
                     name='x-octagon'
                     size={17}
@@ -217,7 +216,7 @@ export default function ShowHabits({ item, handleEdit }) {
                                     </CheckHeaders>
 
                                     <CheckHorizontalView>
-                                        
+
                                         <CheckVerticalView>
                                             <HeaderLabel>{item.repeat != false && item.repeat != 'Nenhum' ? item.repeat : 'Desativado'}</HeaderLabel>
                                             <Feather

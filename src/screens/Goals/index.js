@@ -13,17 +13,17 @@ import ModalMessage from '../../components/ModalMessage';
 import { LayoutAnimation } from 'react-native';
 
 export default function Goals() {
-    // controla visibilidade do formulario de adição/edição de metas
+    // controla visibilidade do formulario de metas
     const [formDisplay, setFormDisplay] = useState(false);
     // quantidade de metas cadastradas
     const [goals, setGoals] = useState([]);
     // Armazena o id do item quando chama o form para edição.
     const [editId, setEditId] = useState("");
+
     // Controla a visibilidade do componente de confirmação
     const [showingConfirmation, setShowingConfirmation] = useState(false);
-    // Mensagem exibida no componente de confirmação
-    const [messageConfirmation, setMessageConfirmation] = useState('');
     // Componente de exibição de mensagens
+    const [messageConfirmation, setMessageConfirmation] = useState('');
     const [modalType, setModalType] = useState('');
     const [modalTitle, setModalTitle] = useState('');
     const [modalYes, setModalYes] = useState();
@@ -31,11 +31,6 @@ export default function Goals() {
     useEffect(() => {
         fetchData();
     }, []);
-
-    useEffect(() => {
-        console.log(showingConfirmation);
-    }, [showingConfirmation]);
-
 
     /**
      * Desvincula as metas dos hábitos vinculados
@@ -94,8 +89,6 @@ export default function Goals() {
      * @param {string} description Mensagem central.
      * @param {string} type Tipo da mensagem: "info" | "success" | "warning."
      * @param {function} yes Função executada ao confirmar a mensagem.
-     * 
-     * @returns {JSX.Element} Elemento de exibição de mensagem.
      */
     async function showInfo(title, message, type, yes) {
 
@@ -109,6 +102,8 @@ export default function Goals() {
 
         displayConfirmation();
     };
+
+
 
     /**
      * Realiza consulta dos dados cadastrados e o atribui para o state vinculado a renderização dos componentes.
@@ -332,6 +327,7 @@ export default function Goals() {
                     title={modalTitle}
                     message={messageConfirmation}
                     type={modalType}
+                    closeOnEnd={false}
                 />
             )}
 

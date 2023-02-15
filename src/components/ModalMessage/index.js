@@ -21,9 +21,11 @@ import { useEffect } from 'react';
  * 
  * @param {string} type Tipo da exibição da mensagem. ["info", "warning", "success"]
  * 
+ * @param {string} closeOnEnd Boolean que define se o modal fecha ao executar a função.
+ * 
  * @returns {JSX.Element} 
  */
-export default function ModalMessage({ hide, yes, no, title, message, type }) {
+export default function ModalMessage({ hide, yes, no, title, message, type, closeOnEnd }) {
 
     const [animation, setAnimation] = useState("fadeIn");
     const [typeIcon, setTypeIcon] = useState('');
@@ -101,7 +103,7 @@ export default function ModalMessage({ hide, yes, no, title, message, type }) {
                             fontFamily={THEME.FONTS.MEDIUM}
                             handleFunction={() => {
                                 yes();
-                                setAnimation("fadeOut")
+                                closeOnEnd ? setAnimation("fadeOut") : null;
                             }}
                             width={RFPercentage(17)}
                             height={RFPercentage(5)}

@@ -17,13 +17,9 @@ import { LayoutAnimation } from 'react-native';
  * 
  * @param {function} showMessage Function que exibe mensagens de sucesso na tela do componente pai.
  * 
- * @param {function} showMessageNotFound Function que exibe mensagens de erro/imprevistos na tela do componente pai.
- * 
- * @param {function} showConfirmation Function que exibe componente de confirmação de exclusão na tela do componente pai.
- * 
  * @param {string} id ID referente a um item específico (quando chamado para edição).
  */
-export default function AddForm({ hideForm, showMessage, showConfirmation, id }) {
+export default function AddForm({ hideForm, showMessage, id }) {
     // quantidade de indicadores
     const [numIndicators, setNumIndicators] = useState(1);
 
@@ -43,6 +39,12 @@ export default function AddForm({ hideForm, showMessage, showConfirmation, id })
 
     // Realiza a verificação se é edição ou cadastro de metas ao carregar a tela
     useEffect(() => {
+        LayoutAnimation.configureNext({
+            duration: 300,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+            },
+        });
         if (typeof (id) == "string") {
             setSubmitButtonText("EDITAR");
             setDeleteButton("flex");
@@ -57,6 +59,14 @@ export default function AddForm({ hideForm, showMessage, showConfirmation, id })
     * Deleta o item atual.
     */
     async function deleteItem() {
+        
+        LayoutAnimation.configureNext({
+            duration: 300,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+            },
+        });
+
         const response = await AsyncStorage.getItem("@goalsmanagement:goals");
         const previousData = response ? JSON.parse(response) : [];
 
@@ -66,17 +76,16 @@ export default function AddForm({ hideForm, showMessage, showConfirmation, id })
 
         await unlink();
 
-        setTimeout(() => showMessage("SUCESSO", "Meta excluída e desvínculada com sucesso!", "success"), 200);
+        showMessage("SUCESSO", "Meta excluída e desvínculada com sucesso!", "confirmation");
 
-        await hideForm();
-
+        hideForm();
 
     };
 
     /**
      * Desvincula a meta dos hábitos vinculados
      * 
-     * @param {string} id ID do item a ser desvinculado. Desvincula todos se não for informado. 
+     * @param {string} goalId ID do item a ser desvinculado. Desvincula todos se não for informado. 
      */
     async function unlink(goalId) {
         const response = await AsyncStorage.getItem('@goalsmanagement:habits');
@@ -110,6 +119,13 @@ export default function AddForm({ hideForm, showMessage, showConfirmation, id })
      * Carrega as informações do item a ser editado.
      */
     async function loadEditItem() {
+        LayoutAnimation.configureNext({
+            duration: 300,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+            },
+        });
+
         const response = await AsyncStorage.getItem("@goalsmanagement:goals");
         const previousData = response ? JSON.parse(response) : [];
 
@@ -191,7 +207,7 @@ export default function AddForm({ hideForm, showMessage, showConfirmation, id })
             showMessage("SUCESSO", "Meta editada com sucesso!", "success");
             hideForm();
         } else {
-            showMessage("OPS!", "Preencha os campos para editar uma meta!", "danger");
+            showMessage("OPS!", "Preencha os campos para editar uma meta!", "warning");
         };
 
     }

@@ -9,18 +9,43 @@ import GenericButton from '../../components/Buttons/Generic';
 import HabitsForm from '../../components/HabitsForm';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ShowHabits from '../../components/ShowHabits';
+import ModalMessage from '../../components/ModalMessage';
+import { LayoutAnimation } from 'react-native';
 
 export default function Habits() {
+    // controla visibilidade do formulario de hábitos
     const [formDisplay, setFormDisplay] = useState(false);
+    // hábitos
     const [habits, setHabits] = useState([]);
+    // visibilidade do botão de exclusão
     const [deleteButton, setDeleteButton] = useState(true);
+    // ID de um item passado para edição
     const [editId, setEditId] = useState(undefined);
+
+
+    // Controla a visibilidade do componente de confirmação
+    const [showingConfirmation, setShowingConfirmation] = useState(false);
+    // Componente de exibição de mensagens
+    const [modalTitle, setModalTitle] = useState('');
+    const [messageConfirmation, setMessageConfirmation] = useState('');
+    const [modalType, setModalType] = useState('');
+    const [modalYes, setModalYes] = useState(); // function executada ao confirmar mensagem
 
     useEffect(() => {
         fetchData();
     }, []);
 
+    /**
+     * Busca informações dos hábitos cadastrados
+     */
     async function fetchData() {
+        LayoutAnimation.configureNext({
+            duration: 300,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+            },
+        });
+
         const response = await AsyncStorage.getItem("@goalsmanagement:habits");
 
         if (response != null) {
@@ -28,15 +53,51 @@ export default function Habits() {
         };
     };
 
+    /**
+     * Exibe uma mensagem no centro da tela.
+     * 
+     * @param {string} message Título da mensagem. 
+     * @param {string} description Mensagem central.
+     * @param {string} type Tipo da mensagem: "info" | "success" | "warning."
+     * @param {function} yes Função executada ao confirmar a mensagem.
+     * 
+     */
+    function showInfo(title, message, type, yes) {
+        setModalTitle(title);
 
-    function showInfo(message, description, type) {
-        window.alert(description);
+        setMessageConfirmation(message);
+
+        setModalType(type);
+
+        setModalYes(() => yes);
+
+        displayConfirmation();
+    };
+
+    /**
+     * Altera a exibição da mensagem de confirmação
+     */
+    function displayConfirmation() {
+        LayoutAnimation.configureNext({
+            duration: 300,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+            },
+        });
+
+        setShowingConfirmation(!showingConfirmation);
     };
 
     /**
      * Muda o display do formulario
      */
     async function changeDisplayForm(toEditId) {
+        LayoutAnimation.configureNext({
+            duration: 300,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+            },
+        });
 
         toEditId != undefined ? setEditId(toEditId) : null;
 
@@ -46,11 +107,44 @@ export default function Habits() {
         setDeleteButton(!deleteButton);
     };
 
+    /**
+     * Remove um hábito específico
+     */
+    async function deleteItem(id) {
+        LayoutAnimation.configureNext({
+            duration: 300,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+            },
+        });
+
+        const response = await AsyncStorage.getItem('@goalsmanagement:habits');
+        const data = response ? JSON.parse(response) : [];
+
+        await AsyncStorage.setItem(
+            '@goalsmanagement:habits',
+            JSON.stringify(data.filter((item) => item.id !== id))
+        );
+
+        await fetchData();
+        showInfo('SUCESSO', 'Item excluído com sucesso!', 'success');
+    };
+    /**
+     * Remove todos os hábitos cadastrados
+     */
     async function deleteAll() {
+        LayoutAnimation.configureNext({
+            duration: 300,
+            update: {
+                type: LayoutAnimation.Types.easeInEaseOut,
+            },
+        });
+
         await AsyncStorage.removeItem('@goalsmanagement:habits');
+
         await fetchData();
         setHabits([]);
-        showInfo("", 'Deleted');
+        showInfo('SUCESSO', 'Todos os hábitos foram excluídos com sucesso!', 'success');
     };
 
     /**
@@ -100,15 +194,25 @@ export default function Habits() {
         )
     }
 
-    /**
-     * Verifica se possui algum item cadastrado e retorna o respectivo componente
-     * 
-     * @returns {JSX.Element}
-     * 
-     */
-    function setScreen() {
-        if (habits.length <= 0) {
-            return (
+    return (
+        <RootView>
+            <ImageView
+                animation='fadeInDownBig'
+                duration={1000}
+            >
+                <HabitsImage
+                    source={habitsBg}
+                    resizeMode={'center'}
+                />
+                <FooterLicenseView>
+                    <LicenseText>
+                        Designed by rawpixel.com / Freepik
+                    </LicenseText>
+                </FooterLicenseView>
+            </ImageView>
+
+            {/* Tela quando não houver itens cadastrados */}
+            {!formDisplay && habits.length <= 0 && (
                 <CenterView
                     animation={'fadeIn'}
                     duration={1000}
@@ -232,9 +336,12 @@ export default function Habits() {
 
                     </HabitsView>
 
-                </CenterView>);
-        } else {
-            return (
+                </CenterView>
+            )
+            }
+
+            {/* Tela quando houver item(s) cadastrado(s) */}
+            {!formDisplay && habits.length > 0 && (
                 <CenterView
                     animation={'fadeIn'}
                     duration={1000}
@@ -261,6 +368,13 @@ export default function Habits() {
                                         handleEdit={() => {
                                             changeDisplayForm(habito.id);
                                         }}
+                                        handleDelete={() =>
+                                            showInfo(
+                                                'CONFIRMAÇÃO',
+                                                `Deseja excluir o item (${habito.habit}) ?`,
+                                                'warning',
+                                                () => deleteItem(habito.id)
+                                            )}
                                     />
                                 </DefaultView>
                             ))}
@@ -272,7 +386,7 @@ export default function Habits() {
                             style={{ justifyContent: 'center' }}
                         >
                             <GenericButton
-                                handleFunction={deleteAll}
+                                handleFunction={async () => showInfo("CONFIRMAÇÃO", `Tem certeza que deseja excluir todos os hábitos cadastrados (${habits.length}) ?`, 'warning', async () => await deleteAll())}
                                 icon='plus-circle'
                                 iconColor={THEME.COLORS.GOALS}
                                 iconSize={24}
@@ -301,33 +415,26 @@ export default function Habits() {
                     )}
 
                 </CenterView>
-            );
-        }
-    }
-    return (
-        <RootView>
-            <ImageView
-                animation='fadeInDownBig'
-                duration={1000}
-            >
-                <HabitsImage
-                    source={habitsBg}
-                    resizeMode={'center'}
-                />
-                <FooterLicenseView>
-                    <LicenseText>
-                        Designed by rawpixel.com / Freepik
-                    </LicenseText>
-                </FooterLicenseView>
-            </ImageView>
+            )}
 
-            {!formDisplay && (setScreen())}
 
             {formDisplay && (
                 <HabitsForm
-                    hideForm={changeDisplayForm}
-                    showMessage={(title, msg, type) => showInfo(title, msg, type)}
                     id={editId}
+                    hideForm={changeDisplayForm}
+                    showMessage={(title, msg, type, yes) => showInfo(title, msg, type, yes)}
+                    handleDelete={(id) => deleteItem(id)}
+                />
+            )}
+
+            {showingConfirmation && (
+                <ModalMessage
+                    hide={displayConfirmation}
+                    yes={modalYes}
+                    title={modalTitle}
+                    message={messageConfirmation}
+                    type={modalType}
+                    closeOnEnd={false}
                 />
             )}
 
