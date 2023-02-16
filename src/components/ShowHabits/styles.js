@@ -3,6 +3,11 @@ import THEME from '../../theme';
 import styled from "styled-components/native";
 import * as Animatable from 'react-native-animatable';
 
+export const MarkCheckView = styled.TouchableOpacity`
+   justify-content: center;
+    align-items: center;
+`
+
 export const EditButton = styled.TouchableOpacity`
     position: absolute;
     top: -${RFPercentage(2)}px;

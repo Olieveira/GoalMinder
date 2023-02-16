@@ -1,4 +1,4 @@
-import { BgView, HorizontalView, FrameDataView, FrameLabel, HeaderLabel, MultiplyItensView, SimpleHorizontalView, SimpleView, CheckValues, CheckHeaders, CheckVerticalView, CheckHorizontalView, EditButton, DeleteButton } from './styles';
+import { BgView, HorizontalView, FrameDataView, FrameLabel, HeaderLabel, MultiplyItensView, SimpleHorizontalView, SimpleView, CheckValues, CheckHeaders, CheckVerticalView, CheckHorizontalView, EditButton, DeleteButton, MarkCheckView } from './styles';
 import { Feather } from '@expo/vector-icons';
 import THEME from '../../theme';
 import { useEffect, useState } from 'react';
@@ -7,13 +7,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { View } from 'react-native-animatable';
 
-export default function ShowHabits({ item, handleEdit, handleDelete }) {
+export default function ShowHabits({ item, handleEdit, handleDelete, handleChangeBox }) {
     const [expandGoalsDisplay, setExpandGoalsDisplay] = useState(false);
     const [expandChecksDisplay, setExpandCheckDisplay] = useState(false);
 
-    const [linkedGoals, setLinkedGoals] = useState([]);
+    const [linkedGoals, setLinkedGoals] = useState([]); // Informações das metas vinculadas
 
     useEffect(() => {
+        /**
+         * Busca as metas vinculadas
+         */
         async function fetchGoalsLinked() {
 
             LayoutAnimation.configureNext({
@@ -203,44 +206,49 @@ export default function ShowHabits({ item, handleEdit, handleDelete }) {
                                     onPress={handleExpandChecks}
                                 />
                             </HorizontalView>
-                            {expandChecksDisplay && item.checklists.map((item, index) => (
+                            {expandChecksDisplay && item.checklists.map((check, index) => (
                                 <CheckValues
                                     key={index}
                                     animation={'fadeIn'}
                                 >
 
                                     <CheckHeaders>
-                                        <HeaderLabel>{item.title}</HeaderLabel>
+                                        <HeaderLabel>{check.title}</HeaderLabel>
 
-                                        <SimpleView
-                                            animation={'jello'}
-                                            iterationCount={'infinite'}
-                                            duration={1500}
-                                            iterationDelay={5000}
+                                        <MarkCheckView
+                                            onPress={() => handleChangeBox(index)}
                                         >
-                                            <Feather
-                                                name='check-square'
-                                                size={20}
-                                                color={THEME.COLORS.ALERT900}
-                                            />
-                                        </SimpleView>
+                                            <SimpleView
+                                                animation={'jello'}
+                                                iterationCount={'infinite'}
+                                                duration={800}
+                                                iterationDelay={1500}
+                                            >
+                                                <Feather
+                                                    name={check.done ? 'check-square' : 'square'}
+                                                    size={20}
+                                                    color={THEME.COLORS.ALERT900}
+                                                />
+                                            </SimpleView>
+                                        </MarkCheckView>
+
                                     </CheckHeaders>
 
                                     <CheckHorizontalView>
 
                                         <CheckVerticalView>
-                                            <HeaderLabel>{item.repeat != false && item.repeat != 'Nenhum' ? item.repeat : 'Desativado'}</HeaderLabel>
+                                            <HeaderLabel>{check.repeat != false && check.repeat != 'Nenhum' ? check.repeat : 'Desativado'}</HeaderLabel>
                                             <Feather
-                                                name={item.repeat != false && item.repeat != 'Nenhum' ? 'repeat' : 'shuffle'}
+                                                name={check.repeat != false && check.repeat != 'Nenhum' ? 'repeat' : 'shuffle'}
                                                 size={20}
                                                 color={THEME.COLORS.ALERT900}
                                             />
                                         </CheckVerticalView>
 
                                         <CheckVerticalView>
-                                            <HeaderLabel>{item.notifications != false && item.notifications != 'Nenhum' ? item.notifications : 'Desativado'}</HeaderLabel>
+                                            <HeaderLabel>{check.notifications != false && check.notifications != 'Nenhum' ? check.notifications : 'Desativado'}</HeaderLabel>
                                             <Feather
-                                                name={item.notifications != false && item.notifications != 'Nenhum' ? 'bell' : 'bell-off'}
+                                                name={check.notifications != false && check.notifications != 'Nenhum' ? 'bell' : 'bell-off'}
                                                 size={20}
                                                 color={THEME.COLORS.ALERT900}
                                             />

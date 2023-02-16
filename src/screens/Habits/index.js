@@ -64,6 +64,54 @@ export default function Habits({ navigation }) {
     };
 
     /**
+    * Marca/Desmarca o checkBox do respectivo hábito e insere no histórico de alterações.
+    * 
+    * @param {string} id ID do hábito que contém o checkBox a ser marcado/desmarcado.
+    * 
+    * @param {number} i Index do check a ser alterado.
+    */
+    async function changeChecks(id, i) {
+        const response = await AsyncStorage.getItem('@goalsmanagement:habits');
+        const data = response ? JSON.parse(response) : [];
+
+        const now = new Date();
+        const dia = toString(now.getDate()).length > 1 ? now.getDate() : `0${now.getDate()}`;
+        const mes = now.getMonth() + 1 >= 10 ? now.getMonth() + 1 : `0${now.getMonth() + 1}`;
+        const ano = now.getFullYear();
+
+        const editedAt = `${dia}/${mes}/${ano}`;
+
+        const changed = data.map((habit) => {
+            if (habit.id === id) {
+                return {
+                    createdAt: habit.createdAt,
+                    habit: habit.habit,
+                    id: habit.id,
+                    linked: habit.linked,
+                    checklists: habit.checklists.map((check, index) => {
+                        if (index === i) {
+                            return {
+                                done: !check.done,
+                                historic: !check.historic.includes(editedAt) ? [...check.historic, editedAt] : check.historic,
+                                notifications: check.notifications,
+                                repeat: check.repeat,
+                                title: check.title,
+                            };
+                        } else {
+                            return check;
+                        };
+                    })
+                };
+            } else {
+                return habit;
+            };
+        });
+
+        await AsyncStorage.setItem('@goalsmanagement:habits', JSON.stringify(changed));
+        fetchData();
+    };
+
+    /**
      * Exibe uma mensagem no centro da tela.
      * 
      * @param {string} message Título da mensagem. 
@@ -384,6 +432,9 @@ export default function Habits({ navigation }) {
                                                 'warning',
                                                 () => deleteItem(habito.id)
                                             )}
+                                        handleChangeBox={(checkIndex) => {
+                                            changeChecks(habito.id, checkIndex);
+                                        }}
                                     />
                                 </DefaultView>
                             ))}

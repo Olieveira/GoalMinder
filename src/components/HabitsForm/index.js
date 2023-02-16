@@ -80,7 +80,9 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
                     return {
                         title: check.title,
                         repeat: check.repeat,
-                        notifications: check.notifications
+                        notifications: check.notifications,
+                        done: check.done,
+                        historic: check.historic
                     };
                 });
 
@@ -125,7 +127,7 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
             }
         });
 
-        setCheckLists([...checklists, { title: '', repeat: false, notifications: false }]);
+        setCheckLists([...checklists, { title: '', repeat: false, notifications: false, done: false, historic: [] }]);
 
         checkListsScroll.current.scrollToEnd({ animated: true });
         centerViewScroll.current.scrollToEnd({ animated: true });
