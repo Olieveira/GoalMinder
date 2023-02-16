@@ -12,7 +12,7 @@ import GenericButton from '../../components/Buttons/Generic';
 import ModalMessage from '../../components/ModalMessage';
 import { LayoutAnimation } from 'react-native';
 
-export default function Goals() {
+export default function Goals({ navigation }) {
     // controla visibilidade do formulario de metas
     const [formDisplay, setFormDisplay] = useState(false);
     // quantidade de metas cadastradas
@@ -28,8 +28,20 @@ export default function Goals() {
     const [modalTitle, setModalTitle] = useState('');
     const [modalYes, setModalYes] = useState();
 
+    // restaura os estados quando a tela é desfocada
+    useEffect(() => {
+        const reset = navigation.addListener('blur', () => {
+            setFormDisplay(false);
+            setShowingConfirmation(false);
+            setEditId("");
+        });
+
+        return reset;
+    }, [navigation]);
+
     useEffect(() => {
         fetchData();
+
     }, []);
 
     /**

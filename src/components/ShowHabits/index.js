@@ -15,7 +15,7 @@ export default function ShowHabits({ item, handleEdit, handleDelete }) {
 
     useEffect(() => {
         async function fetchGoalsLinked() {
-            
+
             LayoutAnimation.configureNext({
                 duration: 3000,
             });
@@ -90,8 +90,8 @@ export default function ShowHabits({ item, handleEdit, handleDelete }) {
                     color={THEME.COLORS.ALERT900}
                 />
             </DeleteButton>
-            <BgView>
 
+            <BgView>
                 <HorizontalView>
                     <FrameDataView>
                         <HorizontalView style={{ justifyContent: 'center' }}>
@@ -204,15 +204,26 @@ export default function ShowHabits({ item, handleEdit, handleDelete }) {
                                 />
                             </HorizontalView>
                             {expandChecksDisplay && item.checklists.map((item, index) => (
-                                <CheckValues key={index}>
+                                <CheckValues
+                                    key={index}
+                                    animation={'fadeIn'}
+                                >
 
                                     <CheckHeaders>
                                         <HeaderLabel>{item.title}</HeaderLabel>
-                                        <Feather
-                                            name='check-square'
-                                            size={20}
-                                            color={THEME.COLORS.ALERT900}
-                                        />
+
+                                        <SimpleView
+                                            animation={'jello'}
+                                            iterationCount={'infinite'}
+                                            duration={1500}
+                                            iterationDelay={5000}
+                                        >
+                                            <Feather
+                                                name='check-square'
+                                                size={20}
+                                                color={THEME.COLORS.ALERT900}
+                                            />
+                                        </SimpleView>
                                     </CheckHeaders>
 
                                     <CheckHorizontalView>

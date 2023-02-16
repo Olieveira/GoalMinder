@@ -12,7 +12,7 @@ import ShowHabits from '../../components/ShowHabits';
 import ModalMessage from '../../components/ModalMessage';
 import { LayoutAnimation } from 'react-native';
 
-export default function Habits() {
+export default function Habits({ navigation }) {
     // controla visibilidade do formulario de hábitos
     const [formDisplay, setFormDisplay] = useState(false);
     // hábitos
@@ -22,7 +22,6 @@ export default function Habits() {
     // ID de um item passado para edição
     const [editId, setEditId] = useState(undefined);
 
-
     // Controla a visibilidade do componente de confirmação
     const [showingConfirmation, setShowingConfirmation] = useState(false);
     // Componente de exibição de mensagens
@@ -30,6 +29,17 @@ export default function Habits() {
     const [messageConfirmation, setMessageConfirmation] = useState('');
     const [modalType, setModalType] = useState('');
     const [modalYes, setModalYes] = useState(); // function executada ao confirmar mensagem
+
+    // restaura os estados quando a tela é desfocada
+    useEffect(() => {
+        const reset = navigation.addListener('blur', () => {
+            setFormDisplay(false);
+            setEditId(undefined);
+            setShowingConfirmation(false);
+        });
+
+        return reset;
+    }, [navigation]);
 
     useEffect(() => {
         fetchData();
@@ -104,7 +114,6 @@ export default function Habits() {
         await fetchData();
 
         setFormDisplay(!formDisplay);
-        setDeleteButton(!deleteButton);
     };
 
     /**

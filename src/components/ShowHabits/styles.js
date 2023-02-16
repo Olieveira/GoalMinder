@@ -31,9 +31,6 @@ export const CheckVerticalView = styled.View`
 
 export const CheckHorizontalView = styled.View`
     margin-top: ${RFPercentage(1)}px;
-    border-top-color: ${THEME.COLORS.ALERT900};
-    border-top-width: 1px;
-    border-style: dashed;
     width: 100%;
     flex-direction: row;
     justify-content: space-around;
@@ -42,23 +39,25 @@ export const CheckHorizontalView = styled.View`
 
 export const CheckHeaders = styled.View`
     width: 100%;
+    background-color: ${THEME.COLORS.PRIMARY900};
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     padding: ${RFPercentage(0.3)}px ${RFPercentage(0.8)}px;
 `
 
-export const CheckValues = styled.View`
+export const CheckValues = styled(Animatable.View)`
     margin: ${RFPercentage(0.6)}px;
-    padding: ${RFPercentage(1)}px 0;
+    padding: 0 0 ${RFPercentage(1)}px 0;
     justify-content: center;
     align-items: center;
     width: ${RFPercentage(30)}px;
-    border: 1px dashed ${THEME.COLORS.ALERT900};
+    background-color: ${THEME.COLORS.PRIMARY800};
+    border: 1.2px solid ${THEME.COLORS.PRIMARY900};
     border-radius: 4px;
 `
 
-export const SimpleView = styled.View`
+export const SimpleView = styled(Animatable.View)`
     justify-content: center;
     align-items: center;
 `

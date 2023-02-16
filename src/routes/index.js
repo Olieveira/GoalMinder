@@ -6,5 +6,5 @@ export function Routes() {
         <NavigationContainer>
             <UserRoutes />
         </NavigationContainer>
-    )
-}
+    );
+};
