@@ -75,9 +75,9 @@ export default function Habits({ navigation }) {
         const data = response ? JSON.parse(response) : [];
 
         const now = new Date();
-        const dia = toString(now.getDate()).length > 1 ? now.getDate() : `0${now.getDate()}`;
-        const mes = now.getMonth() + 1 >= 10 ? now.getMonth() + 1 : `0${now.getMonth() + 1}`;
-        const ano = now.getFullYear();
+        const dia = now.getDate().toString().padStart(2, '0');
+        const mes = (now.getMonth() + 1).toString().padStart(2, '0');
+        const ano = now.getFullYear().toString();
 
         const editedAt = `${dia}/${mes}/${ano}`;
 
@@ -92,7 +92,7 @@ export default function Habits({ navigation }) {
                         if (index === i) {
                             return {
                                 done: !check.done,
-                                historic: !check.historic.includes(editedAt) ? [...check.historic, editedAt] : check.historic,
+                                historic: !check.historic.includes(editedAt) && !check.done == true ? [...check.historic, editedAt] : check.historic.filter(item => item !== editedAt),
                                 notifications: check.notifications,
                                 repeat: check.repeat,
                                 title: check.title,
@@ -106,6 +106,8 @@ export default function Habits({ navigation }) {
                 return habit;
             };
         });
+
+        console.log('Check alterado: ', changed)
 
         await AsyncStorage.setItem('@goalsmanagement:habits', JSON.stringify(changed));
         fetchData();

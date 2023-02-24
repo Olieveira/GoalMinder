@@ -14,6 +14,24 @@ export default function ShowHabits({ item, handleEdit, handleDelete, handleChang
     const [linkedGoals, setLinkedGoals] = useState([]); // Informações das metas vinculadas
 
     useEffect(() => {
+
+        console.log('----------CHECKLISTS-----------\n', item.checklists, '\n------------------\n');
+
+        console.log('---------DATAS CHECKLISTS---------');
+
+        item.checklists.map((item, i) => {
+            console.log("\nCheckLists: ", i + 1);
+
+            item.historic.map((data) => {
+                const checkData = data.split("/");
+                // yyyy/mm/dd
+                const checkDataObj = new Date(checkData[2], checkData[1] - 1, checkData[0]);
+                const compareTo = new Date(2023, 0, 15);
+
+                console.log(`${checkDataObj} > ${compareTo} -> ${checkDataObj > compareTo}`);
+            });
+        });
+
         /**
          * Busca as metas vinculadas
          */
