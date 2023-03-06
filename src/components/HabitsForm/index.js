@@ -82,7 +82,8 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
                         repeat: check.repeat,
                         notifications: check.notifications,
                         done: check.done,
-                        historic: check.historic
+                        historic: check.historic,
+                        created: check.created
                     };
                 });
 
@@ -127,7 +128,15 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
             }
         });
 
-        setCheckLists([...checklists, { title: '', repeat: false, notifications: false, done: false, historic: [] }]);
+        const now = new Date();
+        const dia = now.getDate().toString().padStart(2, '0');
+        const mes = (now.getMonth() + 1).toString().padStart(2, '0');
+        const ano = now.getFullYear().toString();
+
+        const created = `${dia}/${mes}/${ano}`;
+
+
+        setCheckLists([...checklists, { title: '', repeat: false, notifications: false, done: false, historic: [], created: created }]);
 
         checkListsScroll.current.scrollToEnd({ animated: true });
         centerViewScroll.current.scrollToEnd({ animated: true });

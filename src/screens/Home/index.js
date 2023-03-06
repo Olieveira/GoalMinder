@@ -1,4 +1,4 @@
-import { MainContainer, Title, StatusBar, TitleContainer, MainImage, Text, AnimatedIcon, CenterView, CenterTitle, CenterGroup } from "./styles";
+import { MainContainer, Title, StatusBar, TitleContainer, MainImage, Text, AnimatedIcon, CenterView, CenterTitle, CenterGroup, DefaultView, ChecksBg, CheckFrame, CheckHeader, TitleHeaderCheck } from "./styles";
 import { useEffect } from "react";
 import THEME from "../../theme";
 import { useNavigation } from "@react-navigation/native";
@@ -10,9 +10,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 
 export default function Home() {
-    const [checksToday, setChecksToday] = useState();
-    const [checksLate, setChecksLate] = useState();
+    const [checksToday, setChecksToday] = useState([]);
+    const [checksLate, setChecksLate] = useState([]);
     const navigation = useNavigation();
+
+    useEffect(() => {
+        console.log("\nLATES\n", checksLate);
+    }, [checksLate]);
+    useEffect(() => {
+        console.log("\nTODAY\n", checksToday);
+    }, [checksToday]);
 
     useEffect(() => {
         /**
@@ -22,6 +29,13 @@ export default function Home() {
             const response = await AsyncStorage.getItem('@goalsmanagement:habits');
             const data = response ? JSON.parse(response) : [];
 
+            /**
+             * Calcula diferença entre duas datas
+             * 
+             * @param {object} date1 Objeto de data  
+             * @param {object} date2 Objeto de data
+             * @returns 
+             */
             const calcDiferenca = (date1, date2) => {
                 const day = 24 * 60 * 60 * 1000; // 1 dia em milissegundos
                 const diferenca = Math.abs(date1 - date2); // diferença em milissegundos
@@ -29,9 +43,16 @@ export default function Home() {
                 return Math.round(diferenca / day);
             };
 
+            // pega e formata data atual para comparação
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            const nowFormatted = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear().toString().padStart(2, '0')}`;
+
+            let toSubmit = []; // Array que armazenará objetos dos checks atrasados
+
             // loop nos hábitos
             data.map((habito, index) => {
-                console.log('Hábito n° ', index);
+
                 // loop nos checkBox's
                 habito.checklists.map((item, i) => {
 
@@ -52,28 +73,34 @@ export default function Home() {
                             intervalo = 0;
                     };
 
-                    if (item.historic.length > 0) {
-                        // formata a ultima data cadastrada para comparação
-                        const checkData = item.historic[item.historic.length - 1].split("/");
-                        const checkDataObj = new Date(checkData[2], checkData[1] - 1, checkData[0]);
+                    // pega e formata a data de criação do check.
+                    const created = item.created.split('/');
+                    const createdObj = new Date(created[2], created[1] - 1, created[0]);
 
-                        // pega a data atual e formata para comparação
-                        const now = new Date();
-                        now.setHours(0, 0, 0, 0);
+                    // quantidade de vezes que o check deve ter sido feito até o momento atual
+                    const hadDone = Math.floor(calcDiferenca(createdObj, now) / intervalo) + 1;
 
-                        // diferença
-                        const diferenca = calcDiferenca(checkDataObj, now);
+                    for (let j = 0; j < hadDone; j++) {
 
-                        console.log(`-----------Diferença------------\n${checkDataObj} - ${now}\nrepeat: ${item.repeat}\n${diferenca}\n`);
+                        const converted = new Date(createdObj.getTime() + (intervalo * (j)) * (24 * 60 * 60 * 1000)); // data que o item deveria ter sido marcado
+                        const toCompare = `${converted.getDate().toString().padStart(2, '0')}/${(converted.getMonth() + 1).toString().padStart(2, '0')}/${converted.getFullYear().toString().padStart(2, '0')}`; // formatado para comparação
 
-                        if (diferenca > intervalo) {
-                            console.log("Pronto para resetar!");
-                        }
+                        // Se essa repetição do item não foi marcado
+                        if (!item.historic.includes(toCompare)) {
+                            toSubmit.push({
+                                habito: index,
+                                check: i,
+                                checkTitle: item.title,
+                                repeticao: item.repeat,
+                                data: toCompare
+                            });
+                        };
                     };
-
                 });
             });
 
+            setChecksLate(...checksLate, toSubmit.filter(item => item.data != nowFormatted)); // define os itens atrasados
+            setChecksToday(toSubmit.filter(item => item.data == nowFormatted)) // define os itens do dia atual
         };
 
         adjustChecks();
@@ -89,48 +116,76 @@ export default function Home() {
     }
     return (
         <MainContainer>
-            <StatusBar animated backgroundColor={THEME.COLORS.BACKGROUND} barStyle={"dark-content"} />
 
-            <TitleContainer>
-                <AnimatedIcon
-                    source={target}
-                    resizeMode={"center"}
-                    animation={'rotate'}
-                    direction='normal'
-                    iterationCount={'infinite'}
-                    duration={3500}
-                    delay={1000}
-                />
-                <Title>
-                    GERENCIADOR DE METAS
-                </Title>
-                <Text
-                    delay={1500}
-                    animation={'fadeInDown'}>
-                    Crie metas e indicadores para acompanhar seu progresso!
-                </Text>
-            </TitleContainer>
+            {checksToday.length < 1 && checksLate.length < 1 && (
+                <DefaultView>
+                    <StatusBar animated backgroundColor={THEME.COLORS.BACKGROUND} barStyle={"dark-content"} />
 
-            <CenterGroup>
-                <CenterView onTouchEnd={() => go('Goals')} animation={'fadeInDown'} delay={2300}>
-                    <CenterTitle
-                        animation={'fadeInDown'}
-                        duration={1500}
-                        delay={2600}>
-                        METAS
-                    </CenterTitle>
-                    <MaterialIcons color={THEME.COLORS.TEXT} size={RFPercentage(3.4)} name="add-task" />
-                </CenterView>
-                <CenterView onTouchEnd={() => go('Habits')} animation={'fadeInDown'} delay={2300}>
-                    <CenterTitle
-                        animation={'fadeInDown'}
-                        duration={1500}
-                        delay={2600}>
-                        HÁBITOS
-                    </CenterTitle>
-                    <MaterialIcons color={THEME.COLORS.TEXT} size={RFPercentage(3.4)} name="menu-book" />
-                </CenterView>
-            </CenterGroup>
+                    <TitleContainer>
+                        <AnimatedIcon
+                            source={target}
+                            resizeMode={"center"}
+                            animation={'rotate'}
+                            direction='normal'
+                            iterationCount={'infinite'}
+                            duration={3500}
+                            delay={1000}
+                        />
+                        <Title>
+                            GERENCIADOR DE METAS
+                        </Title>
+                        <Text
+                            delay={1500}
+                            animation={'fadeInDown'}>
+                            Crie metas e indicadores para acompanhar seu progresso!
+                        </Text>
+                    </TitleContainer>
+
+                    <CenterGroup>
+                        <CenterView onTouchEnd={() => go('Goals')} animation={'fadeInDown'} delay={2300}>
+                            <CenterTitle
+                                animation={'fadeInDown'}
+                                duration={1500}
+                                delay={2600}>
+                                METAS
+                            </CenterTitle>
+                            <MaterialIcons color={THEME.COLORS.TEXT} size={RFPercentage(3.4)} name="add-task" />
+                        </CenterView>
+                        <CenterView onTouchEnd={() => go('Habits')} animation={'fadeInDown'} delay={2300}>
+                            <CenterTitle
+                                animation={'fadeInDown'}
+                                duration={1500}
+                                delay={2600}>
+                                HÁBITOS
+                            </CenterTitle>
+                            <MaterialIcons color={THEME.COLORS.TEXT} size={RFPercentage(3.4)} name="menu-book" />
+                        </CenterView>
+                    </CenterGroup>
+                </DefaultView>
+            )}
+
+            {checksToday.length > 0 || checksLate.length > 0 && (
+                <ChecksBg>
+                    <CheckFrame>
+                        <CheckHeader>
+                            <MaterialIcons
+                                name='assignment-late'
+                            />
+                            <TitleHeaderCheck>ATRASADOS</TitleHeaderCheck>
+                        </CheckHeader>
+                    </CheckFrame>
+
+                    <CheckFrame>
+                        <CheckHeader>
+                            <MaterialIcons
+                                name='circle-notifications'
+                            />
+                            <TitleHeaderCheck>ATRASADOS</TitleHeaderCheck>
+                        </CheckHeader>
+                    </CheckFrame>
+
+                </ChecksBg>
+            )}
 
             <MainImage
                 animation={'fadeInUpBig'}
@@ -142,5 +197,5 @@ export default function Home() {
             />
 
         </MainContainer>
-    );
-}
+    )
+};

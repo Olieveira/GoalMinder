@@ -3,6 +3,27 @@ import THEME from "../../theme";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import * as Animatable from 'react-native-animatable';
 
+export const TitleHeaderCheck = styled.Text`
+`
+
+export const CheckHeader = styled.View`
+`
+
+export const CheckFrame = styled.View`
+`
+
+export const ChecksBg = styled(Animatable.View)`
+    flex: 1;
+    flex-direction: column;
+    background-color: #fff;
+    height: ${RFPercentage(10)}px;
+    width: 100%;
+
+`
+
+export const DefaultView = styled.View`
+`
+
 export const CenterTitle = styled(Animatable.Text)`
   font-family: ${THEME.FONTS.MEDIUM};
   color: ${THEME.COLORS.TEXT};

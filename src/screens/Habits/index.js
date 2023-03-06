@@ -96,6 +96,7 @@ export default function Habits({ navigation }) {
                                 notifications: check.notifications,
                                 repeat: check.repeat,
                                 title: check.title,
+                                created: check.created
                             };
                         } else {
                             return check;
@@ -106,8 +107,6 @@ export default function Habits({ navigation }) {
                 return habit;
             };
         });
-
-        console.log('Check alterado: ', changed)
 
         await AsyncStorage.setItem('@goalsmanagement:habits', JSON.stringify(changed));
         fetchData();
