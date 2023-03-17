@@ -1,4 +1,4 @@
-import { MainContainer, Title, StatusBar, TitleContainer, MainImage, Text, AnimatedIcon, CenterView, CenterTitle, CenterGroup, DefaultView, ChecksBg, CheckFrame, CheckHeader, TitleHeaderCheck } from "./styles";
+import { MainContainer, Title, StatusBar, TitleContainer, MainImage, Text, AnimatedIcon, CenterView, CenterTitle, CenterGroup, DefaultView, ChecksBg, CheckFrame, DatesFrame, DatesHeader, DatesTitle, IconAnimationLoop, CheckHeader, TitleHeaderCheck, ChecksScroll, ParentChecksView, IconShakeLoop } from "./styles";
 import { useEffect } from "react";
 import THEME from "../../theme";
 import { useNavigation } from "@react-navigation/native";
@@ -8,18 +8,17 @@ import target from '../../assets/target.png';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
+import { LayoutAnimation } from "react-native";
 
 export default function Home() {
     const [checksToday, setChecksToday] = useState([]);
     const [checksLate, setChecksLate] = useState([]);
+    const [showing, setShowing] = useState();
     const navigation = useNavigation();
 
     useEffect(() => {
-        console.log("\nLATES\n", checksLate);
+        console.log("\nLATES: ", checksLate);
     }, [checksLate]);
-    useEffect(() => {
-        console.log("\nTODAY\n", checksToday);
-    }, [checksToday]);
 
     useEffect(() => {
         /**
@@ -99,13 +98,29 @@ export default function Home() {
                 });
             });
 
-            setChecksLate(...checksLate, toSubmit.filter(item => item.data != nowFormatted)); // define os itens atrasados
+            setChecksLate(toSubmit.filter(item => item.data != nowFormatted)); // define os itens atrasados
             setChecksToday(toSubmit.filter(item => item.data == nowFormatted)) // define os itens do dia atual
         };
 
         adjustChecks();
 
     }, []);
+
+    function setShowingFrame(frame) {
+        LayoutAnimation.configureNext({
+            duration: 300,
+            update: {
+                type: "linear"
+            }
+        });
+
+        if (frame == "lates") {
+            showing == "lates" ? setShowing(undefined) : setShowing("lates")
+        };
+        if (frame == "today") {
+            showing == "today" ? setShowing(undefined) : setShowing("today")
+        };
+    };
 
     /** Realiza a navegação entre telas
      * 
@@ -117,7 +132,7 @@ export default function Home() {
     return (
         <MainContainer>
 
-            {checksToday.length < 1 && checksLate.length < 1 && (
+            {checksToday.length < 1 && checksLate.length < 1 ? (
                 <DefaultView>
                     <StatusBar animated backgroundColor={THEME.COLORS.BACKGROUND} barStyle={"dark-content"} />
 
@@ -162,30 +177,95 @@ export default function Home() {
                         </CenterView>
                     </CenterGroup>
                 </DefaultView>
-            )}
+            ) : null}
 
-            {checksToday.length > 0 || checksLate.length > 0 && (
+            {checksToday.length > 0 || checksLate.length > 0 ? (
                 <ChecksBg>
-                    <CheckFrame>
-                        <CheckHeader>
+                    <DatesHeader>
+                        <IconAnimationLoop
+                            animation={'rotate'}
+                            iterationCount="infinite"
+                            duration={2500}
+                            iterationDelay={500}
+                        >
                             <MaterialIcons
-                                name='assignment-late'
+                                name="star"
+                                size={RFPercentage(6)}
+                                color={THEME.COLORS.ALERT900}
                             />
-                            <TitleHeaderCheck>ATRASADOS</TitleHeaderCheck>
-                        </CheckHeader>
-                    </CheckFrame>
+                        </IconAnimationLoop>
+                        <DatesTitle>SUAS ATIVIDADES</DatesTitle>
+                    </DatesHeader>
+                    <DatesFrame>
+                        <CheckFrame>
+                            <CheckHeader
+                                onPress={() => setShowingFrame("lates")}
+                            >
+                                <IconShakeLoop
+                                    animation={'rubberBand'}
+                                    iterationCount="infinite"
+                                    duration={2000}
+                                    iterationDelay={3500}
+                                >
+                                    <MaterialIcons
+                                        name='assignment-late'
+                                        color={THEME.COLORS.TEXT}
+                                        size={RFPercentage(4)}
+                                    />
+                                </IconShakeLoop>
+                                <TitleHeaderCheck>ATRASADOS</TitleHeaderCheck>
+                            </CheckHeader>
+                            <ParentChecksView
+                                animation={showing == "lates" ? 'fadeIn' : null}
+                                duration={500}
+                                delay={300}
+                            >
+                                <ChecksScroll>
+                                    {showing == "lates" && checksLate.map((item, i) => (
+                                        <Text key={i}>
+                                            {item.checkTitle}
+                                        </Text>
+                                    ))}
+                                </ChecksScroll>
+                            </ParentChecksView>
+                        </CheckFrame>
 
-                    <CheckFrame>
-                        <CheckHeader>
-                            <MaterialIcons
-                                name='circle-notifications'
-                            />
-                            <TitleHeaderCheck>ATRASADOS</TitleHeaderCheck>
-                        </CheckHeader>
-                    </CheckFrame>
+                        <CheckFrame>
+                            <CheckHeader
+                                onPress={() => setShowingFrame("today")}
+                            >
+                                <IconShakeLoop
+                                    animation={'rubberBand'}
+                                    iterationCount="infinite"
+                                    duration={2000}
+                                    iterationDelay={3500}
+                                >
+                                    <MaterialIcons
+                                        name='circle-notifications'
+                                        color={THEME.COLORS.TEXT}
+                                        size={RFPercentage(4)}
+                                    />
+                                </IconShakeLoop>
+                                <TitleHeaderCheck>PENDENTES</TitleHeaderCheck>
+                            </CheckHeader>
+                            <ParentChecksView
+                                animation={showing == "today" ? 'fadeIn' : null}
+                                duration={500}
+                                delay={2000}
+                            >
+                                <ChecksScroll>
+                                    {showing == "today" && checksToday.map((item, i) => (
+                                        <Text key={i}>
+                                            {item.checkTitle}
+                                        </Text>
+                                    ))}
 
+                                </ChecksScroll>
+                            </ParentChecksView>
+                        </CheckFrame>
+                    </DatesFrame>
                 </ChecksBg>
-            )}
+            ) : null}
 
             <MainImage
                 animation={'fadeInUpBig'}
