@@ -1,4 +1,8 @@
-import { RootView, HabitsImage, ImageView, FooterLicenseView, LicenseText, CenterView, HeaderView, HeaderTitle, DefaultView, DefaultHorizontalView, BodyText, HabitsView, HabitFrame, HabitTitle, HabitsScrollView, SuggestionTextView } from './styles';
+import {
+    RootView, HabitsImage, ImageView, FooterLicenseView, LicenseText, CenterView, HeaderView, HeaderTitle, DefaultView, DefaultHorizontalView,
+    BodyText, HabitsView, HabitFrame, HabitTitle, HabitsScrollView, SuggestionTextView, AlphaBg, ChecksDataContainer, CloseView, ChecksDataHeader, ChecksDataTitle,
+    ChecksDataBody, ChecksDataScroll, ChecksOptionView, ChecksDataOption
+} from './styles';
 import habitsBg from '../../assets/habitsBg.png'
 import { useEffect, useState } from 'react';
 import { Feather } from '@expo/vector-icons';
@@ -13,6 +17,12 @@ import ModalMessage from '../../components/ModalMessage';
 import { LayoutAnimation } from 'react-native';
 
 export default function Habits({ navigation }) {
+
+    useEffect(() => {
+        console.log(showingCheckData);
+    }, [showingCheckData])
+
+
     // controla visibilidade do formulario de hábitos
     const [formDisplay, setFormDisplay] = useState(false);
     // hábitos
@@ -21,6 +31,10 @@ export default function Habits({ navigation }) {
     const [deleteButton, setDeleteButton] = useState(true);
     // ID de um item passado para edição
     const [editId, setEditId] = useState(undefined);
+
+    // Controla a visibilidade do scroll de datas dos check's
+    const [showingCheckData, setShowingCheckData] = useState(false);
+    const [checkDataOptions, setCheckDataOptions] = useState(["teste1", "teste2", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3"]);
 
     // Controla a visibilidade do componente de confirmação
     const [showingConfirmation, setShowingConfirmation] = useState(false);
@@ -63,6 +77,16 @@ export default function Habits({ navigation }) {
         };
     };
 
+
+    /**
+     * Altera a visibilidade do componente que exibe as opções de datas do check
+     * 
+     * @returns {void}
+     */
+    function changeCheckOptionsView() {
+        setShowingCheckData(!showingCheckData)
+    }
+
     /**
     * Marca/Desmarca o checkBox do respectivo hábito e insere no histórico de alterações.
     * 
@@ -80,6 +104,10 @@ export default function Habits({ navigation }) {
         const ano = now.getFullYear().toString();
 
         const editedAt = `${dia}/${mes}/${ano}`;
+
+        if (data.filter(item => item.id === id)[0].checklists[i].historic.includes(editedAt)) {
+            console.log("")
+        }
 
         const changed = data.map((habit) => {
             if (habit.id === id) {
@@ -108,8 +136,8 @@ export default function Habits({ navigation }) {
             };
         });
 
-        await AsyncStorage.setItem('@goalsmanagement:habits', JSON.stringify(changed));
-        fetchData();
+        // await AsyncStorage.setItem('@goalsmanagement:habits', JSON.stringify(changed));
+        // fetchData();
     };
 
     /**
@@ -434,7 +462,8 @@ export default function Habits({ navigation }) {
                                                 () => deleteItem(habito.id)
                                             )}
                                         handleChangeBox={(checkIndex) => {
-                                            changeChecks(habito.id, checkIndex);
+                                            // changeChecks(habito.id, checkIndex);
+                                            changeCheckOptionsView();
                                         }}
                                     />
                                 </DefaultView>
@@ -478,6 +507,48 @@ export default function Habits({ navigation }) {
                 </CenterView>
             )}
 
+            {showingCheckData && (
+                <AlphaBg
+                    animation={'fadeIn'}
+                >
+                    <ChecksDataContainer>
+                        <CloseView
+                            onPress={() => { changeCheckOptionsView() }}
+                        >
+                            <Feather
+                                name='x-circle'
+                                size={RFPercentage(4)}
+                                color={THEME.COLORS.TEXT}
+                            />
+                        </CloseView>
+                        <ChecksDataHeader>
+                            <ChecksDataTitle>
+                                ESCOLHA A DATA PARA CONCLUIR A TAREFA!
+                            </ChecksDataTitle>
+                        </ChecksDataHeader>
+                        <ChecksDataBody>
+                            <ChecksDataScroll>
+                                {checkDataOptions.map((item, i) => (
+                                    <ChecksOptionView
+                                        key={i}
+                                        style={{ backgroundColor: i % 2 == 0 ? THEME.COLORS.PRIMARY600 : null }}
+                                    >
+                                        <ChecksDataOption
+                                            style={{ color: i % 2 == 0 ? THEME.COLORS.PRIMARY900 : THEME.COLORS.TEXT }}
+                                        >
+                                            {item}
+                                        </ChecksDataOption>
+                                        <Feather
+                                            name="square"
+                                            size={RFPercentage(2.4)}
+                                        />
+                                    </ChecksOptionView>
+                                ))}
+                            </ChecksDataScroll>
+                        </ChecksDataBody>
+                    </ChecksDataContainer>
+                </AlphaBg>
+            )}
 
             {formDisplay && (
                 <HabitsForm

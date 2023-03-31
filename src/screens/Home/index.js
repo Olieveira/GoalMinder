@@ -1,4 +1,8 @@
-import { MainContainer, Title, StatusBar, TitleContainer, MainImage, Text, AnimatedIcon, CenterView, CenterTitle, CenterGroup, DefaultView, ChecksBg, CheckFrame, DatesFrame, DatesHeader, DatesTitle, IconAnimationLoop, CheckHeader, TitleHeaderCheck, ChecksScroll, ParentChecksView, IconShakeLoop } from "./styles";
+import {
+    MainContainer, Title, StatusBar, TitleContainer, MainImage, Text, AnimatedIcon, CenterView, CenterTitle, CenterGroup, DefaultView, ChecksBg, CheckFrame, DatesFrame, DatesHeader,
+    DatesTitle, IconAnimationLoop, CheckHeader, TitleHeaderCheck, ChecksScroll, ParentChecksView, IconShakeLoop, GroupHabitsView, GroupHabitsHeader, GroupCheckTitle, GroupCheckHeader, GroupHabitsBody,
+    GroupCheckView, GroupHabitsTitle, GroupCheckBody, GroupCheckHorizontalView, InfoCheckBody, GroupCheckParentView, GroupCheckDataInfo, Line, HeaderTable, HeaderTableText, TouchableDefault
+} from "./styles";
 import { useEffect } from "react";
 import THEME from "../../theme";
 import { useNavigation } from "@react-navigation/native";
@@ -14,98 +18,245 @@ export default function Home() {
     const [checksToday, setChecksToday] = useState([]);
     const [checksLate, setChecksLate] = useState([]);
     const [showing, setShowing] = useState();
+    const [latesShowing, setLatesShowing] = useState([-1, -1]);
+    const [pendingShowing, setPendingShowing] = useState([-1, -1]);
     const navigation = useNavigation();
 
     useEffect(() => {
-        console.log("\nLATES: ", checksLate);
+        // try {
+        //     checksLate.map((item, i) => {
+        //         console.log("INDEX ", i, ":\n", item, "\n---------------------------------------\n");
+        //     })
+        // } catch (e) {
+        //     console.log("Error: ", e);
+        // };
+
     }, [checksLate]);
 
     useEffect(() => {
-        /**
-         * Realiza os calculos de data dos checkBox's e faz os devidos ajustes nos cadastros
-         */
-        async function adjustChecks() {
-            const response = await AsyncStorage.getItem('@goalsmanagement:habits');
-            const data = response ? JSON.parse(response) : [];
-
-            /**
-             * Calcula diferença entre duas datas
-             * 
-             * @param {object} date1 Objeto de data  
-             * @param {object} date2 Objeto de data
-             * @returns 
-             */
-            const calcDiferenca = (date1, date2) => {
-                const day = 24 * 60 * 60 * 1000; // 1 dia em milissegundos
-                const diferenca = Math.abs(date1 - date2); // diferença em milissegundos
-
-                return Math.round(diferenca / day);
-            };
-
-            // pega e formata data atual para comparação
-            const now = new Date();
-            now.setHours(0, 0, 0, 0);
-            const nowFormatted = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear().toString().padStart(2, '0')}`;
-
-            let toSubmit = []; // Array que armazenará objetos dos checks atrasados
-
-            // loop nos hábitos
-            data.map((habito, index) => {
-
-                // loop nos checkBox's
-                habito.checklists.map((item, i) => {
-
-                    let intervalo = 0;
-
-                    // pega o intervalo de lembrete do item
-                    switch (item.repeat) {
-                        case 'Mensal':
-                            intervalo = 30;
-                            break;
-                        case 'Semanal':
-                            intervalo = 7;
-                            break;
-                        case 'Diário':
-                            intervalo = 1;
-                            break;
-                        default:
-                            intervalo = 0;
-                    };
-
-                    // pega e formata a data de criação do check.
-                    const created = item.created.split('/');
-                    const createdObj = new Date(created[2], created[1] - 1, created[0]);
-
-                    // quantidade de vezes que o check deve ter sido feito até o momento atual
-                    const hadDone = Math.floor(calcDiferenca(createdObj, now) / intervalo) + 1;
-
-                    for (let j = 0; j < hadDone; j++) {
-
-                        const converted = new Date(createdObj.getTime() + (intervalo * (j)) * (24 * 60 * 60 * 1000)); // data que o item deveria ter sido marcado
-                        const toCompare = `${converted.getDate().toString().padStart(2, '0')}/${(converted.getMonth() + 1).toString().padStart(2, '0')}/${converted.getFullYear().toString().padStart(2, '0')}`; // formatado para comparação
-
-                        // Se essa repetição do item não foi marcado
-                        if (!item.historic.includes(toCompare)) {
-                            toSubmit.push({
-                                habito: index,
-                                check: i,
-                                checkTitle: item.title,
-                                repeticao: item.repeat,
-                                data: toCompare
-                            });
-                        };
-                    };
-                });
-            });
-
-            setChecksLate(toSubmit.filter(item => item.data != nowFormatted)); // define os itens atrasados
-            setChecksToday(toSubmit.filter(item => item.data == nowFormatted)) // define os itens do dia atual
-        };
 
         adjustChecks();
 
     }, []);
 
+    /**
+    * Realiza os calculos de data dos checkBox's e faz os devidos ajustes nos cadastros
+    * 
+    * @returns {void}
+    * 
+    */
+    async function adjustChecks() {
+        const response = await AsyncStorage.getItem('@goalsmanagement:habits');
+        const data = response ? JSON.parse(response) : [];
+
+        /**
+         * Calcula diferença entre duas datas
+         * 
+         * @param {object} date1 Objeto de data  
+         * @param {object} date2 Objeto de data
+         * 
+         * @returns {number} Diferença entre as duas datas
+         */
+        const calcDiferenca = (date1, date2) => {
+            const day = 24 * 60 * 60 * 1000; // 1 dia em milissegundos
+            const diferenca = Math.abs(date1 - date2); // diferença em milissegundos
+
+            return Math.round(diferenca / day);
+        };
+
+        /**
+         * Agrupa os itens do array por hábitos e checkLists
+         * 
+         * @param {Array} array Array que será agrupados
+         * 
+         * @returns {Array[Array[object]]} Array composto agrupado.
+         */
+        const agruparArray = (array) => {
+
+            let byGroup = []; // array temporario para armazenar o agrupamento
+            let lastHabit = -1; // armazena o ultimo hábito agrupado
+            let lastCheck = -1; // armazena o ultimo checkBox agrupado
+
+            array.map((item) => {
+
+                if (item.habito == lastHabit) {
+                    if (item.check == lastCheck) {
+                        byGroup[byGroup.length - 1][byGroup[byGroup.length - 1].length - 1].push(item);
+                    } else {
+                        lastCheck = item.check;
+                        byGroup[byGroup.length - 1].push([item]);
+                    }
+                } else {
+                    lastHabit = item.habito;
+                    lastCheck = item.check;
+                    byGroup.push([[item]]);
+                }
+            })
+
+            return byGroup;
+        }
+
+        // pega e formata data atual para comparação
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const nowFormatted = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear().toString().padStart(2, '0')}`;
+
+        let toSubmit = []; // Array que armazenará objetos dos checks atrasados
+        let toHabitsGroup = []; // Array para armazenar temporariamente o titulo dos habitos
+
+        // loop nos hábitos
+        data.map((habit, index) => {
+
+            toHabitsGroup.push(habit.habit);
+
+            // loop nos checkBox's
+            habit.checklists.map((item, i) => {
+
+                let intervalo = 0;
+
+                // pega o intervalo de lembrete do item
+                switch (item.repeat) {
+                    case 'Mensal':
+                        intervalo = 30;
+                        break;
+                    case 'Semanal':
+                        intervalo = 7;
+                        break;
+                    case 'Diário':
+                        intervalo = 1;
+                        break;
+                    default:
+                        intervalo = 0;
+                };
+
+                // pega e formata a data de criação do check.
+                const created = item.created.split('/');
+                const createdObj = new Date(created[2], created[1] - 1, created[0]);
+
+                // quantidade de vezes que o check deve ter sido feito até o momento atual
+                const hadDone = Math.floor(calcDiferenca(createdObj, now) / intervalo) + 1;
+
+                for (let j = 0; j < hadDone; j++) {
+
+                    const converted = new Date(createdObj.getTime() + (intervalo * (j)) * (24 * 60 * 60 * 1000)); // data que o item deveria ter sido marcado
+                    const toCompare = `${converted.getDate().toString().padStart(2, '0')}/${(converted.getMonth() + 1).toString().padStart(2, '0')}/${converted.getFullYear().toString().padStart(2, '0')}`; // formatado para comparação
+
+                    // Se essa repetição do item não foi marcado
+                    if (!item.historic.includes(toCompare)) {
+                        toSubmit.push({
+                            habito: index,
+                            habitoTitle: toHabitsGroup[index],
+                            habitoID: habit.id,
+                            check: i,
+                            checkTitle: item.title,
+                            repeticao: item.repeat,
+                            data: toCompare
+                        });
+                    };
+                };
+            });
+        });
+
+        // console.log('---------------AGRUPADO-------------');
+
+        // console.log(agruparArray(toSubmit.filter(item => item.data != nowFormatted)));
+
+        setChecksLate(agruparArray(toSubmit.filter(item => item.data != nowFormatted))); // define os itens atrasados
+        setChecksToday(agruparArray(toSubmit.filter(item => item.data == nowFormatted))); // define os itens do dia atual
+    };
+
+    /**
+      * Marca/Desmarca o checkBox do respectivo hábito e insere no histórico de alterações.
+      * 
+      * @param {String} id ID do hábito que contém o checkBox a ser marcado/desmarcado.
+      * 
+      * @param {number} i Index do check a ser alterado.
+      * 
+      * @param {String} date Data que o check deveria ter sido feito.
+      */
+    async function changeChecks(id, i, date) {
+        console.log("ID habito -> ", id);
+        console.log("Index check -> ", i);
+        const response = await AsyncStorage.getItem('@goalsmanagement:habits');
+        const data = response ? JSON.parse(response) : [];
+
+        // pega e formata a data de criação do check.
+        const created = date.split('/');
+        const converted = new Date(created[2], created[1] - 1, created[0]);
+        const toDoAt = `${converted.getDate().toString().padStart(2, '0')}/${(converted.getMonth() + 1).toString().padStart(2, '0')}/${converted.getFullYear().toString().padStart(2, '0')}`; // formatado para comparação
+
+        // const now = new Date();
+        // const dia = now.getDate().toString().padStart(2, '0');
+        // const mes = (now.getMonth() + 1).toString().padStart(2, '0');
+        // const ano = now.getFullYear().toString();
+
+        // const toDoAt = `${dia}/${mes}/${ano}`;
+
+        const changed = data.map((habit) => {
+            if (habit.id === id) {
+                return {
+                    createdAt: habit.createdAt,
+                    habit: habit.habit,
+                    id: habit.id,
+                    linked: habit.linked,
+                    checklists: habit.checklists.map((check, index) => {
+                        if (index === i) {
+                            return {
+                                done: !check.done,
+                                historic: [...check.historic, toDoAt],
+                                notifications: check.notifications,
+                                repeat: check.repeat,
+                                title: check.title,
+                                created: check.created
+                            };
+                        } else {
+                            return check;
+                        };
+                    })
+                };
+            } else {
+                return habit;
+            };
+        });
+
+        console.log("========================pré cadastro===================");
+        console.log(changed.filter((item) => item.id == id));
+
+        await AsyncStorage.setItem('@goalsmanagement:habits', JSON.stringify(changed));
+        await adjustChecks();
+
+    };
+
+
+    /**
+     * Define o habito || check visivel nos frames
+     * 
+     * @param {Array} index Array contendo os index's do hábito e/ou check clicado.
+     * 
+     * @returns {void}
+     */
+    function setShowingPendingChecks(index) {
+        LayoutAnimation.configureNext({
+            duration: 300,
+            update: {
+                type: "easeIn",
+            }
+        });
+
+        if (showing == "lates") {
+            setLatesShowing(index);
+        } else if (showing == "today") {
+            setPendingShowing(index);
+        };
+    };
+
+    /**
+     * Altera a visibilidade das views dos checks atrasados e pendentes
+     * 
+     * @param {String} frame 'lates' || 'today' Frame que chamou a função
+     * 
+     * @returns {void}
+     */
     function setShowingFrame(frame) {
         LayoutAnimation.configureNext({
             duration: 300,
@@ -113,6 +264,9 @@ export default function Home() {
                 type: "linear"
             }
         });
+
+        setLatesShowing(-1, -1);
+        setPendingShowing(-1, -1);
 
         if (frame == "lates") {
             showing == "lates" ? setShowing(undefined) : setShowing("lates")
@@ -125,6 +279,8 @@ export default function Home() {
     /** Realiza a navegação entre telas
      * 
      * @param {string} Screen - Tela destino.
+     * 
+     * @returns {void}
      */
     function go(Screen) {
         navigation.navigate(Screen);
@@ -222,9 +378,92 @@ export default function Home() {
                             >
                                 <ChecksScroll>
                                     {showing == "lates" && checksLate.map((item, i) => (
-                                        <Text key={i}>
-                                            {item.checkTitle}
-                                        </Text>
+                                        <GroupHabitsView key={i}>
+                                            <GroupHabitsHeader>
+                                                <GroupHabitsTitle>
+                                                    {item[0][0].habitoTitle}
+                                                </GroupHabitsTitle>
+                                                <MaterialIcons
+                                                    onPress={() => {
+                                                        latesShowing[0] == i ?
+                                                            setShowingPendingChecks([-1, -1]) :
+                                                            setShowingPendingChecks([i, -1])
+                                                    }
+                                                    }
+                                                    name={latesShowing[0] == i ? 'visibility' : 'visibility-off'}
+                                                    size={RFPercentage(3)}
+                                                    color={THEME.COLORS.TEXT}
+                                                />
+                                            </GroupHabitsHeader>
+                                            {latesShowing[0] == i && (
+                                                <GroupHabitsBody>
+
+                                                    {item.map((checks, index) => (
+                                                        <GroupCheckView key={index}>
+                                                            <GroupCheckHeader onPress={() => latesShowing[1] == index ? setShowingPendingChecks([i, -1]) : setShowingPendingChecks([i, index])}>
+                                                                <MaterialIcons
+                                                                    style={{
+                                                                        zIndex: 1000,
+                                                                        borderRadius: 5,
+                                                                    }}
+                                                                    name="crop-square"
+                                                                    size={RFPercentage(3.5)}
+                                                                    onPress={() => console.log("PRESSED")}
+                                                                />
+                                                                <GroupCheckTitle>
+                                                                    {checks[index].checkTitle}
+                                                                </GroupCheckTitle>
+                                                                <GroupCheckTitle>
+                                                                    {checks[index].repeticao}
+                                                                </GroupCheckTitle>
+
+                                                            </GroupCheckHeader>
+                                                            {latesShowing[1] == index && (
+                                                                <GroupCheckBody>
+                                                                    <HeaderTable>
+                                                                        <HeaderTableText>
+                                                                            DATA
+                                                                        </HeaderTableText>
+                                                                        <HeaderTableText>
+                                                                            FEITO
+                                                                        </HeaderTableText>
+                                                                    </HeaderTable>
+
+                                                                    {checks.map((dates, j) => (
+                                                                        <GroupCheckParentView
+                                                                            key={j}
+                                                                            style={{ backgroundColor: j % 2 == 0 ? THEME.COLORS.PRIMARY700 : null }}
+                                                                        >
+                                                                            <GroupCheckHorizontalView>
+                                                                                <GroupCheckDataInfo>
+                                                                                    <MaterialIcons
+                                                                                        name="calendar-today"
+                                                                                        size={RFPercentage(2.3)}
+                                                                                    />
+                                                                                    <InfoCheckBody>
+                                                                                        {dates.data}
+                                                                                    </InfoCheckBody>
+                                                                                </GroupCheckDataInfo>
+
+                                                                                <TouchableDefault onPress={() => { changeChecks(dates.habitoID, dates.check, dates.data) }}>
+                                                                                    <MaterialIcons
+                                                                                        name="crop-square"
+                                                                                        size={RFPercentage(3)}
+                                                                                    />
+                                                                                </TouchableDefault>
+
+                                                                            </GroupCheckHorizontalView>
+                                                                        </GroupCheckParentView>
+                                                                    ))}
+                                                                </GroupCheckBody>
+                                                            )}
+
+                                                            <Line />
+                                                        </GroupCheckView>
+                                                    ))}
+                                                </GroupHabitsBody>
+                                            )}
+                                        </GroupHabitsView>
                                     ))}
                                 </ChecksScroll>
                             </ParentChecksView>
@@ -241,7 +480,7 @@ export default function Home() {
                                     iterationDelay={3500}
                                 >
                                     <MaterialIcons
-                                        name='circle-notifications'
+                                        name='assignment'
                                         color={THEME.COLORS.TEXT}
                                         size={RFPercentage(4)}
                                     />
@@ -251,15 +490,99 @@ export default function Home() {
                             <ParentChecksView
                                 animation={showing == "today" ? 'fadeIn' : null}
                                 duration={500}
-                                delay={2000}
+                                delay={300}
                             >
                                 <ChecksScroll>
                                     {showing == "today" && checksToday.map((item, i) => (
-                                        <Text key={i}>
-                                            {item.checkTitle}
-                                        </Text>
-                                    ))}
+                                        <GroupHabitsView key={i}>
+                                            <GroupHabitsHeader>
+                                                <GroupHabitsTitle>
+                                                    {item[0][0].habitoTitle}
+                                                </GroupHabitsTitle>
+                                                <MaterialIcons
+                                                    onPress={() => {
+                                                        pendingShowing[0] == i ?
+                                                            setShowingPendingChecks([-1, -1]) :
+                                                            setShowingPendingChecks([i, -1])
+                                                    }
+                                                    }
+                                                    name={pendingShowing[0] == i ? 'visibility' : 'visibility-off'}
+                                                    size={RFPercentage(3)}
+                                                    color={THEME.COLORS.TEXT}
+                                                />
+                                            </GroupHabitsHeader>
+                                            {pendingShowing[0] == i && (
+                                                <GroupHabitsBody>
 
+                                                    {item.map((checks, index) => (
+                                                        <GroupCheckView key={index}>
+                                                            <GroupCheckHeader onPress={() => pendingShowing[1] == index ? setShowingPendingChecks([i, -1]) : setShowingPendingChecks([i, index])}>
+                                                                <MaterialIcons
+                                                                    style={{
+                                                                        zIndex: 1000,
+                                                                        borderRadius: 5,
+                                                                    }}
+                                                                    name="crop-square"
+                                                                    size={RFPercentage(3.5)}
+                                                                    onPress={() => console.log("PRESSED")}
+                                                                />
+                                                                <GroupCheckTitle>
+                                                                    {checks[0].checkTitle}
+                                                                </GroupCheckTitle>
+                                                                <GroupCheckTitle>
+                                                                    {checks[0].repeticao}
+                                                                </GroupCheckTitle>
+
+                                                            </GroupCheckHeader>
+                                                            {pendingShowing[1] == index && (
+                                                                <GroupCheckBody>
+                                                                    <HeaderTable>
+                                                                        <HeaderTableText>
+                                                                            DATA
+                                                                        </HeaderTableText>
+                                                                        <HeaderTableText>
+                                                                            FEITO
+                                                                        </HeaderTableText>
+                                                                    </HeaderTable>
+
+                                                                    {checks.map((dates, j) => (
+                                                                        <GroupCheckParentView
+                                                                            key={j}
+                                                                            style={{ backgroundColor: j % 2 == 0 ? THEME.COLORS.PRIMARY700 : null }}
+                                                                        >
+                                                                            <GroupCheckHorizontalView>
+                                                                                <GroupCheckDataInfo>
+                                                                                    <MaterialIcons
+                                                                                        name="calendar-today"
+                                                                                        size={RFPercentage(2.3)}
+                                                                                    />
+                                                                                    <InfoCheckBody>
+                                                                                        {dates.data}
+                                                                                    </InfoCheckBody>
+                                                                                </GroupCheckDataInfo>
+
+
+                                                                                <TouchableDefault onPress={() => { changeChecks(dates.habitoID, dates.check, dates.data) }}>
+                                                                                    <MaterialIcons
+                                                                                        name="crop-square"
+                                                                                        size={RFPercentage(3)}
+                                                                                    />
+                                                                                </TouchableDefault>
+
+                                                                            </GroupCheckHorizontalView>
+                                                                        </GroupCheckParentView>
+                                                                    ))}
+                                                                </GroupCheckBody>
+                                                            )}
+
+                                                            <Line />
+                                                        </GroupCheckView>)
+
+                                                    )}
+                                                </GroupHabitsBody>
+                                            )}
+                                        </GroupHabitsView>
+                                    ))}
                                 </ChecksScroll>
                             </ParentChecksView>
                         </CheckFrame>

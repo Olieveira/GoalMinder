@@ -3,6 +3,100 @@ import THEME from "../../theme";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import * as Animatable from 'react-native-animatable';
 
+export const TouchableDefault = styled.TouchableOpacity`
+`
+export const Line = styled.View`
+    min-height: 3px;
+    background-color: ${THEME.COLORS.PRIMARY900};
+    width: ${RFPercentage(35)}px;
+    margin: ${RFPercentage(1)}px 0;
+    border-radius: 10px;
+`
+export const HeaderTable = styled.View`
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: ${RFPercentage(1)}px;
+`
+export const HeaderTableText = styled.Text`
+    flex: 1;
+    text-align: center;
+    font-family: ${THEME.FONTS.BOLD};
+`
+
+export const GroupCheckDataInfo = styled.View`
+    justify-content: center;
+    align-items: center;
+`
+export const InfoCheckBody = styled.Text`
+    text-align: center;
+    flex: 1;
+`
+export const GroupCheckParentView = styled.View`
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: ${RFPercentage(1)}px ${RFPercentage(2)}px;
+`
+export const GroupCheckHorizontalView = styled.View`
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+`
+export const GroupCheckBody = styled.View`
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    border: 1.3px solid ${THEME.COLORS.PRIMARY900};
+    border-radius: 5px;
+`
+export const GroupCheckTitle = styled.Text`
+    flex: 1;
+    text-align: center;
+    font-family: ${THEME.FONTS.MEDIUM};
+    font-size: ${RFPercentage(2.1)}px;
+`
+export const GroupCheckHeader = styled.TouchableOpacity`
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: ${RFPercentage(1)}px;
+`
+export const GroupCheckView = styled.View`
+    background-color: ${THEME.COLORS.PRIMARY600};
+    flex: 1;
+    width: 100%;
+    padding: ${RFPercentage(1)}px ${RFPercentage(1.5)}px;
+    justify-content: center;
+    align-items: center;
+`
+export const GroupHabitsBody = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+`
+export const GroupHabitsTitle = styled.Text`
+    text-align: center;
+    flex: 1;
+    font-family: ${THEME.FONTS.BOLD};
+    font-size: ${RFPercentage(2.4)}px;
+    color: ${THEME.COLORS.TEXT};
+`
+export const GroupHabitsHeader = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: ${RFPercentage(1)}px;
+    `
+export const GroupHabitsView = styled.View`
+    flex: 1;
+    background-color: ${THEME.COLORS.PRIMARY900};
+    border: solid 2.5px ${THEME.COLORS.PRIMARY600};
+    margin: ${RFPercentage(1)}px;
+    border-radius: 6px;
+`
 export const IconShakeLoop = styled(Animatable.View)`
 `
 export const ParentChecksView = styled(Animatable.View)`
@@ -13,13 +107,14 @@ export const ChecksScroll = styled.ScrollView`
 export const TitleHeaderCheck = styled.Text`
     font-size: ${RFPercentage(2.3)}px;
     font-family: ${THEME.FONTS.BOLD};
+    text-align: center;
 `
 export const IconAnimationLoop = styled(Animatable.View)`
 `
 export const CheckHeader = styled.TouchableOpacity`
     background-color: ${THEME.COLORS.PRIMARY600};
     flex-direction: row;
-    width: ${RFPercentage(33)}px;
+    width: 100%;
     justify-content: space-evenly;
     align-items: center;
     padding: ${RFPercentage(1)}px 0;
@@ -34,6 +129,7 @@ export const DatesHeader = styled.View`
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
+    flex: 1;
     margin-bottom: ${RFPercentage(2)}px;
     background-color: rgba(0,50,100,0.8);
     padding: ${RFPercentage(1)}px;
@@ -44,13 +140,13 @@ export const DatesTitle = styled.Text`
     font-size: ${RFPercentage(3)}px;
     font-family: ${THEME.FONTS.BOLD};
     color: ${THEME.COLORS.TEXT};
+    text-align: center;
 `
 
 export const DatesFrame = styled.View`
     background-color: rgba(0,50,100,0.5);
     border: 3px solid ${THEME.COLORS.PRIMARY600};
     min-height: ${RFPercentage(13)}px;
-    min-width: ${RFPercentage(40)}px;
     justify-content: space-between;
     align-items: center;
     border-radius: 5px;
