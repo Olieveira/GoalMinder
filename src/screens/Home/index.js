@@ -1,7 +1,8 @@
 import {
-    MainContainer, Title, StatusBar, TitleContainer, MainImage, Text, AnimatedIcon, CenterView, CenterTitle, CenterGroup, DefaultView, ChecksBg, CheckFrame, DatesFrame, DatesHeader,
+    MainContainer, Title, StatusBar, StartView, TitleContainer, MainImage, Text, AnimatedIcon, CenterView, CenterTitle, CenterGroup, DefaultView, ChecksBg, CheckFrame, DatesFrame, DatesHeader,
     DatesTitle, IconAnimationLoop, CheckHeader, TitleHeaderCheck, ChecksScroll, ParentChecksView, IconShakeLoop, GroupHabitsView, GroupHabitsHeader, GroupCheckTitle, GroupCheckHeader, GroupHabitsBody,
-    GroupCheckView, GroupHabitsTitle, GroupCheckBody, GroupCheckHorizontalView, InfoCheckBody, GroupCheckParentView, GroupCheckDataInfo, Line, HeaderTable, HeaderTableText, TouchableDefault
+    GroupCheckView, GroupHabitsTitle, GroupCheckBody, GroupCheckHorizontalView, InfoCheckBody, GroupCheckParentView, GroupCheckDataInfo, Line, HeaderTable, HeaderTableText, TouchableDefault, NoneCheckView,
+    NoneCheckMessage, NoneCheckTitle, NoneCheckIconView
 } from "./styles";
 import { useEffect } from "react";
 import THEME from "../../theme";
@@ -289,7 +290,7 @@ export default function Home() {
         <MainContainer>
 
             {checksToday.length < 1 && checksLate.length < 1 ? (
-                <DefaultView>
+                <StartView>
                     <StatusBar animated backgroundColor={THEME.COLORS.BACKGROUND} barStyle={"dark-content"} />
 
                     <TitleContainer>
@@ -332,7 +333,9 @@ export default function Home() {
                             <MaterialIcons color={THEME.COLORS.TEXT} size={RFPercentage(3.4)} name="menu-book" />
                         </CenterView>
                     </CenterGroup>
-                </DefaultView>
+
+                    <DefaultView />
+                </StartView>
             ) : null}
 
             {checksToday.length > 0 || checksLate.length > 0 ? (
@@ -465,6 +468,38 @@ export default function Home() {
                                             )}
                                         </GroupHabitsView>
                                     ))}
+
+                                    {/* Caso não tenha nenhum check atrasado */}
+                                    {showing == "lates" && checksLate.length <= 0 && (
+                                        <DefaultView>
+                                            <NoneCheckView>
+                                                <NoneCheckIconView>
+                                                    <MaterialIcons
+                                                        name="military-tech"
+                                                        size={RFPercentage(8)}
+                                                        color={THEME.COLORS.ALERT900}
+                                                    />
+                                                </NoneCheckIconView>
+                                                <DefaultView>
+                                                    <NoneCheckTitle
+                                                        animation={"fadeInDown"}
+                                                        delay={200}
+                                                        duration={850}
+                                                    >
+                                                        Parabéns!
+                                                    </NoneCheckTitle>
+                                                    <NoneCheckMessage
+                                                        animation={"fadeInDown"}
+                                                        delay={900}
+                                                        duration={850}
+                                                    >
+                                                        Você não tem nenhuma atividade atrasada!
+                                                    </NoneCheckMessage>
+                                                </DefaultView>
+                                            </NoneCheckView>
+                                        </DefaultView>
+                                    )}
+
                                 </ChecksScroll>
                             </ParentChecksView>
                         </CheckFrame>
@@ -583,12 +618,44 @@ export default function Home() {
                                             )}
                                         </GroupHabitsView>
                                     ))}
+
+                                    {/* Caso não tenha nenhum check pendente */}
+                                    {showing == "today" && checksToday.length <= 0 && (
+                                        <DefaultView>
+                                            <NoneCheckView>
+                                                <NoneCheckIconView>
+                                                    <MaterialIcons
+                                                        name="done-all"
+                                                        size={RFPercentage(8)}
+                                                        color={THEME.COLORS.ALERT900}
+                                                    />
+                                                </NoneCheckIconView>
+                                                <DefaultView>
+                                                    <NoneCheckTitle
+                                                        animation={"fadeInDown"}
+                                                        delay={200}
+                                                        duration={850}
+                                                    >
+                                                        Nenhuma pendência!
+                                                    </NoneCheckTitle>
+                                                    <NoneCheckMessage
+                                                        animation={"fadeInDown"}
+                                                        delay={900}
+                                                        duration={850}
+                                                    >
+                                                        Crie novas tarefas cadastrando novos Hábitos ou edite os existentes!
+                                                    </NoneCheckMessage>
+                                                </DefaultView>
+                                            </NoneCheckView>
+                                        </DefaultView>
+                                    )}
                                 </ChecksScroll>
                             </ParentChecksView>
                         </CheckFrame>
                     </DatesFrame>
                 </ChecksBg>
-            ) : null}
+            ) : null
+            }
 
             <MainImage
                 animation={'fadeInUpBig'}
@@ -599,6 +666,6 @@ export default function Home() {
                 resizeMode='center'
             />
 
-        </MainContainer>
+        </MainContainer >
     )
 };

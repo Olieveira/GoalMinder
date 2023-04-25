@@ -1,7 +1,7 @@
 import {
     RootView, HabitsImage, ImageView, FooterLicenseView, LicenseText, CenterView, HeaderView, HeaderTitle, DefaultView, DefaultHorizontalView,
     BodyText, HabitsView, HabitFrame, HabitTitle, HabitsScrollView, SuggestionTextView, AlphaBg, ChecksDataContainer, CloseView, ChecksDataHeader, ChecksDataTitle,
-    ChecksDataBody, ChecksDataScroll, ChecksOptionView, ChecksDataOption
+    ChecksDataBody, ChecksDataScroll, ChecksOptionView, ChecksDataOption, CheckName
 } from './styles';
 import habitsBg from '../../assets/habitsBg.png'
 import { useEffect, useState } from 'react';
@@ -19,8 +19,9 @@ import { LayoutAnimation } from 'react-native';
 export default function Habits({ navigation }) {
 
     useEffect(() => {
-        console.log(showingCheckData);
-    }, [showingCheckData])
+        console.log("\nOpções de data:");
+        console.log(checkDataOptions);
+    }, [checkDataOptions])
 
 
     // controla visibilidade do formulario de hábitos
@@ -34,7 +35,7 @@ export default function Habits({ navigation }) {
 
     // Controla a visibilidade do scroll de datas dos check's
     const [showingCheckData, setShowingCheckData] = useState(false);
-    const [checkDataOptions, setCheckDataOptions] = useState(["teste1", "teste2", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3", "teste3"]);
+    const [checkDataOptions, setCheckDataOptions] = useState();
 
     // Controla a visibilidade do componente de confirmação
     const [showingConfirmation, setShowingConfirmation] = useState(false);
@@ -77,6 +78,30 @@ export default function Habits({ navigation }) {
         };
     };
 
+    /**
+     * Define todas opções de data para checagem do checkBox do hábito específicado.
+     * 
+     * @param {String} habitId Id do hábito selecionado.
+     * @param {number} checkIndex Index do checkBox clicado. 
+    */
+    async function setCheckOptions(habitId, checkIndex) {
+        const response = await AsyncStorage.getItem('@goalsmanagement:habits');
+        const data = response ? JSON.parse(response) : [];
+
+        // filtro para obter todas as datas do checkBox
+        const options = data.map((item) => {
+            if (item.id === habitId) {
+                return {
+                    checkTitle: item.checklists[checkIndex].title,
+                    historic: [...item.checklists[checkIndex].historic]
+                }
+            }
+        });
+
+        console.log("Opções encontradas:\n", options);
+        setCheckDataOptions(options[0]);
+
+    };
 
     /**
      * Altera a visibilidade do componente que exibe as opções de datas do check
@@ -105,10 +130,6 @@ export default function Habits({ navigation }) {
 
         const editedAt = `${dia}/${mes}/${ano}`;
 
-        if (data.filter(item => item.id === id)[0].checklists[i].historic.includes(editedAt)) {
-            console.log("")
-        }
-
         const changed = data.map((habit) => {
             if (habit.id === id) {
                 return {
@@ -136,8 +157,8 @@ export default function Habits({ navigation }) {
             };
         });
 
-        // await AsyncStorage.setItem('@goalsmanagement:habits', JSON.stringify(changed));
-        // fetchData();
+        await AsyncStorage.setItem('@goalsmanagement:habits', JSON.stringify(changed));
+        fetchData();
     };
 
     /**
@@ -215,6 +236,7 @@ export default function Habits({ navigation }) {
         await fetchData();
         showInfo('SUCESSO', 'Item excluído com sucesso!', 'success');
     };
+
     /**
      * Remove todos os hábitos cadastrados
      */
@@ -461,8 +483,8 @@ export default function Habits({ navigation }) {
                                                 'warning',
                                                 () => deleteItem(habito.id)
                                             )}
-                                        handleChangeBox={(checkIndex) => {
-                                            // changeChecks(habito.id, checkIndex);
+                                        handleChangeBox={async (checkIndex) => {
+                                            await setCheckOptions(habito.id, checkIndex); // define todas opções de check's do respectivo hábito
                                             changeCheckOptionsView();
                                         }}
                                     />
@@ -527,8 +549,11 @@ export default function Habits({ navigation }) {
                             </ChecksDataTitle>
                         </ChecksDataHeader>
                         <ChecksDataBody>
+                            <CheckName>
+                                {checkDataOptions.checkTitle}
+                            </CheckName>
                             <ChecksDataScroll>
-                                {checkDataOptions.map((item, i) => (
+                                {checkDataOptions.historic.map((item, i) => (
                                     <ChecksOptionView
                                         key={i}
                                         style={{ backgroundColor: i % 2 == 0 ? THEME.COLORS.PRIMARY600 : null }}
@@ -536,11 +561,16 @@ export default function Habits({ navigation }) {
                                         <ChecksDataOption
                                             style={{ color: i % 2 == 0 ? THEME.COLORS.PRIMARY900 : THEME.COLORS.TEXT }}
                                         >
-                                            {item}
+                                            {i + 1 + " - " + item}
                                         </ChecksDataOption>
                                         <Feather
-                                            name="square"
-                                            size={RFPercentage(2.4)}
+                                            onPress={async () => {
+                                                await changeChecks(item.habitId, i);
+                                                await setCheckOptions(item.habitId, i);
+                                            }}
+                                            name={item.done ? "x-square" : "square"}
+                                            size={RFPercentage(2.6)}
+                                            color={item.done ? THEME.COLORS.TEXT : THEME.COLORS.ALERT900}
                                         />
                                     </ChecksOptionView>
                                 ))}

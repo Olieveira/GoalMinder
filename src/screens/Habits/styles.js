@@ -3,6 +3,13 @@ import THEME from '../../theme';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import * as Animatable from 'react-native-animatable';
 
+export const CheckName = styled.Text`
+    text-align: center;
+    font-size: ${RFPercentage(3)}px;
+    font-family: ${THEME.FONTS.BOLD};
+    color: ${THEME.COLORS.TEXT};
+    margin-bottom: ${RFPercentage(1)}px;
+`
 export const ChecksDataOption = styled.Text`
     font-size: ${RFPercentage(2.1)}px;
     flex: 1;
