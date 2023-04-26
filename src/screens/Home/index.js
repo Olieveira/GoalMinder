@@ -24,17 +24,6 @@ export default function Home() {
     const navigation = useNavigation();
 
     useEffect(() => {
-        // try {
-        //     checksLate.map((item, i) => {
-        //         console.log("INDEX ", i, ":\n", item, "\n---------------------------------------\n");
-        //     })
-        // } catch (e) {
-        //     console.log("Error: ", e);
-        // };
-
-    }, [checksLate]);
-
-    useEffect(() => {
 
         adjustChecks();
 
@@ -157,10 +146,6 @@ export default function Home() {
                 };
             });
         });
-
-        // console.log('---------------AGRUPADO-------------');
-
-        // console.log(agruparArray(toSubmit.filter(item => item.data != nowFormatted)));
 
         setChecksLate(agruparArray(toSubmit.filter(item => item.data != nowFormatted))); // define os itens atrasados
         setChecksToday(agruparArray(toSubmit.filter(item => item.data == nowFormatted))); // define os itens do dia atual

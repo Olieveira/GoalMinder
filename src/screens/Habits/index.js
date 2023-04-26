@@ -45,6 +45,9 @@ export default function Habits({ navigation }) {
     const [modalType, setModalType] = useState('');
     const [modalYes, setModalYes] = useState(); // function executada ao confirmar mensagem
 
+    // Variável que controla se todas as datas do check pressionado foram marcadas.
+    const [allDone, setAllDone] = useState(false);
+
     // restaura os estados quando a tela é desfocada
     useEffect(() => {
         const reset = navigation.addListener('blur', () => {
@@ -55,6 +58,13 @@ export default function Habits({ navigation }) {
 
         return reset;
     }, [navigation]);
+
+    useEffect(() => {
+        if (typeof (checkDataOptions) !== 'undefined') {
+            console.log("Opções alteradas e análise refeita:");
+            console.log("Todas as datas estão marcadas? -> ", !checkDataOptions.items.some(item => item.done === false));
+        }
+    }, [checkDataOptions])
 
     useEffect(() => {
         fetchData();
@@ -79,27 +89,94 @@ export default function Habits({ navigation }) {
     };
 
     /**
-     * Define todas opções de data para checagem do checkBox do hábito específicado.
+    * Calcula diferença entre duas datas
+    * 
+    * @param {object} date1 Objeto de data  
+    * @param {object} date2 Objeto de data
+    * 
+    * @returns {number} Diferença entre as duas datas
+    */
+    function calcDiferenca(date1, date2) {
+        const day = 24 * 60 * 60 * 1000; // 1 dia em milissegundos
+        const diferenca = Math.abs(date1 - date2); // diferença em milissegundos
+
+        return Math.round(diferenca / day);
+    };
+
+    /**
+     * Calcula todas as datas em que o checkBox deveria ter sido feito e define como opções de checagem do hábito específicado.
      * 
      * @param {String} habitId Id do hábito selecionado.
      * @param {number} checkIndex Index do checkBox clicado. 
     */
     async function setCheckOptions(habitId, checkIndex) {
+        console.log("HabitID: ", habitId, " checkIndex: ", checkIndex)
         const response = await AsyncStorage.getItem('@goalsmanagement:habits');
         const data = response ? JSON.parse(response) : [];
 
-        // filtro para obter todas as datas do checkBox
-        const options = data.map((item) => {
+        let options = { habitId: habitId, checkIndex: checkIndex, checkTitle: "", items: [] }; // objeto que armazenará as opções
+
+        // filtro para obter valores do checkBox específico
+        const itemClicked = await data.map((item) => {
             if (item.id === habitId) {
+                options.checkTitle = item.checklists[checkIndex].title;
                 return {
-                    checkTitle: item.checklists[checkIndex].title,
+                    created: item.checklists[checkIndex].created,
+                    repeat: item.checklists[checkIndex].repeat,
                     historic: [...item.checklists[checkIndex].historic]
                 }
             }
-        });
+        }).filter(item => item != undefined)[0];
+
+        // pega e formata a data de criação do check.
+        const created = itemClicked.created.split('/');
+        const createdObj = new Date(created[2], created[1] - 1, created[0]);
+
+        // armazenará o intervalo de repetição do checkBox
+        let intervalo = 0;
+
+
+        // // pega o intervalo de repetição do item
+        switch (itemClicked.repeat) {
+            case 'Mensal':
+                intervalo = 30;
+                break;
+            case 'Semanal':
+                intervalo = 7;
+                break;
+            case 'Diário':
+                intervalo = 1;
+                break;
+            default:
+                intervalo = 0;
+        };
+
+        // quantidade de vezes que o check deve ter sido feito até o momento atual
+        const hadDone = Math.floor(calcDiferenca(createdObj, new Date()) / intervalo) + (intervalo == 1 ? 0 : 1);
+
+
+        for (let j = 0; j < hadDone; j++) {
+
+            const converted = new Date(createdObj.getTime() + (intervalo * (j)) * (24 * 60 * 60 * 1000)); // data que o item deveria ter sido marcado
+            const toCompare = `${converted.getDate().toString().padStart(2, '0')}/${(converted.getMonth() + 1).toString().padStart(2, '0')}/${converted.getFullYear().toString().padStart(2, '0')}`; // formatado para comparação
+
+            // Se essa data ja foi marcada
+            if (itemClicked.historic.includes(toCompare)) {
+                options.items.push({
+                    date: toCompare,
+                    done: true
+                })
+            } else {
+                options.items.push({
+                    date: toCompare,
+                    done: false
+                })
+            };
+        };
 
         console.log("Opções encontradas:\n", options);
-        setCheckDataOptions(options[0]);
+
+        setCheckDataOptions(options);
 
     };
 
@@ -118,17 +195,13 @@ export default function Habits({ navigation }) {
     * @param {string} id ID do hábito que contém o checkBox a ser marcado/desmarcado.
     * 
     * @param {number} i Index do check a ser alterado.
+    * 
+    * @param {String} date Data a ser alterada no histórico do checkBox.
     */
-    async function changeChecks(id, i) {
+    async function changeChecks(id, i, date) {
+
         const response = await AsyncStorage.getItem('@goalsmanagement:habits');
-        const data = response ? JSON.parse(response) : [];
-
-        const now = new Date();
-        const dia = now.getDate().toString().padStart(2, '0');
-        const mes = (now.getMonth() + 1).toString().padStart(2, '0');
-        const ano = now.getFullYear().toString();
-
-        const editedAt = `${dia}/${mes}/${ano}`;
+        const data = response ? await JSON.parse(response) : [];;
 
         const changed = data.map((habit) => {
             if (habit.id === id) {
@@ -140,8 +213,8 @@ export default function Habits({ navigation }) {
                     checklists: habit.checklists.map((check, index) => {
                         if (index === i) {
                             return {
-                                done: !check.done,
-                                historic: !check.historic.includes(editedAt) && !check.done == true ? [...check.historic, editedAt] : check.historic.filter(item => item !== editedAt),
+                                done: allDone,
+                                historic: !check.historic.includes(date) ? [...check.historic, date] : check.historic.filter(item => item !== date),
                                 notifications: check.notifications,
                                 repeat: check.repeat,
                                 title: check.title,
@@ -553,7 +626,7 @@ export default function Habits({ navigation }) {
                                 {checkDataOptions.checkTitle}
                             </CheckName>
                             <ChecksDataScroll>
-                                {checkDataOptions.historic.map((item, i) => (
+                                {checkDataOptions.items.map((item, i) => (
                                     <ChecksOptionView
                                         key={i}
                                         style={{ backgroundColor: i % 2 == 0 ? THEME.COLORS.PRIMARY600 : null }}
@@ -561,12 +634,12 @@ export default function Habits({ navigation }) {
                                         <ChecksDataOption
                                             style={{ color: i % 2 == 0 ? THEME.COLORS.PRIMARY900 : THEME.COLORS.TEXT }}
                                         >
-                                            {i + 1 + " - " + item}
+                                            {i + 1 + " - " + item.date}
                                         </ChecksDataOption>
                                         <Feather
                                             onPress={async () => {
-                                                await changeChecks(item.habitId, i);
-                                                await setCheckOptions(item.habitId, i);
+                                                await changeChecks(checkDataOptions.habitId, checkDataOptions.checkIndex, item.date);
+                                                await setCheckOptions(checkDataOptions.habitId, checkDataOptions.checkIndex);
                                             }}
                                             name={item.done ? "x-square" : "square"}
                                             size={RFPercentage(2.6)}
