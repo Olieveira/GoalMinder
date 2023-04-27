@@ -5,8 +5,7 @@ import THEME from "../../theme";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 /**
- * 
- * label e respectivo input.
+ * Retorna um input com seu respectivo label configurado com base nos parâmetros.
  * 
  * @param {string} [keyboardType='default'] - Tipo do teclado do input = 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'number-pad' | 'decimal-pad';
  * 
@@ -31,7 +30,6 @@ import { RFPercentage } from "react-native-responsive-fontsize";
  * @returns {JSX.Element}
  */
 export default function Input({ keyboardType, placeholder, secureTextEntry, showOption, label, icon, onChangeText, value, returnKeyType, infoShowFunction }) {
-    const [isFilled, setIsFilled] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [isShowed, setIsShowed] = useState(false);
 
@@ -67,7 +65,7 @@ export default function Input({ keyboardType, placeholder, secureTextEntry, show
                 <Feather
                     name={icon}
                     size={22}
-                    color={isFilled || isFocused ? THEME.COLORS.PRIMARY600 : THEME.COLORS.BACKGROUND}
+                    color={isFocused ? THEME.COLORS.PRIMARY600 : THEME.COLORS.BACKGROUND}
                 />
                 <TextInput
                     style={{ borderColor: isFocused ? THEME.COLORS.PRIMARY600 : THEME.COLORS.BACKGROUND }}

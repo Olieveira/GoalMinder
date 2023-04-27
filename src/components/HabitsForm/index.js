@@ -1,4 +1,4 @@
-import { Container, CenterView, Frame, Label, ButtonsView, VerticalButtonsView, GoalsLabelView, DefaultView, HorizontalGoalsView, GoalsText, DefaultHorizontalView, ShowMoreCheckView, CheckText, BgCenterView, HeaderView, HeaderTitle } from "./styles";
+import { Container, CenterView, Frame, Label, ButtonsView, VerticalButtonsView, GoalsLabelView, DefaultView, HorizontalGoalsView, GoalsText, BgCenterView, HeaderView, HeaderTitle } from "./styles";
 import Input from "../Input";
 import CircleAdd from '../Buttons/CircleAdd'
 import { useState, useEffect } from "react";
@@ -17,7 +17,7 @@ import { View } from "react-native-animatable";
 
 /**
  * 
- * @param {function} hideForm Function que destroi ou torna invisível o form.
+ * @param {function} hideForm Function que destrói ou torna o form invisível.
  * 
  * @param {function} showMessage Function que exibe mensagens de sucesso na tela do componente pai.
  * 
@@ -39,17 +39,17 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
     const [links, setLinks] = useState([{}]);
     const [linksLoaded, setLinksLoaded] = useState(false); // diz se o state do link ja recebeu os dados do fetch
 
+    // referência aos scrollView's para manipulá-los
     const checkListsScroll = useRef(null);
     const centerViewScroll = useRef(null);
 
-    // Busca as informações cadastradas quando a tela é carregada
+    // Busca as informações cadastradas quando a tela é iniciada
     useEffect(() => {
         fetchData();
     }, []);
 
     // Verifica quando os links são carregados
     useEffect(() => {
-
         if (linksLoaded) {
             if (typeof (id) == "string") {
                 loadItemToEdit(id);
@@ -63,24 +63,29 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
 
     }, [linksLoaded]);
 
-    // Carrega as informações cadastradas do item a ser editado
+    /**
+     * Carrega as informações do item clicado para edição.
+     * 
+     * @param {number} id Id do item a ser carregado. 
+     */
     async function loadItemToEdit(id) {
         const response = await AsyncStorage.getItem('@goalsmanagement:habits');
         const data = response ? JSON.parse(response) : [];
 
+        // busca em todo o cadastro o item procurado 
         data.map((item) => {
             if (item.id === id) {
                 setHabit(item.habit);
 
+                // verifica se o item possui metas vinculadas
                 links.map((link, index) => {
                     item.linked.includes(link.id) ? handleChangeLinks(index) : null;
                 });
 
-                const checks = item.checklists.map((check, index) => {
+                const checks = item.checklists.map((check) => {
                     return {
                         title: check.title,
                         repeat: check.repeat,
-                        notifications: check.notifications,
                         done: check.done,
                         historic: check.historic,
                         created: check.created
@@ -100,10 +105,8 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
      * @param {string} text Titulo do checkBox a ser editado.
      * 
      * @param {string} repeat Texto que define a repetição do checkBox.
-     * 
-     * @param {string} notifications Texto que define a repetição do checkBox.
      */
-    function editCheckList(i, text, repeat, notifications) {
+    function editCheckList(i, text, repeat) {
         setCheckLists(current => {
             const edited = [...current];
 
@@ -111,14 +114,12 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
 
             repeat !== undefined ? edited[i].repeat = repeat : null;
 
-            notifications !== undefined ? edited[i].notifications = notifications : null;
-
             return edited;
         });
     };
 
     /**
-     *  Adiciona um index no state utilizado para renderizar os checkLists 
+     *  Adiciona um checkBox no useState utilizado para armazenar todos os check's 
      */
     function handleAddCheckList() {
         LayoutAnimation.configureNext({
@@ -128,6 +129,7 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
             }
         });
 
+        // pega a data atual e converte para "dd/mm/yyyy"
         const now = new Date();
         const dia = now.getDate().toString().padStart(2, '0');
         const mes = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -136,14 +138,15 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
         const created = `${dia}/${mes}/${ano}`;
 
 
-        setCheckLists([...checklists, { title: '', repeat: false, notifications: false, done: false, historic: [], created: created }]);
+        setCheckLists([...checklists, { title: '', repeat: false, done: false, historic: [], created: created }]);
 
+        // usa os Ref's para rodar as scrolls para final.
         checkListsScroll.current.scrollToEnd({ animated: true });
         centerViewScroll.current.scrollToEnd({ animated: true });
     };
 
     /**
-     * Vincula ou desvincula metas com o objetivo.
+     * Vincula ou desvincula as metas do item aberto.
      * 
      * @param {number} i Posição da meta a ser vinculada. 
      */
@@ -163,10 +166,9 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
     };
 
     /**
-     * Realiza a consulta das metas cadastradas
+     * Busca as metas cadastradas.
      */
     async function fetchData() {
-
         const response = await AsyncStorage.getItem("@goalsmanagement:goals");
 
         if (response != null) {
@@ -191,16 +193,16 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
     };
 
     /**
-     * Realiza a edição da meta atual
-     * 
-     * inutilizado ainda
+     * Define as alterações do item aberto no modo edição.
      */
     async function handleSubmitEdit() {
+        // Se o campo "HÁBITO" e todos os checkBox's estão preenchidos. 
         if (habit != "" && !checklists.find(item => item == "" || item == undefined)) {
 
             const response = await AsyncStorage.getItem("@goalsmanagement:habits");
             const previousData = response ? JSON.parse(response) : [];
 
+            // busca o item aberto no cadastro e realiza as alterações.
             const newData = previousData.map((item) => {
                 if (item.id == id) {
                     return {
@@ -216,6 +218,7 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
             });
 
             await AsyncStorage.setItem("@goalsmanagement:habits", JSON.stringify(newData.filter(item => item !== undefined)));
+
             showMessage('SUCESSO!', 'Hábito editado com sucesso!', 'success');
             hideForm();
         } else {
@@ -225,12 +228,13 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
     };
 
     /**
-     * Realiza a validação dos campos e cadastro dos dados.
+     * Realiza a validação dos campos e cadastra o item se validado.
      */
     async function handleSubmit() {
 
-        const id = uuidv4();
+        const id = uuidv4(); // id gerado para o item aberto.
 
+        // pega a data atual e converte para "dd/mm/yyyy"
         const now = new Date();
         const dia = toString(now.getDate()).length > 1 ? now.getDate() : `0${now.getDate()}`;
         const mes = now.getMonth() + 1 >= 10 ? now.getMonth() + 1 : `0${now.getMonth() + 1}`;
@@ -246,6 +250,7 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
             createdAt
         };
 
+        // Se o campo "Hábito" estiver preenchido realiza o cadastro.
         if (habit != "") {
 
             const response = await AsyncStorage.getItem("@goalsmanagement:habits");
@@ -416,7 +421,7 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
                                             placeholder={'Ex.: Ler 10 páginas.'}
                                             item={checklists[index]}
                                             onChangeText={(text) => { editCheckList(index, text) }}
-                                            onSelectValue={(repeat, notifications) => { editCheckList(index, undefined, repeat, notifications) }}
+                                            onSelectValue={(repeat) => { editCheckList(index, undefined, repeat) }}
                                         />
                                     </DefaultView>
                                 ))}

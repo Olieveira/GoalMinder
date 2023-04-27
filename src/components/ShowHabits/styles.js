@@ -18,6 +18,7 @@ export const EditButton = styled.TouchableOpacity`
     border: solid 3px ${THEME.COLORS.PRIMARY800};
     z-index: 1000;
 `
+
 export const DeleteButton = styled.TouchableOpacity`
     position: absolute;
     top: -${RFPercentage(2)}px;
@@ -94,6 +95,7 @@ export const BgView = styled(Animatable.View)`
     background-color: ${THEME.COLORS.BACKGROUND};
     border: 4px solid ${THEME.COLORS.PRIMARY800};
 `
+
 export const HorizontalView = styled(Animatable.View)`
     width: 100%;
     padding: ${RFPercentage(0.5)}px;
@@ -101,6 +103,7 @@ export const HorizontalView = styled(Animatable.View)`
     justify-content: space-between;
     align-items: center;
 `
+
 export const FrameDataView = styled(Animatable.View)`
     flex: 1;
     justify-content: center;
@@ -109,6 +112,7 @@ export const FrameDataView = styled(Animatable.View)`
     margin: ${RFPercentage(0.5)}px;
     padding: ${RFPercentage(0.7)}px 0;
 `
+
 export const HeaderLabel = styled.Text`
     text-align: center;
     flex: 1;
@@ -116,10 +120,11 @@ export const HeaderLabel = styled.Text`
     color: ${THEME.COLORS.ALERT900};
     font-size: ${RFPercentage(2.2)}px;
     margin: ${RFPercentage(0.3)}px 0;
-    `
+`
+
 export const FrameLabel = styled.Text`
     text-align: center;
     font-family: ${THEME.FONTS.MEDIUM};
     color: ${THEME.COLORS.ALERT900};
     font-size: ${RFPercentage(2.2)}px;
-    `
+`

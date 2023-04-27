@@ -14,7 +14,7 @@ import { TouchableOpacity } from 'react-native';
  * 
  * @param {JSX.Element} bodyComponent Elemento exibido ao expandir componente.
  * 
- * @returns 
+ * @returns {JSX.Element}
  */
 export default function ShowMore({ icon, title, bodyComponent }) {
     const [expandDisplay, setExpandDisplay] = useState(false);
@@ -23,6 +23,7 @@ export default function ShowMore({ icon, title, bodyComponent }) {
      * Define a expansão do componente e sua respectiva animação.
      */
     function handleExpandDisplay() {
+        // animação
         LayoutAnimation.configureNext({
             duration: 300,
             update: {

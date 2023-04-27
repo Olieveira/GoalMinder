@@ -7,13 +7,13 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 
 /**
- * Componente que exibe mensagens com opções
+ * Retorna um componente que exibe mensagens com opções.
  * 
- * @param {function} hide Função que define a visibilidade do componente.
+ * @param {function} hide Function que define a visibilidade do componente.
  * 
- * @param {function} yes Função chamada ao pressionar botão de confirmação.
+ * @param {function} yes Function chamada ao pressionar botão de confirmação.
  * 
- * @param {function} no Função chamada ao pressionar botão de negação.
+ * @param {function} no Function chamada ao pressionar botão de negação.
  *  
  * @param {string} title Título do componente.
  * 

@@ -59,6 +59,7 @@ export const IndicatorsView = styled.View`
 
 export const ViewAnimated = styled(Animatable.View)`
 `
+
 export const GoalsScrollView = styled.ScrollView`
     flex: 1;
     max-height: ${RFPercentage(80)}px;
@@ -78,10 +79,6 @@ export const GoalView = styled(Animatable.View)`
     justify-content: center;
     padding: ${RFPercentage(1)}px;
     border-radius: 4px;
-    `
-
-export const horizontalContainer = styled.View`
-  flex-direction: row;
 `
 
 export const CenterAdvice = styled(Animatable.View)`
@@ -116,5 +113,3 @@ export const Bg = styled.View`
 export const Clouds = styled(Animatable.Image)`
 
 `
-export const Title = styled(Animatable.View)`
-    `

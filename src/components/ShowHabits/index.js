@@ -7,6 +7,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { View } from 'react-native-animatable';
 
+/**
+ * Retorna componente para exibição do hábitos
+ * 
+ * @param {object} item Objeto contendo o hábito e suas informações
+ * 
+ * @param {function} handleEdit Function chamada ao clicar no icone de edição
+ * 
+ * @param {function} handleDelete Function chamada ao clicar no botão de exclusão
+ * 
+ * @param {function} handleChangeBox Function chamada ao marcar um checkBox.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function ShowHabits({ item, handleEdit, handleDelete, handleChangeBox }) {
     const [expandGoalsDisplay, setExpandGoalsDisplay] = useState(false);
     const [expandChecksDisplay, setExpandCheckDisplay] = useState(false);
@@ -244,16 +257,6 @@ export default function ShowHabits({ item, handleEdit, handleDelete, handleChang
                                                 color={THEME.COLORS.ALERT900}
                                             />
                                         </CheckVerticalView>
-
-                                        <CheckVerticalView>
-                                            <HeaderLabel>{check.notifications != false && check.notifications != 'Nenhum' ? check.notifications : 'Desativado'}</HeaderLabel>
-                                            <Feather
-                                                name={check.notifications != false && check.notifications != 'Nenhum' ? 'bell' : 'bell-off'}
-                                                size={20}
-                                                color={THEME.COLORS.ALERT900}
-                                            />
-                                        </CheckVerticalView>
-
                                     </CheckHorizontalView>
 
                                 </CheckValues>

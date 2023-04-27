@@ -1,6 +1,6 @@
 import {
     RootView, HabitsImage, ImageView, FooterLicenseView, LicenseText, CenterView, HeaderView, HeaderTitle, DefaultView, DefaultHorizontalView,
-    BodyText, HabitsView, HabitFrame, HabitTitle, HabitsScrollView, SuggestionTextView, AlphaBg, ChecksDataContainer, CloseView, ChecksDataHeader, ChecksDataTitle,
+    BodyText, HabitsView, HabitsScrollView, SuggestionTextView, AlphaBg, ChecksDataContainer, CloseView, ChecksDataHeader, ChecksDataTitle,
     ChecksDataBody, ChecksDataScroll, ChecksOptionView, ChecksDataOption, CheckName
 } from './styles';
 import habitsBg from '../../assets/habitsBg.png'
@@ -17,19 +17,11 @@ import ModalMessage from '../../components/ModalMessage';
 import { LayoutAnimation } from 'react-native';
 
 export default function Habits({ navigation }) {
-
-    useEffect(() => {
-        console.log("\nOpções de data:");
-        console.log(checkDataOptions);
-    }, [checkDataOptions])
-
-
     // controla visibilidade do formulario de hábitos
     const [formDisplay, setFormDisplay] = useState(false);
-    // hábitos
+    // hábitos cadastrados
     const [habits, setHabits] = useState([]);
-    // visibilidade do botão de exclusão
-    const [deleteButton, setDeleteButton] = useState(true);
+
     // ID de um item passado para edição
     const [editId, setEditId] = useState(undefined);
 
@@ -39,14 +31,12 @@ export default function Habits({ navigation }) {
 
     // Controla a visibilidade do componente de confirmação
     const [showingConfirmation, setShowingConfirmation] = useState(false);
+
     // Componente de exibição de mensagens
     const [modalTitle, setModalTitle] = useState('');
     const [messageConfirmation, setMessageConfirmation] = useState('');
     const [modalType, setModalType] = useState('');
     const [modalYes, setModalYes] = useState(); // function executada ao confirmar mensagem
-
-    // Variável que controla se todas as datas do check pressionado foram marcadas.
-    const [allDone, setAllDone] = useState(false);
 
     // restaura os estados quando a tela é desfocada
     useEffect(() => {
@@ -59,21 +49,16 @@ export default function Habits({ navigation }) {
         return reset;
     }, [navigation]);
 
-    useEffect(() => {
-        if (typeof (checkDataOptions) !== 'undefined') {
-            console.log("Opções alteradas e análise refeita:");
-            console.log("Todas as datas estão marcadas? -> ", !checkDataOptions.items.some(item => item.done === false));
-        }
-    }, [checkDataOptions])
-
+    // Busca as informações dos hábitos cadastrados quando a tela é iniciada
     useEffect(() => {
         fetchData();
     }, []);
 
     /**
-     * Busca informações dos hábitos cadastrados
+     * Busca informações dos hábitos cadastrados a atribui no state dos hábitos
      */
     async function fetchData() {
+        // animação
         LayoutAnimation.configureNext({
             duration: 300,
             update: {
@@ -104,13 +89,75 @@ export default function Habits({ navigation }) {
     };
 
     /**
-     * Calcula todas as datas em que o checkBox deveria ter sido feito e define como opções de checagem do hábito específicado.
+     * Calcula todas datas de um checkBox que passaram até o momento atual baseada em um intervalo e verifica quais foram marcadas.
      * 
-     * @param {String} habitId Id do hábito selecionado.
+     * @param {string} start Data inicial do cálculo
+     * 
+     * @param {string} repeat Repetição do checkBox. Mensal | Semanal | Diário 
+     * 
+     * @param {Array} alreadyDone Array contendo as datas em que o CheckBox já foi marcado.
+     * 
+     * @returns {Array[Object]} Array com objetos contendo uma data e se a mesma ja foi marcada. 
+     */
+    function allDates(start, repeat, alreadyDone) {
+
+        // pega e formata a data inicial do check.
+        const created = start.split('/');
+        const createdObj = new Date(created[2], created[1] - 1, created[0]);
+
+        // armazenará o intervalo de repetição do checkBox
+        let intervalo = 0;
+
+        // pega o intervalo de repetição do item
+        switch (repeat) {
+            case 'Mensal':
+                intervalo = 30;
+                break;
+            case 'Semanal':
+                intervalo = 7;
+                break;
+            case 'Diário':
+                intervalo = 1;
+                break;
+            default:
+                intervalo = 0;
+        };
+
+        // quantidade de vezes que o check deve ter sido feito até o momento atual
+        const hadDone = Math.floor(calcDiferenca(createdObj, new Date()) / intervalo) + (intervalo == 1 ? 0 : 1);
+
+        let allDates = []; // variável que armazenará o retorno
+
+        // loop pegando todas as datas
+        for (let j = 0; j < hadDone; j++) {
+
+            const converted = new Date(createdObj.getTime() + (intervalo * (j)) * (24 * 60 * 60 * 1000)); // data que o item deveria ter sido marcado
+            const toCompare = `${converted.getDate().toString().padStart(2, '0')}/${(converted.getMonth() + 1).toString().padStart(2, '0')}/${converted.getFullYear().toString().padStart(2, '0')}`; // formatado para comparação
+
+            // Se essa data ja foi marcada
+            if (alreadyDone.includes(toCompare)) {
+                allDates.push({
+                    date: toCompare,
+                    done: true
+                })
+            } else {
+                allDates.push({
+                    date: toCompare,
+                    done: false
+                })
+            };
+        };
+
+        return allDates;
+    };
+
+    /**
+     * Calcula todas as datas em que o checkBox deveria ter sido feito e atribui ao state responsável pelas opções de checagem do hábito específicado.
+     * 
+     * @param {string} habitId Id do hábito selecionado.
      * @param {number} checkIndex Index do checkBox clicado. 
     */
     async function setCheckOptions(habitId, checkIndex) {
-        console.log("HabitID: ", habitId, " checkIndex: ", checkIndex)
         const response = await AsyncStorage.getItem('@goalsmanagement:habits');
         const data = response ? JSON.parse(response) : [];
 
@@ -128,66 +175,20 @@ export default function Habits({ navigation }) {
             }
         }).filter(item => item != undefined)[0];
 
-        // pega e formata a data de criação do check.
-        const created = itemClicked.created.split('/');
-        const createdObj = new Date(created[2], created[1] - 1, created[0]);
+        // função que retorna todas as datas e se foi marcada na respectiva data
+        const datas = allDates(itemClicked.created, itemClicked.repeat, itemClicked.historic);
 
-        // armazenará o intervalo de repetição do checkBox
-        let intervalo = 0;
-
-
-        // // pega o intervalo de repetição do item
-        switch (itemClicked.repeat) {
-            case 'Mensal':
-                intervalo = 30;
-                break;
-            case 'Semanal':
-                intervalo = 7;
-                break;
-            case 'Diário':
-                intervalo = 1;
-                break;
-            default:
-                intervalo = 0;
-        };
-
-        // quantidade de vezes que o check deve ter sido feito até o momento atual
-        const hadDone = Math.floor(calcDiferenca(createdObj, new Date()) / intervalo) + (intervalo == 1 ? 0 : 1);
-
-
-        for (let j = 0; j < hadDone; j++) {
-
-            const converted = new Date(createdObj.getTime() + (intervalo * (j)) * (24 * 60 * 60 * 1000)); // data que o item deveria ter sido marcado
-            const toCompare = `${converted.getDate().toString().padStart(2, '0')}/${(converted.getMonth() + 1).toString().padStart(2, '0')}/${converted.getFullYear().toString().padStart(2, '0')}`; // formatado para comparação
-
-            // Se essa data ja foi marcada
-            if (itemClicked.historic.includes(toCompare)) {
-                options.items.push({
-                    date: toCompare,
-                    done: true
-                })
-            } else {
-                options.items.push({
-                    date: toCompare,
-                    done: false
-                })
-            };
-        };
-
-        console.log("Opções encontradas:\n", options);
+        options.items = datas;
 
         setCheckDataOptions(options);
-
     };
 
     /**
      * Altera a visibilidade do componente que exibe as opções de datas do check
-     * 
-     * @returns {void}
      */
     function changeCheckOptionsView() {
         setShowingCheckData(!showingCheckData)
-    }
+    };
 
     /**
     * Marca/Desmarca o checkBox do respectivo hábito e insere no histórico de alterações.
@@ -196,7 +197,7 @@ export default function Habits({ navigation }) {
     * 
     * @param {number} i Index do check a ser alterado.
     * 
-    * @param {String} date Data a ser alterada no histórico do checkBox.
+    * @param {string} date Data a ser alterada no histórico do checkBox.
     */
     async function changeChecks(id, i, date) {
 
@@ -204,6 +205,7 @@ export default function Habits({ navigation }) {
         const data = response ? await JSON.parse(response) : [];;
 
         const changed = data.map((habit) => {
+            // se é o hábito procurado
             if (habit.id === id) {
                 return {
                     createdAt: habit.createdAt,
@@ -211,11 +213,11 @@ export default function Habits({ navigation }) {
                     id: habit.id,
                     linked: habit.linked,
                     checklists: habit.checklists.map((check, index) => {
+                        // se é o check procurado
                         if (index === i) {
                             return {
-                                done: allDone,
+                                done: !allDates(check.created, check.repeat, !check.historic.includes(date) ? [...check.historic, date] : check.historic.filter(item => item !== date)).some(item => item.done === false), // retorna se todas as repetições do check foram feitas até o momento atal
                                 historic: !check.historic.includes(date) ? [...check.historic, date] : check.historic.filter(item => item !== date),
-                                notifications: check.notifications,
                                 repeat: check.repeat,
                                 title: check.title,
                                 created: check.created
@@ -259,6 +261,7 @@ export default function Habits({ navigation }) {
      * Altera a exibição da mensagem de confirmação
      */
     function displayConfirmation() {
+        // animação
         LayoutAnimation.configureNext({
             duration: 300,
             update: {
@@ -273,6 +276,7 @@ export default function Habits({ navigation }) {
      * Muda o display do formulario
      */
     async function changeDisplayForm(toEditId) {
+        // animação
         LayoutAnimation.configureNext({
             duration: 300,
             update: {
@@ -280,7 +284,7 @@ export default function Habits({ navigation }) {
             },
         });
 
-        toEditId != undefined ? setEditId(toEditId) : null;
+        toEditId != undefined ? setEditId(toEditId) : null; // atribui o id ao state se foi informado
 
         await fetchData();
 
@@ -289,8 +293,11 @@ export default function Habits({ navigation }) {
 
     /**
      * Remove um hábito específico
+     * 
+     * @param {string} id Id do hábito a ser removido
      */
     async function deleteItem(id) {
+        // animação
         LayoutAnimation.configureNext({
             duration: 300,
             update: {
@@ -314,21 +321,24 @@ export default function Habits({ navigation }) {
      * Remove todos os hábitos cadastrados
      */
     async function deleteAll() {
+        // animação
         LayoutAnimation.configureNext({
             duration: 300,
             update: {
                 type: LayoutAnimation.Types.easeInEaseOut,
-            },
+            }
         });
 
         await AsyncStorage.removeItem('@goalsmanagement:habits');
 
         await fetchData();
-        setHabits([]);
+        setHabits([]); // zera o state que contém os hábitos cadastrados
+
         showInfo('SUCESSO', 'Todos os hábitos foram excluídos com sucesso!', 'success');
     };
 
     /**
+     * Retorna um componente de exibição de sugestões
      * 
      * @param {object} suggestions Objeto contendo title, array de icones e array de respectivos body text a serem gerados.
      *  
@@ -392,7 +402,6 @@ export default function Habits({ navigation }) {
                 </FooterLicenseView>
             </ImageView>
 
-            {/* Tela quando não houver itens cadastrados */}
             {!formDisplay && habits.length <= 0 && (
                 <CenterView
                     animation={'fadeIn'}
@@ -520,8 +529,6 @@ export default function Habits({ navigation }) {
                 </CenterView>
             )
             }
-
-            {/* Tela quando houver item(s) cadastrado(s) */}
             {!formDisplay && habits.length > 0 && (
                 <CenterView
                     animation={'fadeIn'}
@@ -566,38 +573,36 @@ export default function Habits({ navigation }) {
                         </HabitsScrollView>
                     </HabitsView>
 
-                    {deleteButton && (
-                        <DefaultHorizontalView
-                            style={{ justifyContent: 'center' }}
-                        >
-                            <GenericButton
-                                handleFunction={async () => showInfo("CONFIRMAÇÃO", `Tem certeza que deseja excluir todos os hábitos cadastrados (${habits.length}) ?`, 'warning', async () => await deleteAll())}
-                                icon='plus-circle'
-                                iconColor={THEME.COLORS.GOALS}
-                                iconSize={24}
-                                text="Excluir tudo"
-                                height={RFPercentage(5)}
-                                width={RFPercentage(20)}
-                                borderRadius={5}
-                                txtColor={THEME.COLORS.GOALS}
-                                fontFamily={THEME.FONTS.BOLD}
-                            />
+                    <DefaultHorizontalView
+                        style={{ justifyContent: 'center' }}
+                    >
+                        <GenericButton
+                            handleFunction={async () => showInfo("CONFIRMAÇÃO", `Tem certeza que deseja excluir todos os hábitos cadastrados (${habits.length}) ?`, 'warning', async () => await deleteAll())}
+                            icon='plus-circle'
+                            iconColor={THEME.COLORS.GOALS}
+                            iconSize={24}
+                            text="Excluir tudo"
+                            height={RFPercentage(5)}
+                            width={RFPercentage(20)}
+                            borderRadius={5}
+                            txtColor={THEME.COLORS.GOALS}
+                            fontFamily={THEME.FONTS.BOLD}
+                        />
 
-                            <GenericButton
-                                handleFunction={changeDisplayForm}
-                                icon='plus-circle'
-                                iconColor={THEME.COLORS.SUCCESS}
-                                iconSize={24}
-                                text="Novo Hábito"
-                                height={RFPercentage(5)}
-                                width={RFPercentage(20)}
-                                borderRadius={5}
-                                txtColor={THEME.COLORS.SUCCESS}
-                                fontFamily={THEME.FONTS.BOLD}
-                            />
+                        <GenericButton
+                            handleFunction={changeDisplayForm}
+                            icon='plus-circle'
+                            iconColor={THEME.COLORS.SUCCESS}
+                            iconSize={24}
+                            text="Novo Hábito"
+                            height={RFPercentage(5)}
+                            width={RFPercentage(20)}
+                            borderRadius={5}
+                            txtColor={THEME.COLORS.SUCCESS}
+                            fontFamily={THEME.FONTS.BOLD}
+                        />
 
-                        </DefaultHorizontalView>
-                    )}
+                    </DefaultHorizontalView>
 
                 </CenterView>
             )}

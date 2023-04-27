@@ -5,53 +5,60 @@ import { useState } from 'react';
 import { LayoutAnimation } from 'react-native';
 import { useEffect } from 'react';
 
+/**
+ * Retorna o componente para exibição dos checkBox's
+ * 
+ * @param {string} placeholder Placeholder do titulo da atividade.
+ * 
+ * @param {object} item Objeto contendo todas informações do checkBox.
+ * 
+ * @param {function} onChangeText Função chamada ao alterar texto do input do titulo da atividade.
+ * 
+ * @param {function} onSelectValue Função chamada ao selecionar opção da lista de opções de repetição da atividade.
+ * 
+ * @returns {JSX.Element} 
+ */
 export default function ShowChecks({ placeholder, item, onChangeText, onSelectValue }) {
-    const [notifications, setNotifications] = useState(false);
     const [repeat, setRepeat] = useState(false);
 
+    // states que armazenam se as opções de repetição esta expandida e se possui alguma selecionada.
     const [showingOptionsRepeat, setShowingOptionsRepeat] = useState(false);
     const [selectedValueRepeat, setSelectedValueRepeat] = useState('Selecione');
 
-    const [showingOptionsNotifications, setShowingOptionsNotifications] = useState(false);
-    const [selectedValueNotifications, setSelectedValueNotifications] = useState('Selecione');
-
+    // define se o display do check esta expandido ou não
     const [expandChecksDisplay, setExpandCheckDisplay] = useState(false);
 
+    // opções da lista de opções de repetição da atividade
     const repeatOptions = ['Diário', 'Semanal', 'Mensal', 'Nenhum'];
-    const notificationsOptions = ['Diário', 'Semanal', 'Mensal', 'Nenhum'];
 
+    // executado ao iniciar o componente
     useEffect(() => {
-        item.notifications != false && setSelectedValueNotifications(item.notifications);
-
         item.repeat != false && setSelectedValueRepeat(item.repeat);
-
-        setNotifications(item.notifications);
         setRepeat(item.repeat);
     }, [])
 
-
-    function handleSelectValue(repeat, notifications) {
+    /**
+     * Handle chamda quando uma opção da lista de opções é selecionada.
+     * 
+     * @param {string} repeat valor selecionado
+     */
+    function handleSelectValue(repeat) {
 
         if (repeat !== undefined) {
             setSelectedValueRepeat(repeat);
             onSelectValue(repeat);
             setShowingOptionsRepeat(!showingOptionsRepeat);
         };
-
-        if (notifications !== undefined) {
-            setSelectedValueNotifications(notifications);
-            onSelectValue(undefined, notifications);
-            setShowingOptionsNotifications(!showingOptionsNotifications);
-        };
     };
 
     /**
-     * Expande as opções dos listBox's
+    * Expande a view da atividade e exibe a ListBox da repetição da atividade.
      * 
-     * @param {string} opt Indica qual das opções serão expandidas. ['repeat' | 'notifications']
+     * @param {string} opt Indica qual das opções serão expandidas. ['repeat']
      * 
      */
     function handleExpandList(opt) {
+        // animação
         LayoutAnimation.configureNext({
             duration: 500,
             update: {
@@ -61,27 +68,20 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
 
         if (opt == 'repeat') {
             setRepeat(!repeat);
-
             setSelectedValueRepeat('Selecione');
             onSelectValue(false);
             setShowingOptionsRepeat(false);
-
-        } else if (opt == 'notifications') {
-            setNotifications(!notifications);
-
-            setSelectedValueNotifications('Selecione');
-            onSelectValue(undefined, false);
-            setShowingOptionsNotifications(false);''
-        };
+        }
     };
 
     /**
-     * Expande a view dos checkList's
+     * Expande as opções do listBox de repetição
      * 
-     * @param {string} opt Indica qual das opções serão expandidas. ['repeat' | 'notifications']
+     * @param {string} opt Indica qual das opções serão expandidas. ['repeat']
      * 
      */
     function handleExpandOptions(opt) {
+        // animação
         LayoutAnimation.configureNext({
             duration: 300,
             update: {
@@ -92,13 +92,11 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
 
         if (opt == 'repeat') {
             setShowingOptionsRepeat(!showingOptionsRepeat);
-        } else if (opt == 'notifications') {
-            setShowingOptionsNotifications(!showingOptionsNotifications);
         }
     };
 
     /**
-     * Expande a view dos checkList's
+     * Expande a view do CheckBox
      */
     function handleExpandChecks() {
         LayoutAnimation.configureNext({
@@ -190,54 +188,6 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
 
                             </SimpleView>
 
-                            <SimpleView>
-                                <SimpleHorizontalView>
-                                    <Feather
-                                        name={notifications ? 'bell' : 'bell-off'}
-                                        size={20}
-                                        color={THEME.COLORS.ALERT900}
-                                    />
-                                    <FrameLabel>Lembrete</FrameLabel>
-                                </SimpleHorizontalView>
-                                <Feather
-                                    name={notifications ? 'toggle-right' : 'toggle-left'}
-                                    size={25}
-                                    color={notifications ? THEME.COLORS.SUCCESS : THEME.COLORS.GOALS}
-                                    onPress={() => handleExpandList('notifications')}
-                                />
-
-                                {notifications && (
-                                    <OptionsSection
-                                        animation={'fadeIn'}
-                                    >
-                                        <SimpleHorizontalView>
-                                            <OptionSelectedText>{selectedValueNotifications}</OptionSelectedText>
-                                            <Feather
-                                                name={showingOptionsNotifications ? 'chevrons-up' : 'chevrons-down'}
-                                                size={24}
-                                                color={THEME.COLORS.ALERT900}
-                                                onPress={() => handleExpandOptions('notifications')}
-                                            />
-                                        </SimpleHorizontalView>
-                                        {showingOptionsNotifications && (
-                                            <OptionView
-                                                animation={'fadeIn'}
-                                                delay={80}
-                                            >
-                                                {notificationsOptions.map((item, index) => (
-                                                    <OptionText
-                                                        key={index}
-                                                        onPress={() => handleSelectValue(undefined, item)}>
-                                                        {item}
-                                                    </OptionText>
-                                                ))}
-                                            </OptionView>
-                                        )}
-
-                                    </OptionsSection>
-                                )}
-
-                            </SimpleView>
                         </MultiplyItensView>
                     )}
                 </FrameDataView>

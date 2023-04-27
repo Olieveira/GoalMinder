@@ -1,14 +1,15 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
-const { Screen, Navigator } = createBottomTabNavigator();
-
 import THEME from "../theme";
 import { MaterialIcons } from '@expo/vector-icons'
-
 import Goals from "../screens/Goals"; // Metas
 import Home from '../screens/Home'; //Home
 import Habits from "../screens/Habits"; //Hábitos
 
+const { Screen, Navigator } = createBottomTabNavigator();
+
+/**
+ * Configura a navegação entre as telas
+ */
 export function UserRoutes() {
     return (
         <Navigator screenOptions={{
@@ -17,7 +18,7 @@ export function UserRoutes() {
             tabBarInactiveBackgroundColor: THEME.COLORS.BACKGROUND,
             tabBarActiveTintColor: THEME.COLORS.ALERT,
             tabBarInactiveTintColor: THEME.COLORS.PRIMARY600,
-            tabBarStyle: {backgroundColor: THEME.COLORS.BACKGROUND},
+            tabBarStyle: { backgroundColor: THEME.COLORS.BACKGROUND },
             tabBarShowLabel: false,
             tabBarHideOnKeyboard: true
         }}>

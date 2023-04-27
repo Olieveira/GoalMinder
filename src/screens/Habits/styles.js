@@ -67,9 +67,6 @@ export const AlphaBg = styled(Animatable.View)`
     height: 100%;
     background-color: rgba(0,0,0,0.5);
 `
-
-export const HabitTitle = styled.Text`
-`
 export const SuggestionTextView = styled.View`
     justify-content: center;
     align-items: center;

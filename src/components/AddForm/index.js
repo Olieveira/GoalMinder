@@ -13,7 +13,7 @@ import { LayoutAnimation } from 'react-native';
 
 /**
  * 
- * @param {function} hideForm Function que destroi ou torna invisível o form.
+ * @param {function} hideForm Function que destrói ou torna invisível o form.
  * 
  * @param {function} showMessage Function que exibe mensagens de sucesso na tela do componente pai.
  * 
@@ -37,7 +37,7 @@ export default function AddForm({ hideForm, showMessage, id }) {
     // referência a scrollView
     const scrollViewRef = useRef(null);
 
-    // Realiza a verificação se é edição ou cadastro de metas ao carregar a tela
+    // Realiza a verificação se o form foi aberto para edição ou cadastro.
     useEffect(() => {
         LayoutAnimation.configureNext({
             duration: 300,
@@ -45,6 +45,7 @@ export default function AddForm({ hideForm, showMessage, id }) {
                 type: LayoutAnimation.Types.easeInEaseOut,
             },
         });
+
         if (typeof (id) == "string") {
             setSubmitButtonText("EDITAR");
             setDeleteButton("flex");
@@ -56,10 +57,10 @@ export default function AddForm({ hideForm, showMessage, id }) {
     }, [])
 
     /**
-    * Deleta o item atual.
+    * Deleta o item que esta aberto.
     */
     async function deleteItem() {
-        
+
         LayoutAnimation.configureNext({
             duration: 300,
             update: {
@@ -91,12 +92,12 @@ export default function AddForm({ hideForm, showMessage, id }) {
         const response = await AsyncStorage.getItem('@goalsmanagement:habits');
         const data = response ? JSON.parse(response) : [];
 
-        let filtered = [];
+        let filtered = []; // array que armazenará os dados alterados
 
         // Se o id foi recebido
         if (goalId !== undefined) {
 
-            filtered = data.map((item, index) => {
+            filtered = data.map((item) => {
                 if (item.linked.includes(goalId)) {
                     return {
                         checklists: item.checklists,
@@ -116,7 +117,7 @@ export default function AddForm({ hideForm, showMessage, id }) {
 
 
     /**
-     * Carrega as informações do item a ser editado.
+     * Carrega as informações do item clicado no modo edição.
      */
     async function loadEditItem() {
         LayoutAnimation.configureNext({
@@ -129,7 +130,7 @@ export default function AddForm({ hideForm, showMessage, id }) {
         const response = await AsyncStorage.getItem("@goalsmanagement:goals");
         const previousData = response ? JSON.parse(response) : [];
 
-        let found = false;
+        let found = false; // boolean que indica se o item foi encontrado
 
         previousData.map((data, index) => {
             if (data.id == id) {
@@ -139,6 +140,7 @@ export default function AddForm({ hideForm, showMessage, id }) {
                 setIndicators(data.indicators);
                 found = true;
             } else {
+                // se o item não foi encontrado
                 if (index >= previousData.length - 1 && found == false) {
                     showMessage("ID não encontrado!", "Se o item selecionado existir e esse erro persistir, contacte o desenvolvedor!", "warning");
                     hideForm();
@@ -150,9 +152,9 @@ export default function AddForm({ hideForm, showMessage, id }) {
     /** 
      * Handle que controla o valor do state de todos indicadores
      * 
-     * @param index Number referente ao index do array dos indicadores.
+     * @param {number} index Number referente ao index do array dos indicadores.
      * 
-     * @param value Valor do indicador.
+     * @param {string} value Valor do indicador.
     */
     function handleIndicatorUpdated(index, value) {
         setIndicators(previous => {
@@ -180,9 +182,11 @@ export default function AddForm({ hideForm, showMessage, id }) {
     }
 
     /**
-     * Realiza a edição da meta atual
+     * Define as edições realizadas do item aberto
      */
     async function handleSubmitEdit() {
+
+        // se os campos "META" e "TEMPO" estiverem preenchidos
         if (goal != "" && time != "") {
 
             const response = await AsyncStorage.getItem("@goalsmanagement:goals");
@@ -204,6 +208,7 @@ export default function AddForm({ hideForm, showMessage, id }) {
             })
 
             await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(newData.filter(item => item !== undefined)));
+
             showMessage("SUCESSO", "Meta editada com sucesso!", "success");
             hideForm();
         } else {
@@ -213,18 +218,19 @@ export default function AddForm({ hideForm, showMessage, id }) {
     }
 
     /**
-     * Realiza a validação dos campos e cadastro dos dados.
+     * Realiza a validação dos campos e realiza o cadastro do item se validado.
      */
     async function handleSubmit() {
-        const id = uuidv4();
+        const id = uuidv4(); // id gerado para o item
 
+        // Pega a data atual e converte para "dd/mm/yyyy"
         const now = new Date();
         const dia = toString(now.getDate()).length > 1 ? now.getDate() : `0${now.getDate()}`;
         const mes = now.getMonth() + 1 >= 10 ? now.getMonth() + 1 : `0${now.getMonth() + 1}`;
         const ano = now.getFullYear();
-
         const createdAt = `${dia}/${mes}/${ano}`;
 
+        // cria um objeto com os valores do form
         const newData = {
             id,
             goal,
@@ -234,14 +240,15 @@ export default function AddForm({ hideForm, showMessage, id }) {
             createdAt
         };
 
+        // se os campos "META" e "TEMPO" estiverem preenchidos
         if (goal != "" && time != "") {
 
             const response = await AsyncStorage.getItem("@goalsmanagement:goals");
             const previousData = response ? JSON.parse(response) : [];
 
-            const data = [...previousData, newData]
+            const data = [...previousData, newData]; // adiciona o objeto criado aos outros
 
-            await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data));
+            await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data)); // realiza o cadastro
 
             showMessage("SUCESSO", "Meta cadastrada com sucesso!", "success");
             hideForm();

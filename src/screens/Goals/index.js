@@ -12,6 +12,9 @@ import GenericButton from '../../components/Buttons/Generic';
 import ModalMessage from '../../components/ModalMessage';
 import { LayoutAnimation } from 'react-native';
 
+/**
+ * Tela de metas
+ */
 export default function Goals({ navigation }) {
     // controla visibilidade do formulario de metas
     const [formDisplay, setFormDisplay] = useState(false);
@@ -39,13 +42,13 @@ export default function Goals({ navigation }) {
         return reset;
     }, [navigation]);
 
+    // Busca as informações e atribui ao state responsável pela renderização dos componentes ao iniciar a tela
     useEffect(() => {
         fetchData();
-
     }, []);
 
     /**
-     * Desvincula as metas dos hábitos vinculados
+     * Retira o vínculo de todas as metas com todos os hábitos
      */
     async function unlink() {
         const response = await AsyncStorage.getItem('@goalsmanagement:habits');
@@ -68,6 +71,7 @@ export default function Goals({ navigation }) {
      * Exclui todos os cadastros.
      */
     async function deleteAll() {
+        // animação
         LayoutAnimation.configureNext({
             duration: 300,
             update: {
@@ -77,11 +81,11 @@ export default function Goals({ navigation }) {
 
         await AsyncStorage.removeItem("@goalsmanagement:goals");
 
-        await unlink();
+        await unlink(); // desvincula as metas
 
-        setGoals([]);
+        setGoals([]); // zera o state responsável pela renderização
 
-        setShowingConfirmation(false);
+        setShowingConfirmation(false); // esconde a mensagem de confirmação de exclusão
 
         setTimeout(() => showInfo("SUCESSO", "Todas as metas foram desvinculadas e excluídas com sucesso!", "success"), 100);
 
@@ -115,13 +119,12 @@ export default function Goals({ navigation }) {
         displayConfirmation();
     };
 
-
-
     /**
-     * Realiza consulta dos dados cadastrados e o atribui para o state vinculado a renderização dos componentes.
+     * Realiza consulta dos dados cadastrados e atribui no state vinculado a renderização dos componentes.
      */
     async function fetchData() {
         try {
+            // animação
             LayoutAnimation.configureNext({
                 duration: 300,
                 update: {
@@ -142,9 +145,9 @@ export default function Goals({ navigation }) {
      * @param {string} id - Id do item passado ao clicar no botão de editar. 
      */
     async function handleShowForm(id) {
-        id != undefined ? setEditId(id) : null;
+        id != undefined ? setEditId(id) : null; // atribui o ID ao state caso tenha sido informado
 
-        setFormDisplay(!formDisplay);
+        setFormDisplay(!formDisplay); // altera a visibilidade do formulário
         await fetchData();
     };
 
@@ -154,6 +157,7 @@ export default function Goals({ navigation }) {
      * @returns {JSX.Element}
      */
     function currentUserView() {
+        // se tiver alguma meta cadastrada e o formulário não estiver sendo exibido
         if (goals.length > 0 && formDisplay == false) {
             return (
                 <View>
@@ -243,6 +247,7 @@ export default function Goals({ navigation }) {
                 </View>
             );
         } else {
+            // Se não haver nenhuma meta cadastrada e o formulário não estiver sendo exibido
             if (!formDisplay) {
                 return (
                     <GoalView>

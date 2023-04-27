@@ -210,11 +210,6 @@ export const CenterView = styled(Animatable.View)`
   border: 1px solid ${THEME.COLORS.TEXT};
 `
 
-export const SmallIcon = styled(Animatable.Image)`
-  width: ${RFPercentage(4)}px;
-  height: ${RFPercentage(4)}px;
-`
-
 export const AnimatedIcon = styled(Animatable.Image)`
     width: ${RFPercentage(6)}px;    
     height: ${RFPercentage(6)}px;

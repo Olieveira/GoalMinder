@@ -23,17 +23,35 @@ export default function Home() {
     const [pendingShowing, setPendingShowing] = useState([-1, -1]);
     const navigation = useNavigation();
 
+    // restaura os states quando é desfocada
     useEffect(() => {
+        const reset = navigation.addListener('blur', () => {
+            setShowing(undefined);
+            setLatesShowing([-1, -1]);
+            setPendingShowing([-1, -1]);
+        });
 
+        return reset;
+    }, [navigation]);
+
+    // atualiza a tela quando é focada
+    useEffect(() => {
+        const reset = navigation.addListener('focus', () => {
+            adjustChecks();
+        });
+
+        return reset;
+    }, [navigation]);
+
+    // busca informações quando a tela é aberta pela primeira vez
+    useEffect(() => {
         adjustChecks();
-
     }, []);
 
     /**
-    * Realiza os calculos de data dos checkBox's e faz os devidos ajustes nos cadastros
+    * Realiza os cálculos de data dos checkBox's e atribui para os respectivos states
     * 
     * @returns {void}
-    * 
     */
     async function adjustChecks() {
         const response = await AsyncStorage.getItem('@goalsmanagement:habits');
@@ -84,7 +102,7 @@ export default function Home() {
             })
 
             return byGroup;
-        }
+        };
 
         // pega e formata data atual para comparação
         const now = new Date();
@@ -154,15 +172,13 @@ export default function Home() {
     /**
       * Marca/Desmarca o checkBox do respectivo hábito e insere no histórico de alterações.
       * 
-      * @param {String} id ID do hábito que contém o checkBox a ser marcado/desmarcado.
+      * @param {string} id ID do hábito que contém o checkBox a ser marcado/desmarcado.
       * 
       * @param {number} i Index do check a ser alterado.
       * 
-      * @param {String} date Data que o check deveria ter sido feito.
+      * @param {string} date Data que o check deveria ter sido feito.
       */
     async function changeChecks(id, i, date) {
-        console.log("ID habito -> ", id);
-        console.log("Index check -> ", i);
         const response = await AsyncStorage.getItem('@goalsmanagement:habits');
         const data = response ? JSON.parse(response) : [];
 
@@ -170,13 +186,6 @@ export default function Home() {
         const created = date.split('/');
         const converted = new Date(created[2], created[1] - 1, created[0]);
         const toDoAt = `${converted.getDate().toString().padStart(2, '0')}/${(converted.getMonth() + 1).toString().padStart(2, '0')}/${converted.getFullYear().toString().padStart(2, '0')}`; // formatado para comparação
-
-        // const now = new Date();
-        // const dia = now.getDate().toString().padStart(2, '0');
-        // const mes = (now.getMonth() + 1).toString().padStart(2, '0');
-        // const ano = now.getFullYear().toString();
-
-        // const toDoAt = `${dia}/${mes}/${ano}`;
 
         const changed = data.map((habit) => {
             if (habit.id === id) {
@@ -190,7 +199,6 @@ export default function Home() {
                             return {
                                 done: !check.done,
                                 historic: [...check.historic, toDoAt],
-                                notifications: check.notifications,
                                 repeat: check.repeat,
                                 title: check.title,
                                 created: check.created
@@ -205,23 +213,19 @@ export default function Home() {
             };
         });
 
-        console.log("========================pré cadastro===================");
-        console.log(changed.filter((item) => item.id == id));
-
         await AsyncStorage.setItem('@goalsmanagement:habits', JSON.stringify(changed));
-        await adjustChecks();
-
+        adjustChecks();
     };
 
-
     /**
-     * Define o habito || check visivel nos frames
+     * Define a visibilidade do hábito || check específico.
      * 
      * @param {Array} index Array contendo os index's do hábito e/ou check clicado.
      * 
      * @returns {void}
      */
     function setShowingPendingChecks(index) {
+        // animação
         LayoutAnimation.configureNext({
             duration: 300,
             update: {
@@ -239,11 +243,11 @@ export default function Home() {
     /**
      * Altera a visibilidade das views dos checks atrasados e pendentes
      * 
-     * @param {String} frame 'lates' || 'today' Frame que chamou a função
+     * @param {string} frame 'lates' || 'today' Frame que chamou a função
      * 
-     * @returns {void}
      */
     function setShowingFrame(frame) {
+        // animação
         LayoutAnimation.configureNext({
             duration: 300,
             update: {
@@ -251,8 +255,8 @@ export default function Home() {
             }
         });
 
-        setLatesShowing(-1, -1);
-        setPendingShowing(-1, -1);
+        setLatesShowing(-1, -1); // zera a visibilidade dos checks atrasados
+        setPendingShowing(-1, -1); // zera a visibilidade dos checks pendentes
 
         if (frame == "lates") {
             showing == "lates" ? setShowing(undefined) : setShowing("lates")
@@ -266,14 +270,13 @@ export default function Home() {
      * 
      * @param {string} Screen - Tela destino.
      * 
-     * @returns {void}
      */
     function go(Screen) {
         navigation.navigate(Screen);
-    }
+    };
+
     return (
         <MainContainer>
-
             {checksToday.length < 1 && checksLate.length < 1 ? (
                 <StartView>
                     <StatusBar animated backgroundColor={THEME.COLORS.BACKGROUND} barStyle={"dark-content"} />
@@ -396,7 +399,6 @@ export default function Home() {
                                                                     }}
                                                                     name="crop-square"
                                                                     size={RFPercentage(3.5)}
-                                                                    onPress={() => console.log("PRESSED")}
                                                                 />
                                                                 <GroupCheckTitle>
                                                                     {checks[index].checkTitle}
@@ -454,7 +456,6 @@ export default function Home() {
                                         </GroupHabitsView>
                                     ))}
 
-                                    {/* Caso não tenha nenhum check atrasado */}
                                     {showing == "lates" && checksLate.length <= 0 && (
                                         <DefaultView>
                                             <NoneCheckView>
@@ -544,7 +545,6 @@ export default function Home() {
                                                                     }}
                                                                     name="crop-square"
                                                                     size={RFPercentage(3.5)}
-                                                                    onPress={() => console.log("PRESSED")}
                                                                 />
                                                                 <GroupCheckTitle>
                                                                     {checks[0].checkTitle}
@@ -604,7 +604,6 @@ export default function Home() {
                                         </GroupHabitsView>
                                     ))}
 
-                                    {/* Caso não tenha nenhum check pendente */}
                                     {showing == "today" && checksToday.length <= 0 && (
                                         <DefaultView>
                                             <NoneCheckView>

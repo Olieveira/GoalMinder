@@ -2,6 +2,7 @@ import { Button, BtnText } from './styles';
 import { Feather } from '@expo/vector-icons'
 
 /**
+ * Retorna um botão genérico com as informações passadas por parâmetro.
  * 
  * @param {number} width Largura do botão.
  * 
