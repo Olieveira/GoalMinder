@@ -61,6 +61,7 @@ export default function AddForm({ hideForm, showMessage, id }) {
     */
     async function deleteItem() {
 
+        // animação
         LayoutAnimation.configureNext({
             duration: 300,
             update: {
@@ -75,18 +76,20 @@ export default function AddForm({ hideForm, showMessage, id }) {
 
         await AsyncStorage.setItem("@goalsmanagement:goals", JSON.stringify(data));
 
-        await unlink();
+        await unlink(id); // chama função que desvincula a meta dos hábitos passando o id do item aberto como parâmetro
 
-        showMessage("SUCESSO", "Meta excluída e desvínculada com sucesso!", "confirmation");
+        showMessage("SUCESSO", "Meta excluída com sucesso!", "confirmation");
 
         hideForm();
 
     };
 
     /**
-     * Desvincula a meta dos hábitos vinculados
+     * Desvincula a meta dos hábitos vinculados.
      * 
-     * @param {string} goalId ID do item a ser desvinculado. Desvincula todos se não for informado. 
+     * Desvincula todas as metas de todos os hábitos se não for informado.
+     * 
+     * @param {string} goalId ID do item a ser desvinculado.
      */
     async function unlink(goalId) {
         const response = await AsyncStorage.getItem('@goalsmanagement:habits');
@@ -97,6 +100,7 @@ export default function AddForm({ hideForm, showMessage, id }) {
         // Se o id foi recebido
         if (goalId !== undefined) {
 
+            // retorna os hábitos sem a meta vinculada
             filtered = data.map((item) => {
                 if (item.linked.includes(goalId)) {
                     return {
@@ -109,6 +113,17 @@ export default function AddForm({ hideForm, showMessage, id }) {
                 } else {
                     return item;
                 };
+            })
+        } else {
+            // retorna os hábitos sem nenhuma meta vinculada
+            filtered = data.map((item) => {
+                return {
+                    checklists: item.checklists,
+                    createdAt: item.createdAt,
+                    habit: item.habit,
+                    id: item.id,
+                    linked: []
+                }
             })
         };
 

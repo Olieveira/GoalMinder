@@ -6,6 +6,7 @@ import { LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { View } from 'react-native-animatable';
+import { useNavigation } from '@react-navigation/native';
 
 /**
  * Retorna componente para exibição do hábitos
@@ -26,37 +27,51 @@ export default function ShowHabits({ item, handleEdit, handleDelete, handleChang
 
     const [linkedGoals, setLinkedGoals] = useState([]); // Informações das metas vinculadas
 
+    const navigation = useNavigation();
+
+    // Atualiza as informações e fecha as views expansivas quando a tela é focada
     useEffect(() => {
-        /**
-         * Busca as metas vinculadas
-         */
-        async function fetchGoalsLinked() {
+        const reset = navigation.addListener('focus', async () => {
+            setExpandCheckDisplay(false);
+            setExpandGoalsDisplay(false);
+            await fetchGoalsLinked();
+        });
 
-            LayoutAnimation.configureNext({
-                duration: 3000,
-            });
+        return reset;
+    }, [navigation]);
 
-            const response = await AsyncStorage.getItem('@goalsmanagement:goals');
+    // executado ao abrir a tela
+    useEffect(() => {
+        fetchGoalsLinked();
+    }, []);
 
-            if (response) {
-                const data = JSON.parse(response);
-                const linkeds = data.map((goal) => {
+    /**
+     * Busca as metas vinculadas
+     */
+    async function fetchGoalsLinked() {
 
-                    if (item.linked.includes(goal.id)) {
-                        return {
-                            goal: goal.goal,
-                            time: goal.time,
-                            createdAt: goal.createdAt
-                        };
+        LayoutAnimation.configureNext({
+            duration: 3000,
+        });
+
+        const response = await AsyncStorage.getItem('@goalsmanagement:goals');
+
+        if (response) {
+            const data = JSON.parse(response);
+            const linkeds = data.map((goal) => {
+
+                if (item.linked.includes(goal.id)) {
+                    return {
+                        goal: goal.goal,
+                        time: goal.time,
+                        createdAt: goal.createdAt
                     };
-                });
-                setLinkedGoals(linkeds.filter((linked) => linked !== undefined));
-            };
-
+                };
+            });
+            setLinkedGoals(linkeds.filter((linked) => linked !== undefined));
         };
 
-        fetchGoalsLinked();
-    }, [])
+    };
 
     /**
      * Expande a view das metas vinculadas

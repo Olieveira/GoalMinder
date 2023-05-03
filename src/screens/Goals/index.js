@@ -87,7 +87,7 @@ export default function Goals({ navigation }) {
 
         setShowingConfirmation(false); // esconde a mensagem de confirmação de exclusão
 
-        setTimeout(() => showInfo("SUCESSO", "Todas as metas foram desvinculadas e excluídas com sucesso!", "success"), 100);
+        setTimeout(() => showInfo("SUCESSO", "Todas as metas foram excluídas com sucesso!", "success"), 100);
 
     };
 

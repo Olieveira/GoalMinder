@@ -49,6 +49,15 @@ export default function Habits({ navigation }) {
         return reset;
     }, [navigation]);
 
+    // Atualiza as informações quando a tela é focada
+    useEffect(() => {
+        const reset = navigation.addListener('focus', async () => {
+            await fetchData();
+        });
+
+        return reset;
+    }, [navigation]);
+
     // Busca as informações dos hábitos cadastrados quando a tela é iniciada
     useEffect(() => {
         fetchData();

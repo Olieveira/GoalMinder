@@ -78,9 +78,13 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
                 setHabit(item.habit);
 
                 // verifica se o item possui metas vinculadas
-                links.map((link, index) => {
-                    item.linked.includes(link.id) ? handleChangeLinks(index) : null;
-                });
+                const linkados = links.map((link, index) => {
+                    if (item.linked.includes(link.id)) {
+                        return index;
+                    }
+                }).filter(item => item !== undefined);
+
+                handleChangeLinks(undefined, linkados); // chama função que define o vinculo das metas com o habito
 
                 const checks = item.checklists.map((check) => {
                     return {
@@ -95,6 +99,7 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
                 setCheckLists(checks);
             };
         });
+
     };
 
     /**
@@ -148,25 +153,45 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
     /**
      * Vincula ou desvincula as metas do item aberto.
      * 
-     * @param {number} i Posição da meta a ser vinculada. 
+     * @param {number} i Posição da meta a ser vinculada.
+     * 
+     * @param {Array} array Array com mais de uma posição para alteração em conjunto. 
      */
-    function handleChangeLinks(i) {
-        setLinks(links.map((item, index) => {
-            if (i == index) {
-                return {
-                    'linked': !item.linked,
-                    'id': item.id,
-                    'goal': item.goal,
-                    'time': item.time
-                };
-            } else {
-                return item;
-            };
-        }))
-    };
+    function handleChangeLinks(i, array) {
 
+        // se foi informado o index do item
+        if (i !== undefined) {
+            setLinks(links.map((item, index) => {
+                if (i == index) {
+                    return {
+                        'linked': !item.linked,
+                        'id': item.id,
+                        'goal': item.goal,
+                        'time': item.time
+                    };
+                } else {
+                    return item;
+                };
+            }))
+            // se foi informado o array e possui pelo menos uma posição
+        } else if (array !== undefined && array.length > 0) {
+            setLinks(links.map((item, index) => {
+                if (array.includes(index)) {
+                    return {
+                        'linked': !item.linked,
+                        'id': item.id,
+                        'goal': item.goal,
+                        'time': item.time
+                    };
+                } else {
+                    return item;
+                };
+            }))
+        }
+    };
+    
     /**
-     * Busca as metas cadastradas.
+     * Busca todas as metas cadastradas.
      */
     async function fetchData() {
         const response = await AsyncStorage.getItem("@goalsmanagement:goals");
@@ -185,11 +210,35 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
             );
 
             setLinksLoaded(true);
-
         } else {
             setLinks([]);
             setLinksLoaded(true);
         };
+    };
+
+    /**
+     * Define as alterações do item aberto no cadastro dos HÁBITOS
+     */
+    async function submitHabitsChanges() {
+        const response = await AsyncStorage.getItem("@goalsmanagement:habits");
+        const previousData = response ? JSON.parse(response) : [];
+
+        // busca o item aberto no cadastro e realiza as alterações dos HÁBITOS.
+        const newData = previousData.map((item) => {
+            if (item.id == id) {
+                return {
+                    id: item.id,
+                    habit,
+                    createdAt: item.createdAt,
+                    checklists,
+                    linked: links.map(item => item.linked ? item.id : null).filter(item => item != undefined && item != null)
+                };
+            } else {
+                return item;
+            };
+        });
+
+        await AsyncStorage.setItem("@goalsmanagement:habits", JSON.stringify(newData.filter(item => item !== undefined)));
     };
 
     /**
@@ -199,25 +248,7 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
         // Se o campo "HÁBITO" e todos os checkBox's estão preenchidos. 
         if (habit != "" && !checklists.find(item => item == "" || item == undefined)) {
 
-            const response = await AsyncStorage.getItem("@goalsmanagement:habits");
-            const previousData = response ? JSON.parse(response) : [];
-
-            // busca o item aberto no cadastro e realiza as alterações.
-            const newData = previousData.map((item) => {
-                if (item.id == id) {
-                    return {
-                        id: item.id,
-                        habit,
-                        createdAt: item.createdAt,
-                        checklists,
-                        linked: links.map(item => item.linked ? item.id : null).filter(item => item != undefined && item != null)
-                    };
-                } else {
-                    return item;
-                };
-            });
-
-            await AsyncStorage.setItem("@goalsmanagement:habits", JSON.stringify(newData.filter(item => item !== undefined)));
+            await submitHabitsChanges(); // realiza as alterações nos hábitos
 
             showMessage('SUCESSO!', 'Hábito editado com sucesso!', 'success');
             hideForm();
@@ -394,7 +425,7 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
                                 size={17}
                                 color={THEME.COLORS.BACKGROUND}
                                 onPress={() =>
-                                    showMessage("CHECKLISTS", "Crie atividades frequentes e fortaleça sua caminhada para a habituação!\n\nIsso ajuda a proporcionar recompensas ao seu cérebro sempre que uma atividade é realizada.\n\nIsso proporciona uma maior percepção no aumento do progresso!", "info")
+                                    showMessage("CHECKLISTS", "Crie atividades frequentes e fortaleça sua caminhada para a habituação!\n\nIsso ajuda a proporcionar recompensas ao seu cérebro sempre que uma atividade é realizada.", "info")
                                 }
                             />
                         </DefaultView>
