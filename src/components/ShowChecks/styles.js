@@ -3,6 +3,15 @@ import THEME from '../../theme';
 import styled from "styled-components/native";
 import * as Animatable from 'react-native-animatable';
 
+export const DeleteButton = styled.TouchableOpacity`
+    position: absolute;
+    background-color: ${THEME.COLORS.BACKGROUND};
+    border-radius: 10px;
+    padding: ${RFPercentage(0.15)}px ${RFPercentage(0.3)}px;
+    top: -${RFPercentage(2)}px;
+    justify-content: center;
+    align-items: center;
+`
 export const OptionsSection = styled(Animatable.View)`
     border: 2px solid ${THEME.COLORS.ALERT800};
     justify-content: space-between;
@@ -73,8 +82,8 @@ export const MultiplyItensView = styled(Animatable.View)`
 export const BgView = styled(Animatable.View)`
     justify-content: center;
     align-items: center;
-    padding: ${RFPercentage(0.3)}px;
-    margin: ${RFPercentage(0.3)}px;
+    padding: ${RFPercentage(1)}px ${RFPercentage(0.3)}px ${RFPercentage(0.3)}px ${RFPercentage(0.3)}px;
+    margin: ${RFPercentage(0.6)}px ${RFPercentage(0.3)}px;
     width: ${RFPercentage(43)}px;
     border-radius: 3px;
     background-color: ${THEME.COLORS.BACKGROUND};

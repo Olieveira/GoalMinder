@@ -209,11 +209,6 @@ export const CenterView = styled(Animatable.View)`
   border-radius: 8px;
   border: 1px solid ${THEME.COLORS.TEXT};
 `
-
-export const AnimatedIcon = styled(Animatable.Image)`
-    width: ${RFPercentage(6)}px;    
-    height: ${RFPercentage(6)}px;
-`
 export const MainContainer = styled.View`
     min-height: 100%;
     min-width: 100%;
@@ -230,29 +225,41 @@ export const MainImage = styled(Animatable.Image)`
 `;
 export const StartView = styled.View`
     flex: 1;
+    width: 100%;
     justify-content: space-around;
     align-items: center;
     z-index: 1000;
 `;
+export const TitleContainerHeader = styled(Animatable.View)`
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: ${THEME.COLORS.PRIMARY900};
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;
+    padding: ${RFPercentage(1)}px ${RFPercentage(0.8)}px;
+`
 export const TitleContainer = styled.View`
+    width: 100%;
     justify-content: center;
     align-items: center;
     align-self: flex-start;
-    background-color: ${THEME.COLORS.PRIMARY600};
-    border-radius: 15px;
-    padding: ${RFPercentage(2)}px;
+    background-color: rgba(230, 193, 82, 0.89);
     z-index: 1000;
 `;
 export const Title = styled.Text`
+    flex: 1;
     font-size: ${RFPercentage(3.7)}px;
-    color: ${THEME.COLORS.TEXT};
+    color: ${THEME.COLORS.ALERT800};
     font-family: ${THEME.FONTS.BOLD};
+    text-align: center;
 `;
 
 export const Text = styled(Animatable.Text)`
     font-size: ${RFPercentage(3)}px;
-    margin-top: ${RFPercentage(3.2)}px;
-    color: ${THEME.COLORS.TEXT};
+    text-align: center;
+    color: ${THEME.COLORS.PRIMARY900};
+    padding: ${RFPercentage(1.5)}px;
     font-family: ${THEME.FONTS.MEDIUM};
 `;
 

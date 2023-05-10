@@ -3,6 +3,41 @@ import THEME from "../../theme";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import * as Animatable from 'react-native-animatable';
 
+export const NoneDescription = styled(Animatable.Text)`
+    font-size: ${RFPercentage(2.6)}px;
+    color: ${THEME.COLORS.PRIMARY800};
+    font-family: ${THEME.FONTS.REGULAR};
+    margin-bottom: ${RFPercentage(2)}px;
+    text-align: center;
+`
+export const GoalHeaderView = styled(Animatable.View)`
+    flex: 1;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding: ${RFPercentage(1)}px ${RFPercentage(2)}px;
+    margin-bottom: ${RFPercentage(2)}px;
+    background-color: ${THEME.COLORS.ALERT800};
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+`
+export const NoneText = styled(Animatable.Text)`
+    font-size: ${RFPercentage(3)}px;
+    color: ${THEME.COLORS.PRIMARY900};
+    font-family: ${THEME.FONTS.MEDIUM};
+    margin-bottom: ${RFPercentage(2)}px;
+    text-align: center;
+`
+export const NoneView = styled.View`
+    flex: 1;
+    background-color: ${THEME.COLORS.ALERT800};
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: ${RFPercentage(1)}px;
+    margin: ${RFPercentage(1)}px ${RFPercentage(1.3)}px;
+    border-radius: 4px;
+`
 export const EditButton = styled.TouchableOpacity`
 
 `
@@ -58,6 +93,7 @@ export const IndicatorsView = styled.View`
 `
 
 export const ViewAnimated = styled(Animatable.View)`
+    margin: ${RFPercentage(1)}px 0;
 `
 
 export const GoalsScrollView = styled.ScrollView`
@@ -87,16 +123,15 @@ export const CenterAdvice = styled(Animatable.View)`
     max-height: ${RFPercentage(90)}px;
     flex-direction: column;
     background-color: ${THEME.COLORS.ALERT900};
-    padding: ${RFPercentage(1.3)}px ${RFPercentage(3.3)}px;
     width: ${RFPercentage(51)}px;
     border-radius: 10px;
 `
 
 export const TitleAdvice = styled(Animatable.Text)`
+    flex: 1;
     font-size: ${RFPercentage(3.2)}px;
     color: ${THEME.COLORS.BACKGROUND};
     font-family: ${THEME.FONTS.BOLD};
-    margin-bottom: ${RFPercentage(2)}px;
     text-align: center;
 `
 

@@ -4,6 +4,8 @@ import { Feather } from '@expo/vector-icons';
 import THEME from '../../theme';
 import { LayoutAnimation } from 'react-native';
 import { TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useEffect } from 'react';
 
 /**
  * Componente expandivel para exibição de informações.
@@ -18,6 +20,18 @@ import { TouchableOpacity } from 'react-native';
  */
 export default function ShowMore({ icon, title, bodyComponent }) {
     const [expandDisplay, setExpandDisplay] = useState(false);
+    const navigation = useNavigation();
+
+    /**
+     * Fecha todas as view's expansivas quando a tela é desfocada
+     */
+    useEffect(() => {
+        const reset = navigation.addListener("blur", () => {
+            setExpandDisplay(false);
+        });
+
+        return reset;
+    }, [navigation]);
 
     /**
      * Define a expansão do componente e sua respectiva animação.

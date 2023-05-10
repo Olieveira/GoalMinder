@@ -151,6 +151,18 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
     };
 
     /**
+     * Deleta um checkBox no useState utilizado para armazenar todos os checkBox's
+     * 
+     * @param {number} index Index do checkBox a ser deletado no useState.
+     */
+    function deleteCheck(index) {
+        // filtra o useState com todos os checks retirando o do index informado
+        const filtered = checklists.filter((check, i) => i !== index);
+
+        setCheckLists(filtered);
+    };
+
+    /**
      * Vincula ou desvincula as metas do item aberto.
      * 
      * @param {number} i Posição da meta a ser vinculada.
@@ -189,7 +201,7 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
             }))
         }
     };
-    
+
     /**
      * Busca todas as metas cadastradas.
      */
@@ -245,8 +257,9 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
      * Define as alterações do item aberto no modo edição.
      */
     async function handleSubmitEdit() {
+
         // Se o campo "HÁBITO" e todos os checkBox's estão preenchidos. 
-        if (habit != "" && !checklists.find(item => item == "" || item == undefined)) {
+        if (habit != "" && !checklists.find(item => item.title == "" || item.title == undefined)) {
 
             await submitHabitsChanges(); // realiza as alterações nos hábitos
 
@@ -453,6 +466,16 @@ export default function HabitsForm({ hideForm, showMessage, id, handleDelete }) 
                                             item={checklists[index]}
                                             onChangeText={(text) => { editCheckList(index, text) }}
                                             onSelectValue={(repeat) => { editCheckList(index, undefined, repeat) }}
+                                            onDeleteCheck={() => {
+                                                showMessage(
+                                                    "CONFIRMAÇÃO",
+                                                    "Tem certeza que deseja excluir essa atividade?",
+                                                    "warning",
+                                                    () => deleteCheck(index) // deleta o check
+                                                    ,
+                                                    true // fechar ao pressionar sim
+                                                )
+                                            }}
                                         />
                                     </DefaultView>
                                 ))}

@@ -37,6 +37,7 @@ export default function Habits({ navigation }) {
     const [messageConfirmation, setMessageConfirmation] = useState('');
     const [modalType, setModalType] = useState('');
     const [modalYes, setModalYes] = useState(); // function executada ao confirmar mensagem
+    const [closeOnEnd, setCloseOnEnd] = useState(false);
 
     // restaura os estados quando a tela é desfocada
     useEffect(() => {
@@ -114,6 +115,11 @@ export default function Habits({ navigation }) {
         const created = start.split('/');
         const createdObj = new Date(created[2], created[1] - 1, created[0]);
 
+        // pega a data de hoje formata
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+
+
         // armazenará o intervalo de repetição do checkBox
         let intervalo = 0;
 
@@ -133,7 +139,7 @@ export default function Habits({ navigation }) {
         };
 
         // quantidade de vezes que o check deve ter sido feito até o momento atual
-        const hadDone = Math.floor(calcDiferenca(createdObj, new Date()) / intervalo) + (intervalo == 1 ? 0 : 1);
+        const hadDone = intervalo !== 0 ? Math.floor(calcDiferenca(createdObj, now) / intervalo) + 1 : 1; // se o item possuir repetição então calcula quantas vezes deveria ter sido feito, se não atribui 1
 
         let allDates = []; // variável que armazenará o retorno
 
@@ -159,6 +165,33 @@ export default function Habits({ navigation }) {
 
         return allDates;
     };
+
+    /**
+     * Pega a data de criação, repetição e histórico de um checkBox.
+     * 
+     * @param {string} habitId Id do hábito selecionado.
+     * @param {number} checkIndex Index do checkBox clicado. 
+     * 
+     * @returns {Object} Objeto contendo a data criação. repetição e histórico: {created, repeat, historic}.
+     */
+    async function getUnicCheck(habitId, checkIndex) {
+        const response = await AsyncStorage.getItem('@goalsmanagement:habits');
+        const data = response ? JSON.parse(response) : [];
+
+        // filtro para obter valores do checkBox específico
+        const repeat = await data.map((item) => {
+            if (item.id === habitId) {
+                return {
+                    created: item.checklists[checkIndex].created,
+                    repeat: item.checklists[checkIndex].repeat,
+                    historic: item.checklists[checkIndex].historic
+                }
+            };
+        }).filter(item => item != undefined)[0];
+
+        return repeat;
+        // return !repeat == false;
+    }
 
     /**
      * Calcula todas as datas em que o checkBox deveria ter sido feito e atribui ao state responsável pelas opções de checagem do hábito específicado.
@@ -249,12 +282,17 @@ export default function Habits({ navigation }) {
      * Exibe uma mensagem no centro da tela.
      * 
      * @param {string} message Título da mensagem. 
+     * 
      * @param {string} description Mensagem central.
+     * 
      * @param {string} type Tipo da mensagem: "info" | "success" | "warning."
+     * 
      * @param {function} yes Função executada ao confirmar a mensagem.
      * 
+     * @param {boolean} closeOnEnd Boleano que define se a caixa de mensagem fecha ao executar a função.
+     * 
      */
-    function showInfo(title, message, type, yes) {
+    async function showInfo(title, message, type, yes, closeOnEnd) {
         setModalTitle(title);
 
         setMessageConfirmation(message);
@@ -262,6 +300,8 @@ export default function Habits({ navigation }) {
         setModalType(type);
 
         setModalYes(() => yes);
+
+        closeOnEnd ? setCloseOnEnd(true) : setCloseOnEnd(false);
 
         displayConfirmation();
     };
@@ -421,12 +461,12 @@ export default function Habits({ navigation }) {
                         <DefaultView>
                             <Feather
                                 name='award'
-                                size={24}
-                                color={THEME.COLORS.PRIMARY900}
+                                size={RFPercentage(4)}
+                                color={THEME.COLORS.PRIMARY800}
                             />
                         </DefaultView>
                         <HeaderTitle style={{ marginLeft: RFPercentage(2) }}>
-                            Hábitos
+                            HÁBITOS
                         </HeaderTitle>
                     </HeaderView>
                     <DefaultView style={{ backgroundColor: THEME.COLORS.ALERT800 }}>
@@ -573,8 +613,18 @@ export default function Habits({ navigation }) {
                                                 () => deleteItem(habito.id)
                                             )}
                                         handleChangeBox={async (checkIndex) => {
-                                            await setCheckOptions(habito.id, checkIndex); // define todas opções de check's do respectivo hábito
-                                            changeCheckOptionsView();
+                                            const info = await getUnicCheck(habito.id, checkIndex); // busca algumas informações do check
+
+                                            // se não possuir repetição marca o check direto
+                                            if (info.repeat == false) {
+                                                changeChecks(habito.id, checkIndex, info.created);
+
+                                                // se possuir repetição carrega as datas com as opções de checagem
+                                            } else {
+                                                await setCheckOptions(habito.id, checkIndex); // define todas opções de check's do respectivo hábito
+                                                changeCheckOptionsView();
+                                            }
+
                                         }}
                                     />
                                 </DefaultView>
@@ -671,7 +721,7 @@ export default function Habits({ navigation }) {
                 <HabitsForm
                     id={editId}
                     hideForm={changeDisplayForm}
-                    showMessage={(title, msg, type, yes) => showInfo(title, msg, type, yes)}
+                    showMessage={(title, msg, type, yes, closeOnEnd) => showInfo(title, msg, type, yes, closeOnEnd)}
                     handleDelete={(id) => deleteItem(id)}
                 />
             )}
@@ -683,7 +733,7 @@ export default function Habits({ navigation }) {
                     title={modalTitle}
                     message={messageConfirmation}
                     type={modalType}
-                    closeOnEnd={false}
+                    closeOnEnd={closeOnEnd}
                 />
             )}
 

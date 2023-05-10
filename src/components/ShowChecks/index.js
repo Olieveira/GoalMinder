@@ -1,9 +1,10 @@
-import { BgView, HorizontalView, FrameDataView, FrameLabel, MultiplyItensView, SimpleHorizontalView, SimpleView, InputTitle, OptionView, OptionSelectedText, OptionText, OptionsSection } from './styles';
+import { BgView, HorizontalView, FrameDataView, FrameLabel, MultiplyItensView, SimpleHorizontalView, SimpleView, InputTitle, OptionView, OptionSelectedText, OptionText, OptionsSection, DeleteButton } from './styles';
 import { Feather } from '@expo/vector-icons';
 import THEME from '../../theme';
 import { useState } from 'react';
 import { LayoutAnimation } from 'react-native';
 import { useEffect } from 'react';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 
 /**
  * Retorna o componente para exibição dos checkBox's
@@ -15,10 +16,12 @@ import { useEffect } from 'react';
  * @param {function} onChangeText Função chamada ao alterar texto do input do titulo da atividade.
  * 
  * @param {function} onSelectValue Função chamada ao selecionar opção da lista de opções de repetição da atividade.
- * 
+ *
+ * @param {function} onDeleteCheck Função chamada ao pressionar botão de exclusão do checkBox.
+ *  
  * @returns {JSX.Element} 
  */
-export default function ShowChecks({ placeholder, item, onChangeText, onSelectValue }) {
+export default function ShowChecks({ placeholder, item, onChangeText, onSelectValue, onDeleteCheck }) {
     const [repeat, setRepeat] = useState(false);
 
     // states que armazenam se as opções de repetição esta expandida e se possui alguma selecionada.
@@ -192,6 +195,14 @@ export default function ShowChecks({ placeholder, item, onChangeText, onSelectVa
                     )}
                 </FrameDataView>
             </HorizontalView>
+
+            <DeleteButton onPress={onDeleteCheck}>
+                <Feather
+                    name='x-circle'
+                    size={RFPercentage(3.5)}
+                    color={THEME.COLORS.TEXT}
+                />
+            </DeleteButton>
 
         </BgView>
     );

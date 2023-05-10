@@ -1,8 +1,8 @@
 import {
-    MainContainer, Title, StatusBar, StartView, TitleContainer, MainImage, Text, AnimatedIcon, CenterView, CenterTitle, CenterGroup, DefaultView, ChecksBg, CheckFrame, DatesFrame, DatesHeader,
+    MainContainer, Title, StatusBar, StartView, TitleContainer, MainImage, Text, CenterView, CenterTitle, CenterGroup, DefaultView, ChecksBg, CheckFrame, DatesFrame, DatesHeader,
     DatesTitle, IconAnimationLoop, CheckHeader, TitleHeaderCheck, ChecksScroll, ParentChecksView, IconShakeLoop, GroupHabitsView, GroupHabitsHeader, GroupCheckTitle, GroupCheckHeader, GroupHabitsBody,
     GroupCheckView, GroupHabitsTitle, GroupCheckBody, GroupCheckHorizontalView, InfoCheckBody, GroupCheckParentView, GroupCheckDataInfo, Line, HeaderTable, HeaderTableText, TouchableDefault, NoneCheckView,
-    NoneCheckMessage, NoneCheckTitle, NoneCheckIconView
+    NoneCheckMessage, NoneCheckTitle, NoneCheckIconView, TitleContainerHeader
 } from "./styles";
 import { useEffect } from "react";
 import THEME from "../../theme";
@@ -117,7 +117,7 @@ export default function Home() {
 
             toHabitsGroup.push(habit.habit);
 
-            // loop nos checkBox's
+            // loop nos checkBox's do hábito
             habit.checklists.map((item, i) => {
 
                 let intervalo = 0;
@@ -142,7 +142,7 @@ export default function Home() {
                 const createdObj = new Date(created[2], created[1] - 1, created[0]);
 
                 // quantidade de vezes que o check deve ter sido feito até o momento atual
-                const hadDone = Math.floor(calcDiferenca(createdObj, now) / intervalo) + 1;
+                const hadDone = intervalo !== 0 ? Math.floor(calcDiferenca(createdObj, now) / intervalo) + 1 : 1;
 
                 for (let j = 0; j < hadDone; j++) {
 
@@ -282,22 +282,20 @@ export default function Home() {
                     <StatusBar animated backgroundColor={THEME.COLORS.BACKGROUND} barStyle={"dark-content"} />
 
                     <TitleContainer>
-                        <AnimatedIcon
-                            source={target}
-                            resizeMode={"center"}
-                            animation={'rotate'}
-                            direction='normal'
-                            iterationCount={'infinite'}
-                            duration={3500}
-                            delay={1000}
-                        />
-                        <Title>
-                            GERENCIADOR DE METAS
-                        </Title>
+                        <TitleContainerHeader>
+                            <MaterialIcons
+                                name="star-border"
+                                size={RFPercentage(3.8)}
+                                color={THEME.COLORS.ALERT800}
+                            />
+                            <Title>
+                                GERENCIADOR DE METAS
+                            </Title>
+                        </TitleContainerHeader>
                         <Text
                             delay={1500}
                             animation={'fadeInDown'}>
-                            Crie metas e indicadores para acompanhar seu progresso!
+                            Estabeleça metas, acompanhe seu progresso e conquiste seus objetivos com facilidade!
                         </Text>
                     </TitleContainer>
 
@@ -401,10 +399,10 @@ export default function Home() {
                                                                     size={RFPercentage(3.5)}
                                                                 />
                                                                 <GroupCheckTitle>
-                                                                    {checks[index].checkTitle}
+                                                                    {checks[0].checkTitle}
                                                                 </GroupCheckTitle>
                                                                 <GroupCheckTitle>
-                                                                    {checks[index].repeticao}
+                                                                    {checks[0].repeticao !== false ? checks[0].repeticao : "Único"}
                                                                 </GroupCheckTitle>
 
                                                             </GroupCheckHeader>
@@ -550,7 +548,7 @@ export default function Home() {
                                                                     {checks[0].checkTitle}
                                                                 </GroupCheckTitle>
                                                                 <GroupCheckTitle>
-                                                                    {checks[0].repeticao}
+                                                                    {checks[0].repeticao !== false ? checks[0].repeticao : "Único"}
                                                                 </GroupCheckTitle>
 
                                                             </GroupCheckHeader>

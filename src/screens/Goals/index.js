@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bg, Clouds, CenterAdvice, TitleAdvice, GoalView, GoalsScrollView, GoalHorizontalView, ViewAnimated, IndicatorsView, DataText, Frame, IndicatorHeader, HeaderIndicatorTitle, IndicatorFrame, EditButton } from './styles';
+import { Bg, Clouds, CenterAdvice, TitleAdvice, GoalView, GoalsScrollView, GoalHorizontalView, ViewAnimated, IndicatorsView, DataText, Frame, IndicatorHeader, HeaderIndicatorTitle, IndicatorFrame, EditButton, NoneView, NoneText, GoalHeaderView, NoneDescription } from './styles';
 import { Keyboard, View, Text } from 'react-native';
 import cloudsBg from '../../assets/cloudsBg.png';
 import CircleAdd from '../../components/Buttons/CircleAdd';
@@ -161,7 +161,14 @@ export default function Goals({ navigation }) {
         if (goals.length > 0 && formDisplay == false) {
             return (
                 <View>
-                    <TitleAdvice>METAS</TitleAdvice>
+                    <GoalHeaderView>
+                        <Feather
+                            name='target'
+                            size={RFPercentage(4)}
+                            color={THEME.COLORS.PRIMARY800}
+                        />
+                        <TitleAdvice>METAS</TitleAdvice>
+                    </GoalHeaderView>
                     {goals.map((item, i) => (
                         <GoalView
                             key={i}
@@ -250,19 +257,36 @@ export default function Goals({ navigation }) {
             // Se não haver nenhuma meta cadastrada e o formulário não estiver sendo exibido
             if (!formDisplay) {
                 return (
-                    <GoalView>
-                        <Feather
-                            name='info'
-                            size={RFPercentage(5)}
-                            color={THEME.COLORS.BACKGROUND}
-                            style={{ marginBottom: RFPercentage(1) }}
-                        />
-                        <TitleAdvice>
-                            <Text>
+                    <View>
+                        <GoalHeaderView>
+                            <Feather
+                                name='target'
+                                size={RFPercentage(4)}
+                                color={THEME.COLORS.PRIMARY800}
+                            />
+                            <TitleAdvice>METAS</TitleAdvice>
+                        </GoalHeaderView>
+                        <NoneView>
+                            <Feather
+                                name='info'
+                                size={RFPercentage(5)}
+                                color={THEME.COLORS.PRIMARY900}
+                                style={{ marginBottom: RFPercentage(1) }}
+                            />
+                            <NoneText
+                                animation={"fadeInDown"}
+                                delay={300}
+                            >
                                 Nenhum registro encontrado!
-                            </Text>
-                        </TitleAdvice>
-                    </GoalView>
+                            </NoneText>
+                            <NoneDescription
+                                animation={"fadeInRight"}
+                                delay={1000}
+                            >
+                                Dê vida aos seus sonhos estabelecendo metas realistas e mensuráveis!
+                            </NoneDescription>
+                        </NoneView>
+                    </View>
                 );
             } else {
                 return <></>
