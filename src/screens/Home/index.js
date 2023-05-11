@@ -2,25 +2,28 @@ import {
     MainContainer, Title, StatusBar, StartView, TitleContainer, MainImage, Text, CenterView, CenterTitle, CenterGroup, DefaultView, ChecksBg, CheckFrame, DatesFrame, DatesHeader,
     DatesTitle, IconAnimationLoop, CheckHeader, TitleHeaderCheck, ChecksScroll, ParentChecksView, IconShakeLoop, GroupHabitsView, GroupHabitsHeader, GroupCheckTitle, GroupCheckHeader, GroupHabitsBody,
     GroupCheckView, GroupHabitsTitle, GroupCheckBody, GroupCheckHorizontalView, InfoCheckBody, GroupCheckParentView, GroupCheckDataInfo, Line, HeaderTable, HeaderTableText, TouchableDefault, NoneCheckView,
-    NoneCheckMessage, NoneCheckTitle, NoneCheckIconView, TitleContainerHeader
+    NoneCheckMessage, NoneCheckTitle, NoneCheckIconView, TitleContainerHeader, RightHeaderIconView, RightBodyIconView, CenterHeader, CenterBody, TextBody, RightHeaderIconAnimation
 } from "./styles";
 import { useEffect } from "react";
 import THEME from "../../theme";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons"
 import bg from '../../assets/background.png';
-import target from '../../assets/target.png';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { LayoutAnimation } from "react-native";
 
 export default function Home() {
+    // array que armazena objetos referente aos CheckBox's pendentes
     const [checksToday, setChecksToday] = useState([]);
+    // array que armazena objetos referente aos CheckBox's atrasados
     const [checksLate, setChecksLate] = useState([]);
     const [showing, setShowing] = useState();
+    // states para controlar a expansão dos componentes
     const [latesShowing, setLatesShowing] = useState([-1, -1]);
     const [pendingShowing, setPendingShowing] = useState([-1, -1]);
+    // navegação entre telas
     const navigation = useNavigation();
 
     // restaura os states quando é desfocada
@@ -300,23 +303,61 @@ export default function Home() {
                     </TitleContainer>
 
                     <CenterGroup>
-                        <CenterView onTouchEnd={() => go('Goals')} animation={'fadeInDown'} delay={2300}>
-                            <CenterTitle
-                                animation={'fadeInDown'}
-                                duration={1500}
-                                delay={2600}>
-                                METAS
-                            </CenterTitle>
-                            <MaterialIcons color={THEME.COLORS.TEXT} size={RFPercentage(3.4)} name="add-task" />
+                        <CenterView animation={'fadeInDown'} delay={2300}>
+                            <CenterHeader onPressOut={() => go('Goals')}>
+                                <CenterTitle
+                                    animation={'fadeInDown'}
+                                    duration={1500}
+                                    delay={2600}>
+                                    METAS
+                                </CenterTitle>
+                                <RightHeaderIconView>
+                                    <RightHeaderIconAnimation
+                                        animation={"bounceIn"}
+                                        direction={"alternate"}
+                                        iterationCount={"infinite"}
+
+
+                                    >
+                                        <MaterialIcons color={THEME.COLORS.PRIMARY900} size={RFPercentage(3.4)} name="fast-forward" />
+                                    </RightHeaderIconAnimation>
+                                </RightHeaderIconView>
+                            </CenterHeader>
+                            <CenterBody>
+                                <TextBody>
+                                    "Se você traçar metas absurdamente altas e falhar, seu fracasso será muito melhor que o sucesso de todos." - James Cameron
+                                </TextBody>
+                                <RightBodyIconView>
+                                    <MaterialIcons color={THEME.COLORS.ALERT800} size={RFPercentage(3.4)} name="add-task" />
+                                </RightBodyIconView>
+                            </CenterBody>
                         </CenterView>
-                        <CenterView onTouchEnd={() => go('Habits')} animation={'fadeInDown'} delay={2300}>
-                            <CenterTitle
-                                animation={'fadeInDown'}
-                                duration={1500}
-                                delay={2600}>
-                                HÁBITOS
-                            </CenterTitle>
-                            <MaterialIcons color={THEME.COLORS.TEXT} size={RFPercentage(3.4)} name="menu-book" />
+                        <CenterView animation={'fadeInDown'} delay={2300}>
+                            <CenterHeader onPressOut={() => go('Habits')}>
+                                <CenterTitle
+                                    animation={'fadeInDown'}
+                                    duration={1500}
+                                    delay={2600}>
+                                    HÁBITOS
+                                </CenterTitle>
+                                <RightHeaderIconView>
+                                    <RightHeaderIconAnimation
+                                        animation={"bounceIn"}
+                                        direction={"alternate"}
+                                        iterationCount={"infinite"}
+                                    >
+                                        <MaterialIcons color={THEME.COLORS.PRIMARY900} size={RFPercentage(3.4)} name="fast-forward" />
+                                    </RightHeaderIconAnimation>
+                                </RightHeaderIconView>
+                            </CenterHeader>
+                            <CenterBody>
+                                <TextBody>
+                                    "Nós somos o que repetidamente fazemos. A excelência, então, não é um feito, mas um hábito." - Aristóteles
+                                </TextBody>
+                                <RightBodyIconView>
+                                    <MaterialIcons color={THEME.COLORS.ALERT800} size={RFPercentage(3.4)} name="menu-book" />
+                                </RightBodyIconView>
+                            </CenterBody>
                         </CenterView>
                     </CenterGroup>
 

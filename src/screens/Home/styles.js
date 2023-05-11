@@ -3,6 +3,43 @@ import THEME from "../../theme";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import * as Animatable from 'react-native-animatable';
 
+export const RightHeaderIconAnimation = styled(Animatable.View)`
+`
+export const TextBody = styled.Text`
+    flex: 1;
+    font-size: ${RFPercentage(2.3)}px;
+    text-align: center;
+    color: ${THEME.COLORS.PRIMARY900};
+    font-family: ${THEME.FONTS.MEDIUM};
+    padding: ${RFPercentage(1)}px ${RFPercentage(1.7)}px;
+    line-height: ${RFPercentage(4)}px;
+`
+export const CenterBody = styled.View`
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: ${THEME.COLORS.ALERT800};
+`
+export const CenterHeader = styled.TouchableOpacity`
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+`
+export const RightBodyIconView = styled.View`
+    justify-content: center;
+    background-color: ${THEME.COLORS.PRIMARY900};
+    padding: ${RFPercentage(1)}px ${RFPercentage(5)}px;
+    border-bottom-left-radius: 7px;
+    height: 100%;
+`
+export const RightHeaderIconView = styled(Animatable.View)`
+    justify-content: center;
+    background-color: ${THEME.COLORS.ALERT800};
+    padding: ${RFPercentage(1)}px ${RFPercentage(5)}px;
+    border-top-left-radius: 7px;
+`
+
 export const NoneCheckIconView = styled(Animatable.View)`
     margin-right: ${RFPercentage(1)}px;
 `
@@ -187,27 +224,28 @@ export const DefaultView = styled.View`
 `
 
 export const CenterTitle = styled(Animatable.Text)`
-  font-family: ${THEME.FONTS.MEDIUM};
-  color: ${THEME.COLORS.TEXT};
-  font-size: ${RFPercentage(2.8)}px;  
-  `
+    flex: 1;
+    text-align: center;
+    font-family: ${THEME.FONTS.MEDIUM};
+    color: ${THEME.COLORS.ALERT800};
+    font-size: ${RFPercentage(2.8)}px;
+`
 export const CenterGroup = styled(Animatable.View)`
+    flex: 1;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 `
 export const CenterView = styled(Animatable.View)`
-  flex-direction: row;
-  justify-content: space-around;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  text-align: center;
-  padding: 0 ${RFPercentage(3)}px;
+  width: 100%;
   margin: ${RFPercentage(2)}px 0;
-  width: ${RFPercentage(25)}px;
-  height: ${RFPercentage(7)}px;
+  max-height: ${RFPercentage(25)}px;
   background-color: ${THEME.COLORS.PRIMARY900};
-  border-radius: 8px;
-  border: 1px solid ${THEME.COLORS.TEXT};
+  border: 2px solid ${THEME.COLORS.ALERT800};
 `
 export const MainContainer = styled.View`
     min-height: 100%;
@@ -244,7 +282,7 @@ export const TitleContainer = styled.View`
     justify-content: center;
     align-items: center;
     align-self: flex-start;
-    background-color: rgba(230, 193, 82, 0.89);
+    background-color: rgba(68, 128, 220, 0.89);
     z-index: 1000;
 `;
 export const Title = styled.Text`
@@ -258,7 +296,7 @@ export const Title = styled.Text`
 export const Text = styled(Animatable.Text)`
     font-size: ${RFPercentage(3)}px;
     text-align: center;
-    color: ${THEME.COLORS.PRIMARY900};
+    color: ${THEME.COLORS.TEXT};
     padding: ${RFPercentage(1.5)}px;
     font-family: ${THEME.FONTS.MEDIUM};
 `;

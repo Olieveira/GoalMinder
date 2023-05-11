@@ -1,7 +1,7 @@
 import {
     RootView, HabitsImage, ImageView, FooterLicenseView, LicenseText, CenterView, HeaderView, HeaderTitle, DefaultView, DefaultHorizontalView,
     BodyText, HabitsView, HabitsScrollView, SuggestionTextView, AlphaBg, ChecksDataContainer, CloseView, ChecksDataHeader, ChecksDataTitle,
-    ChecksDataBody, ChecksDataScroll, ChecksOptionView, ChecksDataOption, CheckName
+    ChecksDataBody, ChecksDataScroll, ChecksOptionView, ChecksDataOption, CheckName, AnimatedShowMoreView
 } from './styles';
 import habitsBg from '../../assets/habitsBg.png'
 import { useEffect, useState } from 'react';
@@ -505,70 +505,86 @@ export default function Habits({ navigation }) {
                         </BodyText>
 
                         <HabitsScrollView style={{ maxHeight: RFPercentage(50) }}>
-                            <ShowMore
-                                icon='book-open'
-                                title='Leitura'
-                                bodyComponent={suggetionsComponent(
-                                    {
-                                        icon: [
-                                            'trending-up',
-                                            'users',
-                                            'smile',
-                                            'heart',
-                                        ],
-                                        body: [
-                                            'Aumenta a capacidade cognitiva',
-                                            'Aumento da empatia',
-                                            'Melhora o bem-estar emocional além de ajudar a combater a ansiedade e melhorar o sono',
-                                            'Ajuda a reduzir a pressão arterial e risco de doenças cardíacas',
-                                        ]
-                                    }
-                                )}
-                            />
 
-                            <ShowMore
-                                icon='pause'
-                                title='Parar de fumar'
-                                bodyComponent={suggetionsComponent(
-                                    {
-                                        icon: [
-                                            'activity',
-                                            'wind',
-                                            'smile',
-                                            'shield',
-                                        ],
-                                        body: [
-                                            'Melhoria da saúde cardiovascular',
-                                            'Melhoria da saúde respiratória',
-                                            'Benefícios estéticos além de economia financeira',
-                                            'Proteção para as pessoas ao redor',
-                                        ]
-                                    }
-                                )}
-                            />
+                            <AnimatedShowMoreView
+                                animation={"fadeInLeft"}
+                                delay={500}
+                            >
+                                <ShowMore
+                                    icon='book-open'
+                                    title='Leitura'
+                                    bodyComponent={suggetionsComponent(
+                                        {
+                                            icon: [
+                                                'trending-up',
+                                                'users',
+                                                'smile',
+                                                'heart',
+                                            ],
+                                            body: [
+                                                'Aumenta a capacidade cognitiva',
+                                                'Aumento da empatia',
+                                                'Melhora o bem-estar emocional além de ajudar a combater a ansiedade e melhorar o sono',
+                                                'Ajuda a reduzir a pressão arterial e risco de doenças cardíacas',
+                                            ]
+                                        }
+                                    )}
+                                />
+                            </AnimatedShowMoreView>
 
-                            <ShowMore
-                                icon='shopping-cart'
-                                title='Dieta equilibrada'
-                                bodyComponent={suggetionsComponent(
-                                    {
-                                        icon: [
-                                            'activity',
-                                            'umbrella',
-                                            'shield',
-                                            'smile',
-                                            'moon'
-                                        ],
-                                        body: [
-                                            'Controle de peso',
-                                            'Prevenção de doenças crônicas',
-                                            'Melhoria do sistema imunológico',
-                                            'Melhoria do humor e do bem-estar geral',
-                                            'Melhoria da saúde mental e do sono'
-                                        ]
-                                    }
-                                )}
-                            />
+                            <AnimatedShowMoreView
+                                animation={"fadeInLeft"}
+                                delay={900}
+                            >
+                                <ShowMore
+                                    icon='pause'
+                                    title='Parar de fumar'
+                                    bodyComponent={suggetionsComponent(
+                                        {
+                                            icon: [
+                                                'activity',
+                                                'wind',
+                                                'smile',
+                                                'shield',
+                                            ],
+                                            body: [
+                                                'Melhoria da saúde cardiovascular',
+                                                'Melhoria da saúde respiratória',
+                                                'Benefícios estéticos além de economia financeira',
+                                                'Proteção para as pessoas ao redor',
+                                            ]
+                                        }
+                                    )}
+                                />
+                            </AnimatedShowMoreView>
+
+                            <AnimatedShowMoreView
+                                animation={"fadeInLeft"}
+                                delay={1200}
+                            >
+                                <ShowMore
+                                    icon='shopping-cart'
+                                    title='Dieta equilibrada'
+                                    bodyComponent={suggetionsComponent(
+                                        {
+                                            icon: [
+                                                'activity',
+                                                'umbrella',
+                                                'shield',
+                                                'smile',
+                                                'moon'
+                                            ],
+                                            body: [
+                                                'Controle de peso',
+                                                'Prevenção de doenças crônicas',
+                                                'Melhoria do sistema imunológico',
+                                                'Melhoria do humor e do bem-estar geral',
+                                                'Melhoria da saúde mental e do sono'
+                                            ]
+                                        }
+                                    )}
+                                />
+                            </AnimatedShowMoreView>
 
                         </HabitsScrollView>
 

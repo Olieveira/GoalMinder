@@ -3,6 +3,8 @@ import THEME from '../../theme';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import * as Animatable from 'react-native-animatable';
 
+export const AnimatedShowMoreView = styled(Animatable.View)`
+`
 export const CheckName = styled.Text`
     text-align: center;
     font-size: ${RFPercentage(3)}px;
