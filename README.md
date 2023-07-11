@@ -3,13 +3,12 @@
 </h1>
 
 <p align="center">
-  <img src="https://github.com/Olieveira/goalsManagement/assets/107584427/955227c5-0b78-4c14-81df-fe7e0d104007" width=235 alt="Carregamento inicial do aplicativo Goal Minder">    
+  <img src="https://github.com/Olieveira/GoalMinder/assets/107584427/3ffd038e-da2d-4064-a0bc-170f3cfa6f89" width=235 alt="Carregamento inicial do aplicativo Goal Minder">    
 
-  <img src="https://github.com/Olieveira/goalsManagement/assets/107584427/7a4cf2af-7209-4041-8172-647ceea0817d" width=235 alt="Carregamento da tela de cadastro de hábitos do aplicativo">    
+  <img src="https://github.com/Olieveira/GoalMinder/assets/107584427/3f83bda3-221c-4e13-ab22-4a0ae4a01f29" width=235 alt="Carregamento da tela de cadastro de hábitos do aplicativo">    
 
-  <img src="https://github.com/Olieveira/goalsManagement/assets/107584427/379fd8ca-0c06-4caf-9076-86020a574bba" width=235 alt="Carregamento da tela de cadastro de metas do aplicativo">    
+  <img src="https://github.com/Olieveira/GoalMinder/assets/107584427/4af1964c-8e46-4071-8790-f6501a84f67b" width=235 alt="Carregamento da tela de cadastro de metas do aplicativo">    
 </p>
-
 <p align="center">
 Aplicativo mobile android/IOS para gerenciamento de metas e hábitos.
 </p>
@@ -17,17 +16,17 @@ Aplicativo mobile android/IOS para gerenciamento de metas e hábitos.
 # Funcionalidades :exclamation:
  - `METAS:` É possível a criação, modificação e remoção de **Metas** criadas pelo usuário, assim como vincular **indicadores** que facilitarão o acompanhamento.
  <p align="center">
-   <img src="https://github.com/Olieveira/goalsManagement/assets/107584427/d46b3673-6885-422a-8fbe-fe885690aa26" width=190 alt="Tela de cadastro de metas">
+   <img src="https://github.com/Olieveira/GoalMinder/assets/107584427/87bdde9a-767f-4f86-8831-056a7dcd9583" width=190 alt="Tela de cadastro de metas">
   </p>
 
  - `HÁBITOS:` Assim como as metas, é possível a criação e gestão de **Hábitos** personalizados, sendo possível vincular diversas metas em um único hábito para mensurar o progresso.
  <p align="center">
-   <img src="https://github.com/Olieveira/goalsManagement/assets/107584427/9d584178-c1c2-4eb9-9566-2fe5d53ce847" width=190 alt="Tela de cadastro de hábitos">
+   <img src="https://github.com/Olieveira/GoalMinder/assets/107584427/3241caa4-6913-46cf-87a2-fbc5af5eeb5a" width=190 alt="Tela de cadastro de hábitos">
  </p>
 
  - `TO-DO` Dentro dos hábitos o usuário pode criar **tarefas**, periódicas ou únicas, que podem ser visualizadas na **tela inicial**, indicando seu respectivo estado.
 <p align="center">
-   <img src="https://github.com/Olieveira/goalsManagement/assets/107584427/877c24ce-5b79-4a5e-80e5-0a05ab7e59aa" width=190 alt="Tela de cadastro de hábitos">
+   <img src="https://github.com/Olieveira/GoalMinder/assets/107584427/16880924-a0a2-467f-87e1-d7a7de7912a1" width=190 alt="Tela de exibição das tarefas">
  </p>
 
 # Características do projeto :hammer:
